@@ -1,4 +1,6 @@
-﻿#pragma once
+﻿/*    DummyClient/Pch.h    */
+
+#pragma once
 
 #ifdef _DEBUG
 #pragma comment(lib, "Debug//ServerEngine.lib")
@@ -6,4 +8,4 @@
 #pragma comment(lib, "Release//ServerEngine.lib")
 #endif // _DEBUG
 
-#include "Core/Pch.h"
+#include "ServerEngine/Core/Pch.h"

@@ -6,14 +6,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\Pch.h">
+    <ClInclude Include="Core\Types.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Types.h">
+    <ClInclude Include="Pch.h" />
+    <ClInclude Include="Core\Pch.h">
       <Filter>Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Pch.cpp" />
     <ClCompile Include="Core\Pch.cpp">
       <Filter>Core</Filter>
     </ClCompile>
