@@ -5,9 +5,4 @@
 
 #include <iostream>
 
-#include "Types.h"
-
-namespace MMO
-{
-    void HelloWorld();
-}
+#include "Core/Types.h"

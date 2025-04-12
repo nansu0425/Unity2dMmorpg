@@ -1,9 +1,8 @@
-﻿#include "pch.h"
+﻿#include "Main/Pch.h"
 
 using namespace MMO;
 
 int main()
 {
-    HelloWorld();
     return 0;
 }

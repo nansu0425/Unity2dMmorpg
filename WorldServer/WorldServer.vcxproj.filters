@@ -4,21 +4,18 @@
     <Filter Include="Main">
       <UniqueIdentifier>{061ec5ad-b401-4ae8-ad48-50f0a6da8e84}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Utils">
-      <UniqueIdentifier>{6fe814b2-6cca-489f-8fde-e1a4efb6b85f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="Main\Main.cpp">
       <Filter>Main</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>Utils</Filter>
+    <ClCompile Include="Main\Pch.cpp">
+      <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>Utils</Filter>
+    <ClInclude Include="Main\Pch.h">
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
