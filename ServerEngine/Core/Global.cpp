@@ -15,3 +15,5 @@ GlobalContext::~GlobalContext()
     delete g_threadManager;
     g_threadManager = nullptr;
 }
+
+GlobalContext g_globalContext;

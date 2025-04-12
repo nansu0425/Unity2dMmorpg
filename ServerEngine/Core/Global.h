@@ -10,3 +10,5 @@ public:
     GlobalContext();
     ~GlobalContext();
 };
+
+extern GlobalContext g_globalContext;

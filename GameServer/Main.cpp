@@ -3,8 +3,6 @@
 #include "GameServer/Pch.h"
 #include "ServerEngine/Core/Thread.h"
 
-GlobalContext g_globalContext;
-
 void ThreadMain()
 {
     while (true)
