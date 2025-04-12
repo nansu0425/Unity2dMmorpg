@@ -9,6 +9,9 @@
 #include <shared_mutex>
 #include <thread>
 #include <atomic>
+#include <vector>
+#include <functional>
+#include <memory>
 
 #include "ServerEngine/Core/Types.h"
 #include "ServerEngine/Core/Global.h"

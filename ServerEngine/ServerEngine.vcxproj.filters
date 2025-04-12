@@ -5,7 +5,7 @@
       <UniqueIdentifier>{67ee8be2-fcf5-4df2-9b83-abf31462876e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Thread">
-      <UniqueIdentifier>{d5eab5de-75ef-4030-8d1a-ab923476bb5b}</UniqueIdentifier>
+      <UniqueIdentifier>{6e1193ac-8f06-4b49-aef5-3da36f3458a1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -25,6 +25,9 @@
     <ClInclude Include="Core\Tls.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Thread.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -32,6 +35,9 @@
       <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Core\Tls.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Thread.cpp">
       <Filter>Core</Filter>
     </ClCompile>
   </ItemGroup>

@@ -20,3 +20,14 @@ using UniqueLock = std::unique_lock<SharedMutex>;
 using SharedLock = std::shared_lock<SharedMutex>;
 using CondVar = std::condition_variable;
 using Thread = std::thread;
+
+template<typename T>
+using Vector = std::vector<T>;
+
+template<typename F>
+using Func = std::function<F>;
+
+template<typename T>
+using SharedPtr = std::shared_ptr<T>;
+template<typename T>
+using UniquePtr = std::unique_ptr<T>;
