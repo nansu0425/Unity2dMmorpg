@@ -1,4 +1,4 @@
-﻿/*    ServerEngine/Thread/Thread.h    */
+﻿/*    ServerEngine/Concurrency/Thread.h    */
 
 #pragma once
 
@@ -15,6 +15,6 @@ public:
     static void     DestroyTls();
 
 private:
-    Mutex               m_mutex;
-    Vector<Thread>      m_threads;
+    Mutex               mMutex;
+    Vector<Thread>      mThreads;
 };

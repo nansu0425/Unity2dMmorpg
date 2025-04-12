@@ -1,8 +1,8 @@
-﻿/*    ServerEngine/Core/GlobalContext.h    */
+﻿/*    ServerEngine/Core/Global.h    */
 
 #pragma once
 
-extern class ThreadManager* g_threadManager;
+extern class ThreadManager* gThreadManager;
 
 class GlobalContext
 {
@@ -11,4 +11,4 @@ public:
     ~GlobalContext();
 };
 
-extern GlobalContext g_globalContext;
+extern GlobalContext gGlobalContext;

@@ -1,7 +1,7 @@
-﻿/*    ServerEngine/Thread/Thread.cpp    */
+﻿/*    ServerEngine/Concurrency/Thread.cpp    */
 
 #include "ServerEngine/Pch.h"
-#include "ServerEngine/Core/Thread.h"
+#include "ServerEngine/Concurrency/Thread.h"
 
 ThreadManager::ThreadManager()
 {
@@ -15,9 +15,9 @@ ThreadManager::~ThreadManager()
 
 void ThreadManager::Launch(Func<void(void)> callback)
 {
-    LockGuard guard(m_mutex);
+    LockGuard guard(mMutex);
 
-    m_threads.emplace_back([callback]()
+    mThreads.emplace_back([callback]()
                            {
                                InitTls();
                                callback();
@@ -27,21 +27,23 @@ void ThreadManager::Launch(Func<void(void)> callback)
 
 void ThreadManager::Join()
 {
-    LockGuard guard(m_mutex);
+    LockGuard guard(mMutex);
 
-    for (Thread& thread : m_threads)
+    for (Thread& thread : mThreads)
     {
         if (thread.joinable())
             thread.join();
     }
 
-    m_threads.clear();
+    mThreads.clear();
 }
 
 void ThreadManager::InitTls()
 {
-    static Atomic<Int32> s_threadId = 1;
-    t_threadId = s_threadId.fetch_add(1);
+    static Atomic<Int16> sThreadId = 1;
+    tThreadId = sThreadId.fetch_add(1);
+
+    ASSERT_CRASH(tThreadId > 0);
 }
 
 void ThreadManager::DestroyTls()

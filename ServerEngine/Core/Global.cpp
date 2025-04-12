@@ -1,19 +1,19 @@
-﻿/*    ServerEngine/Core/GlobalContext.cpp    */
+﻿/*    ServerEngine/Core/Global.cpp    */
 
 #include "ServerEngine/Pch.h"
-#include "ServerEngine/Core/Thread.h"
+#include "ServerEngine/Concurrency/Thread.h"
 
-ThreadManager* g_threadManager = nullptr;
+ThreadManager* gThreadManager = nullptr;
 
 GlobalContext::GlobalContext()
 {
-    g_threadManager = new ThreadManager();
+    gThreadManager = new ThreadManager();
 }
 
 GlobalContext::~GlobalContext()
 {
-    delete g_threadManager;
-    g_threadManager = nullptr;
+    delete gThreadManager;
+    gThreadManager = nullptr;
 }
 
-GlobalContext g_globalContext;
+GlobalContext gGlobalContext;

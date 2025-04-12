@@ -4,6 +4,9 @@
     <Filter Include="Core">
       <UniqueIdentifier>{67ee8be2-fcf5-4df2-9b83-abf31462876e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Concurrency">
+      <UniqueIdentifier>{bf2a8b0b-e5f3-495d-953a-b34f9435ca9f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Types.h">
@@ -22,8 +25,11 @@
     <ClInclude Include="Core\Tls.h">
       <Filter>Core</Filter>
     </ClInclude>
-    <ClInclude Include="Core\Thread.h">
-      <Filter>Core</Filter>
+    <ClInclude Include="Concurrency\Thread.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="Concurrency\Lock.h">
+      <Filter>Concurrency</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -34,8 +40,11 @@
     <ClCompile Include="Core\Tls.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Core\Thread.cpp">
-      <Filter>Core</Filter>
+    <ClCompile Include="Concurrency\Thread.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="Concurrency\Lock.cpp">
+      <Filter>Concurrency</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

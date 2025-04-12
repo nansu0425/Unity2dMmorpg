@@ -2,4 +2,4 @@
 
 #pragma once
 
-extern thread_local Int32 t_threadId;
+extern thread_local Int16 tThreadId;

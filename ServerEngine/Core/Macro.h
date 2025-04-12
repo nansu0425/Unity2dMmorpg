@@ -2,6 +2,8 @@
 
 #pragma once
 
+#define OUT
+
 // 의도적으로 크래시를 발생시킨다
 #define CRASH(cause)                        \
 {                                           \
@@ -15,7 +17,7 @@
 {                                           \
     if (!(expr))                            \
     {                                       \
-        __analysis_assume(!expr);           \
+        __analysis_assume(!(expr));         \
         CRASH("ASSERT_CRASH");              \
     }                                       \
 }                                           \

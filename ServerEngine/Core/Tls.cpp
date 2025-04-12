@@ -2,4 +2,4 @@
 
 #include "ServerEngine/Pch.h"
 
-thread_local Int32 t_threadId = 0;
+thread_local Int16 tThreadId = 0;

@@ -8,6 +8,10 @@ using Int8 = __int8;
 using Int16 = __int16;
 using Int32 = __int32;
 using Int64 = __int64;
+using Uint8 = unsigned __int8;
+using Uint16 = unsigned __int16;
+using Uint32 = unsigned __int32;
+using Uint64 = unsigned __int64;
 using Float32 = float;
 using Float64 = double;
 
