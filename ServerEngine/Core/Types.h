@@ -13,10 +13,10 @@ using Float64 = double;
 
 template<typename T>
 using Atomic = std::atomic<T>;
-using Mutex = std::shared_mutex;
+using Mutex = std::mutex;
+using LockGuard = std::lock_guard<Mutex>;
+using SharedMutex = std::shared_mutex;
+using UniqueLock = std::unique_lock<SharedMutex>;
+using SharedLock = std::shared_lock<SharedMutex>;
 using CondVar = std::condition_variable;
 using Thread = std::thread;
-using ThreadId = std::thread::id;
-using LockGuard = std::lock_guard<Mutex>;
-using UniqueLock = std::unique_lock<Mutex>;
-using SharedLock = std::shared_lock<Mutex>;

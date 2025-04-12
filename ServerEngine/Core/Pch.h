@@ -11,5 +11,6 @@
 #include <atomic>
 
 #include "ServerEngine/Core/Types.h"
-
-void HelloWorld();
+#include "ServerEngine/Core/Global.h"
+#include "ServerEngine/Core/Tls.h"
+#include "ServerEngine/Core/Macro.h"
