@@ -12,8 +12,10 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <queue>
 
 #include "ServerEngine/Core/Types.h"
 #include "ServerEngine/Core/Global.h"
 #include "ServerEngine/Core/Tls.h"
+#include "ServerEngine/Concurrency/Lock.h"
 #include "ServerEngine/Core/Macro.h"

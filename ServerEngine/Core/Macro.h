@@ -21,3 +21,10 @@
         CRASH("ASSERT_CRASH");              \
     }                                       \
 }                                           \
+
+#define RW_SPIN_LOCK_ARRAY(count)       RwSpinLock mLocks[count];
+#define RW_SPIN_LOCK                    RW_SPIN_LOCK_ARRAY(1)
+#define READ_GUARD_IDX(idx)             RwSpinLock::ReadGuard readGuard_##idx(mLocks[idx]);
+#define READ_GUARD                      READ_GUARD_IDX(0)
+#define WRITE_GUARD_IDX(idx)            RwSpinLock::WriteGuard writeGuard_##idx(mLocks[idx]);
+#define WRITE_GUARD                     WRITE_GUARD_IDX(0)
