@@ -9,5 +9,5 @@ public:
     void WriteA(A& a);
 
 private:
-    RW_SPIN_LOCK;
+    RW_LOCK;
 };

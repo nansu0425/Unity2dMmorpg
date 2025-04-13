@@ -9,5 +9,5 @@ public:
     void WriteC(C& c);
 
 private:
-    RW_SPIN_LOCK;
+    RW_LOCK;
 };

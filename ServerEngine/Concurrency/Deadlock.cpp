@@ -27,16 +27,17 @@ void DeadlockDetector::PushLock(const Char8* name)
     if (!tLockStack.empty())
     {
         const Int32 prevLockId = tLockStack.top();
-        // 재귀 잠금이 아닌 경우
-        if (prevLockId != lockId)
+        // 같은 락을 다시 잠그는 경우 크래시
+        if (prevLockId == lockId)
         {
-            HashSet<Int32>& nextLocks = mlockGraph[prevLockId];
-            // 새로 발견한 잠금 순서라면 데드락 여부 확인
-            if (nextLocks.find(lockId) == nextLocks.end())
-            {
-                nextLocks.insert(lockId);
-                CheckCycle();
-            }
+            CRASH("MULTIPLE_LOCK");
+        }
+        HashSet<Int32>& nextLocks = mlockGraph[prevLockId];
+        // 새로 발견한 잠금 순서라면 데드락 여부 확인
+        if (nextLocks.find(lockId) == nextLocks.end())
+        {
+            nextLocks.insert(lockId);
+            CheckCycle();
         }
     }
 

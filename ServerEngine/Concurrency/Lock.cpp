@@ -113,3 +113,39 @@ void RwSpinLock::ReadUnlock(const Char8* name)
         CRASH("MULTIPLE_UNLOCK");
     }
 }
+
+void SrwLock::AcquireWriteLock(const Char8* name)
+{
+#ifdef _DEBUG
+    gDeadlockDetector->PushLock(name);
+#endif // _DEBUG
+
+    ::AcquireSRWLockExclusive(&mLock);
+}
+
+void SrwLock::ReleaseWriteLock(const Char8* name)
+{
+#ifdef _DEBUG
+    gDeadlockDetector->PopLock(name);
+#endif // _DEBUG
+
+    ::ReleaseSRWLockExclusive(&mLock);
+}
+
+void SrwLock::AcquireReadLock(const Char8* name)
+{
+#ifdef _DEBUG
+    gDeadlockDetector->PushLock(name);
+#endif // _DEBUG
+
+    ::AcquireSRWLockShared(&mLock);
+}
+
+void SrwLock::ReleaseReadLock(const Char8* name)
+{
+#ifdef _DEBUG
+    gDeadlockDetector->PopLock(name);
+#endif // _DEBUG
+
+    ::ReleaseSRWLockShared(&mLock);
+}

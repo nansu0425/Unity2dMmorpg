@@ -14,7 +14,7 @@ void ThreadA()
 {
     while (true)
     {
-        gA.WriteB(gB);
+        gA.RecursiveWrite(gC);
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
@@ -40,8 +40,8 @@ void ThreadC()
 int main()
 {
     gThreadManager->Launch(ThreadA);
-    gThreadManager->Launch(ThreadB);
-    gThreadManager->Launch(ThreadC);
+    /*gThreadManager->Launch(ThreadB);
+    gThreadManager->Launch(ThreadC);*/
 
     gThreadManager->Join();
 

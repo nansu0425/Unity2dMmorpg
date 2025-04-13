@@ -71,3 +71,60 @@ private:
     Atomic<UInt32>  mLockFlag = kEmptyFlag;
     Int32           mWriteCount = 0;
 };
+
+/*
+ * 윈도우의 Slim Reader/Writer lock을 래핑
+ * 재귀 잠금 불가능
+ */
+class SrwLock
+{
+public:
+    void    AcquireWriteLock(const Char8* name);
+    void    ReleaseWriteLock(const Char8* name);
+    void    AcquireReadLock(const Char8* name);
+    void    ReleaseReadLock(const Char8* name);
+
+public:
+    class WriteGuard
+    {
+    public:
+        WriteGuard(SrwLock& lock, const Char8* name)
+            : mLock(lock)
+            , mName(name)
+        {
+            mLock.AcquireWriteLock(mName);
+        }
+
+        ~WriteGuard()
+        {
+            mLock.ReleaseWriteLock(mName);
+        }
+
+    private:
+        SrwLock&        mLock;
+        const Char8*    mName;
+    };
+
+    class ReadGuard
+    {
+    public:
+        ReadGuard(SrwLock& lock, const Char8* name)
+            : mLock(lock)
+            , mName(name)
+        {
+            mLock.AcquireReadLock(mName);
+        }
+
+        ~ReadGuard()
+        {
+            mLock.ReleaseReadLock(mName);
+        }
+
+    private:
+        SrwLock&        mLock;
+        const Char8*    mName;
+    };
+
+private:
+    SRWLOCK     mLock = SRWLOCK_INIT;
+};
