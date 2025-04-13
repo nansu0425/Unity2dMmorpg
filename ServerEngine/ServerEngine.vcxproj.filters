@@ -31,6 +31,9 @@
     <ClInclude Include="Concurrency\Lock.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="Concurrency\Deadlock.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -44,6 +47,9 @@
       <Filter>Concurrency</Filter>
     </ClCompile>
     <ClCompile Include="Concurrency\Lock.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="Concurrency\Deadlock.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
   </ItemGroup>

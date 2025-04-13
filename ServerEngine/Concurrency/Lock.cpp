@@ -1,9 +1,14 @@
 ﻿/*    ServerEngine/Concurrency/Lock.cpp    */
 
 #include "ServerEngine/Pch.h"
+#include "ServerEngine/Concurrency/Deadlock.h"
 
-void RwSpinLock::WriteLock()
+void RwSpinLock::WriteLock(const Char8* name)
 {
+#ifdef _DEBUG
+    gDeadlockDetector->PushLock(name);
+#endif // _DEBUG
+
     const Int16 writeThreadId = static_cast<Int16>(mLockFlag.load() >> 16);
     // 이미 쓰기 잠금을 한 스레드는 반드시 쓰기 잠금 성공
     if (writeThreadId == tThreadId)
@@ -37,8 +42,12 @@ void RwSpinLock::WriteLock()
     }
 }
 
-void RwSpinLock::WriteUnlock()
+void RwSpinLock::WriteUnlock(const Char8* name)
 {
+#ifdef _DEBUG
+    gDeadlockDetector->PopLock(name);
+#endif // _DEBUG
+
     // 읽기 -> 쓰기 잠금은 허용하지 않음
     if ((mLockFlag.load() & kReadCountMask) != kEmptyFlag)
     {
@@ -56,8 +65,12 @@ void RwSpinLock::WriteUnlock()
     ASSERT_CRASH(lockCount > 0);
 }
 
-void RwSpinLock::ReadLock()
+void RwSpinLock::ReadLock(const Char8* name)
 {
+#ifdef _DEBUG
+    gDeadlockDetector->PushLock(name);
+#endif // _DEBUG
+
     const Int16 writeThreadId = static_cast<Int16>(mLockFlag.load() >> 16);
     // 이미 쓰기 잠금을 한 스레드는 반드시 읽기 잠금 성공
     if (writeThreadId == tThreadId)
@@ -89,8 +102,12 @@ void RwSpinLock::ReadLock()
     }
 }
 
-void RwSpinLock::ReadUnlock()
+void RwSpinLock::ReadUnlock(const Char8* name)
 {
+#ifdef _DEBUG
+    gDeadlockDetector->PopLock(name);
+#endif // _DEBUG
+
     if ((mLockFlag.fetch_sub(1) & kReadCountMask) == 0)
     {
         CRASH("MULTIPLE_UNLOCK");

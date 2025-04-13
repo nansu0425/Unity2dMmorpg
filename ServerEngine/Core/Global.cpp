@@ -2,18 +2,23 @@
 
 #include "ServerEngine/Pch.h"
 #include "ServerEngine/Concurrency/Thread.h"
+#include "ServerEngine/Concurrency/Deadlock.h"
 
-ThreadManager* gThreadManager = nullptr;
+ThreadManager*          gThreadManager = nullptr;
+DeadlockDetector*       gDeadlockDetector = nullptr;
 
 GlobalContext::GlobalContext()
 {
-    gThreadManager = new ThreadManager();
+    gThreadManager      = new ThreadManager();
+    gDeadlockDetector   = new DeadlockDetector();
 }
 
 GlobalContext::~GlobalContext()
 {
-    delete gThreadManager;
-    gThreadManager = nullptr;
+    delete  gDeadlockDetector;
+    gDeadlockDetector   = nullptr;
+    delete  gThreadManager;
+    gThreadManager      = nullptr;
 }
 
 GlobalContext gGlobalContext;

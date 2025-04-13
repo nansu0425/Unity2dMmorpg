@@ -2,37 +2,49 @@
 
 #pragma once
 
-using Byte = unsigned char;
-using Char8 = char;
-using Char16 = wchar_t;
-using Int8 = __int8;
-using Int16 = __int16;
-using Int32 = __int32;
-using Int64 = __int64;
-using UInt8 = unsigned __int8;
-using UInt16 = unsigned __int16;
-using UInt32 = unsigned __int32;
-using UInt64 = unsigned __int64;
-using Float32 = float;
-using Float64 = double;
+using Byte      = unsigned char;
+using Bool      = bool;
+using Char8     = char;
+using Char16    = wchar_t;
+using Int8      = __int8;
+using Int16     = __int16;
+using Int32     = __int32;
+using Int64     = __int64;
+using UInt8     = unsigned __int8;
+using UInt16    = unsigned __int16;
+using UInt32    = unsigned __int32;
+using UInt64    = unsigned __int64;
+using Float32   = float;
+using Float64   = double;
 
 template<typename T>
-using Atomic = std::atomic<T>;
-using Mutex = std::mutex;
-using LockGuard = std::lock_guard<Mutex>;
-using SharedMutex = std::shared_mutex;
-using UniqueLock = std::unique_lock<SharedMutex>;
-using SharedLock = std::shared_lock<SharedMutex>;
-using CondVar = std::condition_variable;
-using Thread = std::thread;
+using Atomic        = std::atomic<T>;
+using SharedMutex   = std::shared_mutex;
+using LockGuard     = std::lock_guard<SharedMutex>;
+using UniqueLock    = std::unique_lock<SharedMutex>;
+using SharedLock    = std::shared_lock<SharedMutex>;
+using CondVar       = std::condition_variable;
+using Thread        = std::thread;
 
 template<typename T>
-using Vector = std::vector<T>;
+using Vector    = std::vector<T>;
+template<typename T>
+using Queue     = std::queue<T>;
+template<typename T>
+using Stack     = std::stack<T>;
+template<typename K, typename V>
+using TreeMap   = std::map<K, V>;
+template<typename K, typename V>
+using HashMap   = std::unordered_map<K, V>;
+template<typename K>
+using TreeSet   = std::set<K>;
+template<typename K>
+using HashSet   = std::unordered_set<K>;
 
 template<typename F>
-using Func = std::function<F>;
+using Function  = std::function<F>;
 
 template<typename T>
-using SharedPtr = std::shared_ptr<T>;
+using SharedPtr     = std::shared_ptr<T>;
 template<typename T>
-using UniquePtr = std::unique_ptr<T>;
+using UniquePtr     = std::unique_ptr<T>;

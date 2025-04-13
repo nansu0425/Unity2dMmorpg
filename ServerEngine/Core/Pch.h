@@ -9,10 +9,15 @@
 #include <shared_mutex>
 #include <thread>
 #include <atomic>
-#include <vector>
 #include <functional>
 #include <memory>
+#include <vector>
 #include <queue>
+#include <stack>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
 
 #include "ServerEngine/Core/Types.h"
 #include "ServerEngine/Core/Global.h"

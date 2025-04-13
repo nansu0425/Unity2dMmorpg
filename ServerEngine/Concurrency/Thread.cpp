@@ -13,21 +13,21 @@ ThreadManager::~ThreadManager()
     Join();
 }
 
-void ThreadManager::Launch(Func<void(void)> callback)
+void ThreadManager::Launch(Function<void(void)> callback)
 {
-    LockGuard guard(mMutex);
+    LockGuard guard(mLock);
 
     mThreads.emplace_back([callback]()
-                           {
-                               InitTls();
-                               callback();
-                               DestroyTls();
-                           });
+                          {
+                              InitTls();
+                              callback();
+                              DestroyTls();
+                          });
 }
 
 void ThreadManager::Join()
 {
-    LockGuard guard(mMutex);
+    LockGuard guard(mLock);
 
     for (Thread& thread : mThreads)
     {

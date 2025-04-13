@@ -11,30 +11,50 @@
 class RwSpinLock
 {
 public:
-    void    WriteLock();
-    void    WriteUnlock();
-    void    ReadLock();
-    void    ReadUnlock();
+    void    WriteLock(const Char8* name);
+    void    WriteUnlock(const Char8* name);
+    void    ReadLock(const Char8* name);
+    void    ReadUnlock(const Char8* name);
 
 public:
     class WriteGuard
     {
     public:
-        WriteGuard(RwSpinLock& lock) : mLock(lock)  { mLock.WriteLock(); }
-        ~WriteGuard()                               { mLock.WriteUnlock(); }
+        WriteGuard(RwSpinLock& lock, const Char8* name)
+            : mLock(lock)
+            , mName(name)
+        {
+            mLock.WriteLock(mName);
+        }
+
+        ~WriteGuard()
+        {
+            mLock.WriteUnlock(mName);
+        }
 
     private:
         RwSpinLock&     mLock;
+        const Char8*    mName;
     };
 
     class ReadGuard
     {
     public:
-        ReadGuard(RwSpinLock& lock) : mLock(lock)   { mLock.ReadLock(); }
-        ~ReadGuard()                                { mLock.ReadUnlock(); }
+        ReadGuard(RwSpinLock& lock, const Char8* name)
+            : mLock(lock)
+            , mName(name)
+        {
+            mLock.ReadLock(mName);
+        }
+
+        ~ReadGuard()
+        {
+            mLock.ReadUnlock(mName);
+        }
 
     private:
-        RwSpinLock&    mLock;
+        RwSpinLock&     mLock;
+        const Char8*    mName;
     };
 
 private:

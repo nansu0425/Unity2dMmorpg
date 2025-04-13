@@ -8,13 +8,13 @@ public:
     ThreadManager();
     ~ThreadManager();
 
-    void    Launch(Func<void(void)> callback);
+    void    Launch(Function<void(void)> callback);
     void    Join();
 
     static void     InitTls();
     static void     DestroyTls();
 
 private:
-    Mutex               mMutex;
+    SharedMutex         mLock;
     Vector<Thread>      mThreads;
 };
