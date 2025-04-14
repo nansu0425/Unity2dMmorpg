@@ -15,6 +15,6 @@ public:
     static void     DestroyTls();
 
 private:
-    SharedMutex         mLock;
+    SRWLOCK             mLock;
     Vector<Thread>      mThreads;
 };

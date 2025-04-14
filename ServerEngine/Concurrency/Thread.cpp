@@ -15,7 +15,7 @@ ThreadManager::~ThreadManager()
 
 void ThreadManager::Launch(Function<void(void)> callback)
 {
-    LockGuard guard(mLock);
+    SrwLockWriteGuard guard(mLock);
 
     mThreads.emplace_back([callback]()
                           {
@@ -27,7 +27,7 @@ void ThreadManager::Launch(Function<void(void)> callback)
 
 void ThreadManager::Join()
 {
-    LockGuard guard(mLock);
+    SrwLockWriteGuard guard(mLock);
 
     for (Thread& thread : mThreads)
     {
@@ -40,7 +40,7 @@ void ThreadManager::Join()
 
 void ThreadManager::InitTls()
 {
-    static Atomic<Int16> sThreadId = 1;
+    static Atomic<Int32> sThreadId = 1;
     tThreadId = sThreadId.fetch_add(1);
 
     ASSERT_CRASH(tThreadId > 0, "THREAD_ID_OVERFLOW");
