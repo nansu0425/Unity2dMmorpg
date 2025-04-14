@@ -5,7 +5,7 @@
 
 void DeadlockDetector::PushLock(const Char8* name)
 {
-    LockGuard guard(mLock);
+    SrwLockWriteGuard guard(mLock);
 
     Int32 lockId = 0;
     auto nameIter = mNameToId.find(name);
@@ -46,7 +46,7 @@ void DeadlockDetector::PushLock(const Char8* name)
 
 void DeadlockDetector::PopLock(const Char8* name)
 {
-    LockGuard guard(mLock);
+    SrwLockWriteGuard guard(mLock);
 
     if (tLockStack.empty())
     {

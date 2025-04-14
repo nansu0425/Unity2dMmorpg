@@ -2,7 +2,7 @@
 
 #include "ServerEngine/Pch.h"
 
-void* BaseAllocator::Allocate(UInt64 size)
+void* BaseAllocator::Alloc(UInt64 size)
 {
     return ::malloc(size);
 }

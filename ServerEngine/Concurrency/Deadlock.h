@@ -17,7 +17,7 @@ public:
     void    CheckCycle();
 
 private:
-    SharedMutex     mLock;
+    SRWLOCK         mLock = SRWLOCK_INIT;
 
     HashMap<const Char8*, Int32>    mNameToId;
     HashMap<Int32, const Char8*>    mIdToName;

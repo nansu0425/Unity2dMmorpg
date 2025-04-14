@@ -72,59 +72,38 @@ private:
     Atomic<Byte>    mLockFlag = Flag::kEmpty;
 };
 
-/*
- * 윈도우의 Slim Reader/Writer lock을 래핑
- * 재귀 잠금 불가능
- */
-class SrwLock
+class SrwLockWriteGuard
 {
 public:
-    void    AcquireWriteLock(const Char8* name);
-    void    ReleaseWriteLock(const Char8* name);
-    void    AcquireReadLock(const Char8* name);
-    void    ReleaseReadLock(const Char8* name);
-
-public:
-    class WriteGuard
+    SrwLockWriteGuard(SRWLOCK& lock)
+        : mLock(lock)
     {
-    public:
-        WriteGuard(SrwLock& lock, const Char8* name)
-            : mLock(lock)
-            , mName(name)
-        {
-            mLock.AcquireWriteLock(mName);
-        }
+        ::AcquireSRWLockExclusive(&mLock);
+    }
 
-        ~WriteGuard()
-        {
-            mLock.ReleaseWriteLock(mName);
-        }
-
-    private:
-        SrwLock&        mLock;
-        const Char8*    mName;
-    };
-
-    class ReadGuard
+    ~SrwLockWriteGuard()
     {
-    public:
-        ReadGuard(SrwLock& lock, const Char8* name)
-            : mLock(lock)
-            , mName(name)
-        {
-            mLock.AcquireReadLock(mName);
-        }
-
-        ~ReadGuard()
-        {
-            mLock.ReleaseReadLock(mName);
-        }
-
-    private:
-        SrwLock&        mLock;
-        const Char8*    mName;
-    };
+        ::ReleaseSRWLockExclusive(&mLock);
+    }
 
 private:
-    SRWLOCK     mLock = SRWLOCK_INIT;
+    SRWLOCK&    mLock;
+};
+
+class SrwLockReadGuard
+{
+public:
+    SrwLockReadGuard(SRWLOCK& lock)
+        : mLock(lock)
+    {
+        ::AcquireSRWLockShared(&mLock);
+    }
+
+    ~SrwLockReadGuard()
+    {
+        ::ReleaseSRWLockShared(&mLock);
+    }
+
+private:
+    SRWLOCK&    mLock;
 };

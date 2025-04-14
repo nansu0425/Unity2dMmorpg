@@ -39,17 +39,7 @@
 
 #pragma optimize("", off)
 Int32* gData;
-SrwLock* gSrwLock;
 RwSpinLock* gRwSpinLock;
-
-void Write_SrwLock()
-{
-    for (Int32 i = 0; i < 1'000'000; ++i)
-    {
-        SrwLock::WriteGuard guard(*gSrwLock, "Write_SrwLock");
-        ++*gData;
-    }
-}
 
 void Write_RwSpinLock()
 {
@@ -58,24 +48,6 @@ void Write_RwSpinLock()
         RwSpinLock::WriteGuard guard(*gRwSpinLock, "Write_RwSpinLock");
         ++*gData;
     }
-}
-
-void Read_SrwLock()
-{
-    // 실행 시간 측정 시작
-    auto start = std::chrono::high_resolution_clock::now();
-    while (true)
-    {
-        SrwLock::ReadGuard guard(*gSrwLock, "Read_SrwLock");
-        if (*gData == 4'000'000)
-        {
-            break;
-        }
-    }
-    // 실행 시간 측정 종료
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "Read_SrwLock duration: " << duration.count() << " ms" << std::endl;
 }
 
 void Read_RwSpinLock()
@@ -99,36 +71,25 @@ void Read_RwSpinLock()
 
 int main()
 {
-    gData = (Int32*)ALLOCATE_MEMORY(sizeof(Int32));
-    gSrwLock = ::CreateObject<SrwLock>();
-    gRwSpinLock = ::CreateObject<RwSpinLock>();
+    gData = (Int32*)ALLOC_MEMORY(sizeof(Int32));
+    gRwSpinLock = ::NewObject<RwSpinLock>();
 
     *gData = 0;
     gThreadManager->Launch(Read_RwSpinLock);
     for (Int32 i = 0; i < 4; ++i)
     {
-
         gThreadManager->Launch(Write_RwSpinLock);
     }
-
     gThreadManager->Join();
-
-    *gData = 0;
-    gThreadManager->Launch(Read_SrwLock);
-    for (Int32 i = 0; i < 4; ++i)
-    {
-       
-        gThreadManager->Launch(Write_SrwLock);
-    }
-   /* gThreadManager->Launch(ThreadA);
-    gThreadManager->Launch(ThreadB);
-    gThreadManager->Launch(ThreadC);*/
     
-    gThreadManager->Join();
-
-    ::DestroyObject(gSrwLock);
-    ::DestroyObject(gRwSpinLock);
+    ::DeleteObject(gRwSpinLock);
     FREE_MEMORY(gData);
+
+    /*gThreadManager->Launch(ThreadA);
+    gThreadManager->Launch(ThreadB);
+    gThreadManager->Launch(ThreadC);
+
+    gThreadManager->Join();*/
 
     return 0;
 }
