@@ -13,18 +13,18 @@
 }                                           \
 
 // 표현식이 참이 아니면 크래시를 발생시킨다
-#define ASSERT_CRASH(expr)                  \
+#define ASSERT_CRASH(expr, cause)           \
 {                                           \
     if (!(expr))                            \
     {                                       \
         __analysis_assume(!(expr));         \
-        CRASH("ASSERT_CRASH");              \
+        CRASH(cause);                       \
     }                                       \
 }                                           \
 
-#define RW_LOCK_ARRAY(count)            SrwLock mLocks[count];
+#define RW_LOCK_ARRAY(count)            RwSpinLock mLocks[count];
 #define RW_LOCK                         RW_LOCK_ARRAY(1)
-#define READ_GUARD_IDX(idx)             SrwLock::ReadGuard readGuard_##idx(mLocks[idx], typeid(*this).name());
+#define READ_GUARD_IDX(idx)             RwSpinLock::ReadGuard readGuard_##idx(mLocks[idx], typeid(*this).name());
 #define READ_GUARD                      READ_GUARD_IDX(0)
-#define WRITE_GUARD_IDX(idx)            SrwLock::WriteGuard writeGuard_##idx(mLocks[idx], typeid(*this).name());
+#define WRITE_GUARD_IDX(idx)            RwSpinLock::WriteGuard writeGuard_##idx(mLocks[idx], typeid(*this).name());
 #define WRITE_GUARD                     WRITE_GUARD_IDX(0)

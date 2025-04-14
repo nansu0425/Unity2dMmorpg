@@ -43,7 +43,7 @@ void ThreadManager::InitTls()
     static Atomic<Int16> sThreadId = 1;
     tThreadId = sThreadId.fetch_add(1);
 
-    ASSERT_CRASH(tThreadId > 0);
+    ASSERT_CRASH(tThreadId > 0, "THREAD_ID_OVERFLOW");
 }
 
 void ThreadManager::DestroyTls()

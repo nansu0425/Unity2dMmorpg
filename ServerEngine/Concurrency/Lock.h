@@ -3,18 +3,18 @@
 #pragma once
 
 /*
- * 락의 구조: [쓰기 잠금 스레드 Id][읽기 잠금 스레드 개수]
- * 쓰기 잠금: 배타적 잠금
- * 읽기 잠금: 공유 잠금
- * 허용 가능한 재귀 잠금: 쓰기 -> 쓰기, 쓰기 -> 읽기, 읽기 -> 읽기
+ * 락 비트 플래그 구조: [WRRRRRRR]
+ * W: 쓰기 잠금 여부
+ * RRRRRRR: 읽기 잠금 개수
+ * 재귀 잠금 금지(정의되지 않은 동작 발생)
  */
 class RwSpinLock
 {
 public:
-    void    WriteLock(const Char8* name);
-    void    WriteUnlock(const Char8* name);
-    void    ReadLock(const Char8* name);
-    void    ReadUnlock(const Char8* name);
+    void    LockWrite(const Char8* name);
+    void    UnlockWrite(const Char8* name);
+    void    LockRead(const Char8* name);
+    void    UnlockRead(const Char8* name);
 
 public:
     class WriteGuard
@@ -24,12 +24,12 @@ public:
             : mLock(lock)
             , mName(name)
         {
-            mLock.WriteLock(mName);
+            mLock.LockWrite(mName);
         }
 
         ~WriteGuard()
         {
-            mLock.WriteUnlock(mName);
+            mLock.UnlockWrite(mName);
         }
 
     private:
@@ -44,12 +44,12 @@ public:
             : mLock(lock)
             , mName(name)
         {
-            mLock.ReadLock(mName);
+            mLock.LockRead(mName);
         }
 
         ~ReadGuard()
         {
-            mLock.ReadUnlock(mName);
+            mLock.UnlockRead(mName);
         }
 
     private:
@@ -58,18 +58,18 @@ public:
     };
 
 private:
-    enum : UInt32
+    enum Flag : Byte
     {
-        kLockTimeoutTick    = 10'000,
-        kMaxSpinCount       = 5'000,
-        kWriteThreadMask    = 0xFFFF'0000,
-        kReadCountMask      = 0x0000'FFFF,
-        kEmptyFlag          = 0x0000'0000,
+        kWriteState         = 0b1000'0000,
+        kReadCountMask      = 0b0111'1111,
+        kEmpty              = 0b0000'0000,
     };
 
+    static constexpr Int32  kLockTimeoutTick = 10'000;
+    static constexpr Int32  kMaxBackoff = 1'024;
+
 private:
-    Atomic<UInt32>  mLockFlag = kEmptyFlag;
-    Int32           mWriteCount = 0;
+    Atomic<Byte>    mLockFlag = Flag::kEmpty;
 };
 
 /*

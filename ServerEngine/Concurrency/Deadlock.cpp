@@ -87,7 +87,7 @@ void DeadlockDetector::CheckCycle()
 void DeadlockDetector::Dfs(Int32 current)
 {
     // 방문한 적 없는 락만 Dfs 수행
-    ASSERT_CRASH(mVisitHistory[current] == -1);
+    ASSERT_CRASH(mVisitHistory[current] == -1, "MULTIPLE_DFS");
 
     mVisitHistory[current] = mNextVisitOrder++;
     auto currentIter = mlockGraph.find(current);
