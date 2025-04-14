@@ -24,4 +24,5 @@
 #include "ServerEngine/Core/Global.h"
 #include "ServerEngine/Core/Tls.h"
 #include "ServerEngine/Concurrency/Lock.h"
+#include "ServerEngine/Memory/Allocator.h"
 #include "ServerEngine/Core/Macro.h"

@@ -6,100 +6,104 @@
 #include "B.h"
 #include "C.h"
 
-A gA;
-B gB;
-C gC;
-
-void ThreadA()
-{
-    while (true)
-    {
-        gA.WriteB(gB);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-}
-
-void ThreadB()
-{
-    while (true)
-    {
-        gB.WriteC(gC);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-}
-
-void ThreadC()
-{
-    while (true)
-    {
-        gC.WriteA(gA);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
-}
-
-//#pragma optimize("", off)
-//Int32 gData;
-//SrwLock gSrwLock;
-//RwSpinLock gRwSpinLock;
+//A gA;
+//B gB;
+//C gC;
 //
-//void Write_SrwLock()
+//void ThreadA()
 //{
-//    for (Int32 i = 0; i < 1'000'000; ++i)
-//    {
-//        SrwLock::WriteGuard guard(gSrwLock, "Write_SrwLock");
-//        ++gData;
-//    }
-//}
-//
-//void Write_RwSpinLock()
-//{
-//    for (Int32 i = 0; i < 1'000'000; ++i)
-//    {
-//        RwSpinLock::WriteGuard guard(gRwSpinLock, "Write_RwSpinLock");
-//        ++gData;
-//    }
-//}
-//
-//void Read_SrwLock()
-//{
-//    // 실행 시간 측정 시작
-//    auto start = std::chrono::high_resolution_clock::now();
 //    while (true)
 //    {
-//        SrwLock::ReadGuard guard(gSrwLock, "Read_SrwLock");
-//        if (gData == 4'000'000)
-//        {
-//            break;
-//        }
+//        gA.WriteB(gB);
+//        std::this_thread::sleep_for(std::chrono::milliseconds(10));
 //    }
-//    // 실행 시간 측정 종료
-//    auto end = std::chrono::high_resolution_clock::now();
-//    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-//    std::cout << "Read_SrwLock duration: " << duration.count() << " ms" << std::endl;
 //}
 //
-//void Read_RwSpinLock()
+//void ThreadB()
 //{
-//    // 실행 시간 측정 시작
-//    auto start = std::chrono::high_resolution_clock::now();
 //    while (true)
 //    {
-//        RwSpinLock::ReadGuard guard(gRwSpinLock, "Read_RwSpinLock");
-//        if (gData == 4'000'000)
-//        {
-//            break;
-//        }
+//        gB.WriteC(gC);
+//        std::this_thread::sleep_for(std::chrono::milliseconds(10));
 //    }
-//    // 실행 시간 측정 종료
-//    auto end = std::chrono::high_resolution_clock::now();
-//    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-//    std::cout << "Read_RwSpinLock duration: " << duration.count() << " ms" << std::endl;
 //}
-//#pragma optimize("", on)
+//
+//void ThreadC()
+//{
+//    while (true)
+//    {
+//        gC.WriteA(gA);
+//        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+//    }
+//}
+
+#pragma optimize("", off)
+Int32* gData;
+SrwLock* gSrwLock;
+RwSpinLock* gRwSpinLock;
+
+void Write_SrwLock()
+{
+    for (Int32 i = 0; i < 1'000'000; ++i)
+    {
+        SrwLock::WriteGuard guard(*gSrwLock, "Write_SrwLock");
+        ++*gData;
+    }
+}
+
+void Write_RwSpinLock()
+{
+    for (Int32 i = 0; i < 1'000'000; ++i)
+    {
+        RwSpinLock::WriteGuard guard(*gRwSpinLock, "Write_RwSpinLock");
+        ++*gData;
+    }
+}
+
+void Read_SrwLock()
+{
+    // 실행 시간 측정 시작
+    auto start = std::chrono::high_resolution_clock::now();
+    while (true)
+    {
+        SrwLock::ReadGuard guard(*gSrwLock, "Read_SrwLock");
+        if (*gData == 4'000'000)
+        {
+            break;
+        }
+    }
+    // 실행 시간 측정 종료
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "Read_SrwLock duration: " << duration.count() << " ms" << std::endl;
+}
+
+void Read_RwSpinLock()
+{
+    // 실행 시간 측정 시작
+    auto start = std::chrono::high_resolution_clock::now();
+    while (true)
+    {
+        RwSpinLock::ReadGuard guard(*gRwSpinLock, "Read_RwSpinLock");
+        if (*gData == 4'000'000)
+        {
+            break;
+        }
+    }
+    // 실행 시간 측정 종료
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "Read_RwSpinLock duration: " << duration.count() << " ms" << std::endl;
+}
+#pragma optimize("", on)
 
 int main()
 {
-    /*gData = 0;
+    gData = (Int32*)::AllocateMemory(sizeof(Int32));
+    gSrwLock = ::CreateObject<SrwLock>();
+    gRwSpinLock = ::CreateObject<RwSpinLock>();
+
+    *gData = 0;
     gThreadManager->Launch(Read_RwSpinLock);
     for (Int32 i = 0; i < 4; ++i)
     {
@@ -109,20 +113,22 @@ int main()
 
     gThreadManager->Join();
 
-    gData = 0;
+    *gData = 0;
     gThreadManager->Launch(Read_SrwLock);
     for (Int32 i = 0; i < 4; ++i)
     {
        
         gThreadManager->Launch(Write_SrwLock);
-    }*/
-    gThreadManager->Launch(ThreadA);
+    }
+   /* gThreadManager->Launch(ThreadA);
     gThreadManager->Launch(ThreadB);
-    gThreadManager->Launch(ThreadC);
+    gThreadManager->Launch(ThreadC);*/
     
     gThreadManager->Join();
 
-    
+    ::DestroyObject(gSrwLock);
+    ::DestroyObject(gRwSpinLock);
+    ::FreeMemory(gData);
 
     return 0;
 }

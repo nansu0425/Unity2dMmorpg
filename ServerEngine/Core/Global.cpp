@@ -15,10 +15,10 @@ GlobalContext::GlobalContext()
 
 GlobalContext::~GlobalContext()
 {
-    delete  gDeadlockDetector;
+    delete              gDeadlockDetector;
     gDeadlockDetector   = nullptr;
-    delete  gThreadManager;
+    delete              gThreadManager;
     gThreadManager      = nullptr;
 }
 
-GlobalContext gGlobalContext;
+GlobalContext           gGlobalContext;

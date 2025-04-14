@@ -7,6 +7,9 @@
     <Filter Include="Concurrency">
       <UniqueIdentifier>{bf2a8b0b-e5f3-495d-953a-b34f9435ca9f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Memory">
+      <UniqueIdentifier>{bea8fd23-eec9-467b-ba4f-8c06426b6fde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Types.h">
@@ -34,6 +37,12 @@
     <ClInclude Include="Concurrency\Deadlock.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="Memory\Allocator.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\Allocator_Impl.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -51,6 +60,9 @@
     </ClCompile>
     <ClCompile Include="Concurrency\Deadlock.cpp">
       <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="Memory\Allocator.cpp">
+      <Filter>Memory</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
