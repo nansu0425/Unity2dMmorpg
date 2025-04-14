@@ -40,7 +40,7 @@
     <ClInclude Include="Memory\Allocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Allocator_Impl.h">
+    <ClInclude Include="Memory\Core.h">
       <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>

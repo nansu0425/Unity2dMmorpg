@@ -27,22 +27,22 @@ using CondVar       = std::condition_variable;
 using Thread        = std::thread;
 
 template<typename T>
-using Vector    = std::vector<T>;
+using Vector        = std::vector<T>;
 template<typename T>
-using Queue     = std::queue<T>;
+using Queue         = std::queue<T>;
 template<typename T>
-using Stack     = std::stack<T>;
+using Stack         = std::stack<T>;
 template<typename K, typename V>
-using TreeMap   = std::map<K, V>;
+using TreeMap       = std::map<K, V>;
 template<typename K, typename V>
-using HashMap   = std::unordered_map<K, V>;
+using HashMap       = std::unordered_map<K, V>;
 template<typename K>
-using TreeSet   = std::set<K>;
+using TreeSet       = std::set<K>;
 template<typename K>
-using HashSet   = std::unordered_set<K>;
+using HashSet       = std::unordered_set<K>;
 
 template<typename F>
-using Function  = std::function<F>;
+using Function      = std::function<F>;
 
 template<typename T>
 using SharedPtr     = std::shared_ptr<T>;

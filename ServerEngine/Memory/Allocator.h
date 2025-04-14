@@ -2,12 +2,9 @@
 
 #pragma once
 
-void* AllocateMemory(UInt64 size);
-void FreeMemory(void* memory);
-
-template<typename T, typename ...Args>
-T* CreateObject(Args&&... args);
-template<typename T>
-void DestroyObject(T* object);
-
-#include "ServerEngine/Memory/Allocator_Impl.h"
+class BaseAllocator
+{
+public:
+    static void*    Allocate(UInt64 size);
+    static void     Free(void* memory);
+};

@@ -99,7 +99,7 @@ void Read_RwSpinLock()
 
 int main()
 {
-    gData = (Int32*)::AllocateMemory(sizeof(Int32));
+    gData = (Int32*)ALLOCATE_MEMORY(sizeof(Int32));
     gSrwLock = ::CreateObject<SrwLock>();
     gRwSpinLock = ::CreateObject<RwSpinLock>();
 
@@ -128,7 +128,7 @@ int main()
 
     ::DestroyObject(gSrwLock);
     ::DestroyObject(gRwSpinLock);
-    ::FreeMemory(gData);
+    FREE_MEMORY(gData);
 
     return 0;
 }

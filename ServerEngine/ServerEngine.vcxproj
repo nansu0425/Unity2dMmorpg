@@ -28,7 +28,7 @@
     <ClInclude Include="Core\Tls.h" />
     <ClInclude Include="Core\Types.h" />
     <ClInclude Include="Memory\Allocator.h" />
-    <ClInclude Include="Memory\Allocator_Impl.h" />
+    <ClInclude Include="Memory\Core.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <ItemGroup>

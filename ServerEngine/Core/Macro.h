@@ -28,3 +28,12 @@
 #define READ_GUARD                      READ_GUARD_IDX(0)
 #define WRITE_GUARD_IDX(idx)            RwSpinLock::WriteGuard writeGuard_##idx(mLocks[idx], typeid(*this).name());
 #define WRITE_GUARD                     WRITE_GUARD_IDX(0)
+
+#ifdef _DEBUG
+#define ALLOCATE_MEMORY(size)           BaseAllocator::Allocate(size)
+#define FREE_MEMORY(memory)             BaseAllocator::Free(memory)
+#else
+#define ALLOCATE_MEMORY(size)           BaseAllocator::Allocate(size)
+#define FREE_MEMORY(memory)             BaseAllocator::Free(memory)
+#endif // _DEBUG
+
