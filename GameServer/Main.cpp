@@ -51,9 +51,9 @@ private:
         }
         while (true)
         {
-            Resource* resoucre = ::NewObject<Resource>(threadId);
+            Resource* resoucre = ObjectPool<Resource>::Pop(threadId);
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            ::DeleteObject(resoucre);
+            ObjectPool<Resource>::Push(resoucre);
         }
     }
 
@@ -64,8 +64,8 @@ private:
 
 int main()
 {
-    Workers* workers = ::NewObject<Workers>(4);
-    ::DeleteObject(workers);
+    Workers* workers = ObjectPool<Workers>::Pop(4);
+    ObjectPool<Workers>::Push(workers);
 
     return 0;
 }

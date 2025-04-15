@@ -46,7 +46,7 @@
     <ClInclude Include="Memory\Container.h">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Pool.h">
+    <ClInclude Include="Memory\MemoryPool.h">
       <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>
@@ -70,7 +70,7 @@
     <ClCompile Include="Memory\Allocator.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
-    <ClCompile Include="Memory\Pool.cpp">
+    <ClCompile Include="Memory\MemoryPool.cpp">
       <Filter>Memory</Filter>
     </ClCompile>
   </ItemGroup>

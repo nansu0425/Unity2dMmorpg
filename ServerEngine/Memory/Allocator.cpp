@@ -1,7 +1,7 @@
 ﻿/*    ServerEngine/Memory/Allocator.cpp    */
 
 #include "ServerEngine/Pch.h"
-#include "ServerEngine/Memory/Pool.h"
+#include "ServerEngine/Memory/MemoryPool.h"
 
 void* BaseAllocator::Alloc(UInt64 size)
 {

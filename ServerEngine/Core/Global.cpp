@@ -3,7 +3,7 @@
 #include "ServerEngine/Pch.h"
 #include "ServerEngine/Concurrency/Thread.h"
 #include "ServerEngine/Concurrency/Deadlock.h"
-#include "ServerEngine/Memory/Pool.h"
+#include "ServerEngine/Memory/MemoryPool.h"
 
 DeadlockDetector*       gDeadlockDetector = nullptr;
 ThreadManager*          gThreadManager = nullptr;
