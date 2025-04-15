@@ -33,3 +33,6 @@ template<typename T>
 using SharedPtr     = std::shared_ptr<T>;
 template<typename T>
 using UniquePtr     = std::unique_ptr<T>;
+
+using String8View   = std::basic_string_view<Char8>;
+using String16View  = std::basic_string_view<Char16>;

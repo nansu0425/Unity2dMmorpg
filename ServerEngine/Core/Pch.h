@@ -19,6 +19,8 @@
 #include <set>
 #include <unordered_set>
 #include <chrono>
+#include <string>
+#include <string_view>
 
 #include "ServerEngine/Core/Macro.h"
 #include "ServerEngine/Core/Types.h"

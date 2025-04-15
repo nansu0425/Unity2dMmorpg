@@ -37,3 +37,5 @@
 #define FREE_MEMORY(memory)     BaseAllocator::Free(memory)
 #endif // _DEBUG
 
+#define TEXT8(quote)            quote
+#define TEXT16(quote)           L##quote

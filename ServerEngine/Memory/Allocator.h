@@ -34,8 +34,8 @@ public:
     template<typename U>
     constexpr ContainerAllocator(const ContainerAllocator<U>&) noexcept {}
 
-    __declspec(allocator) T* allocate(const UInt64 count)           { return static_cast<T*>(ALLOC_MEMORY(count * sizeof(T))); }
-    void deallocate(T* const base, const UInt64 count) noexcept     { FREE_MEMORY(base); }
+    __declspec(allocator) T* allocate(const UInt64 count)               { return static_cast<T*>(ALLOC_MEMORY(count * sizeof(T))); }
+    void deallocate(T* const base, const UInt64 count) noexcept         { FREE_MEMORY(base); }
 };
 
 template<typename L, typename R>
