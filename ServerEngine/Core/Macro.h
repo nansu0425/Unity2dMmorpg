@@ -22,6 +22,14 @@
     }                                       \
 }                                           \
 
+#ifdef _DEBUG
+// 표현식이 참이 아니면 크래시를 발생시킨다 (디버그 전용)
+#define ASSERT_CRASH_DEBUG(expr, cause)     ASSERT_CRASH(expr, cause)
+#else
+// 표현식이 참이 아니면 크래시를 발생시킨다 (디버그 전용)
+#define ASSERT_CRASH_DEBUG(expr, cause)
+#endif // _DEBUG
+
 #define RW_LOCK_ARRAY(count)    RwSpinLock mLocks[count];
 #define RW_LOCK                 RW_LOCK_ARRAY(1)
 #define READ_GUARD_IDX(idx)     RwSpinLock::ReadGuard readGuard_##idx(mLocks[idx], typeid(*this).name());

@@ -5,48 +5,37 @@
 
 MemoryPool::MemoryPool(UInt64 allocSize)
     : mAllocSize(allocSize)
-{}
+{
+    ::InitializeSListHead(&mHeaders);
+}
 
 MemoryPool::~MemoryPool()
 {
-    while (!mHeaders.empty())
+    while (MemoryHeader* header = static_cast<MemoryHeader*>(::InterlockedPopEntrySList(&mHeaders)))
     {
-        MemoryHeader* header = mHeaders.front();
-        mHeaders.pop();
-        ::free(header);
+        ::_aligned_free(header);
     }
 }
 
 void MemoryPool::Push(MemoryHeader* header)
 {
-    ASSERT_CRASH(header->allocSize == mAllocSize, "INVALID_MEMORY_HEADER");
-    {
-        WRITE_GUARD;
-        mHeaders.push(header);
-    }
+    ASSERT_CRASH_DEBUG(header->allocSize == mAllocSize, "INVALID_MEMORY_HEADER");
+    // 헤더 반납
+    ::InterlockedPushEntrySList(&mHeaders, header);
     mAllocCount.fetch_sub(1);
 }
 
 MemoryHeader* MemoryPool::Pop()
 {
-    MemoryHeader* header = nullptr;
-    {
-        WRITE_GUARD;
-        // 여분의 헤더가 있는 경우
-        if (!mHeaders.empty())
-        {
-            header = mHeaders.front();
-            mHeaders.pop();
-        }
-    }
+    MemoryHeader* header = static_cast<MemoryHeader*>(::InterlockedPopEntrySList(&mHeaders));
     // 여분의 헤더가 없는 경우
     if (header == nullptr)
     {
         // 메모리 할당
-        header = static_cast<MemoryHeader*>(::malloc(mAllocSize));
+        header = static_cast<MemoryHeader*>(::_aligned_malloc(mAllocSize, MEMORY_ALLOCATION_ALIGNMENT));
         header->allocSize = mAllocSize;
     }
-    ASSERT_CRASH(header->allocSize == mAllocSize, "INVALID_MEMORY_HEADER");
+    ASSERT_CRASH_DEBUG(header->allocSize == mAllocSize, "INVALID_MEMORY_HEADER");
     mAllocCount.fetch_add(1);
 
     return header;
@@ -82,8 +71,8 @@ void MemoryPoolManager::Push(void* memory)
 
     if (allocSize > kMaxAllocSize)
     {
-        // 최대 할당 크기보다 큰 경우
-        ::free(header);
+        // 최대 할당 크기보다 큰 경우 메모리 해제
+        ::_aligned_free(header);
     }
     else
     {
@@ -99,8 +88,8 @@ void* MemoryPoolManager::Pop(UInt64 size)
     
     if (allocSize > kMaxAllocSize)
     {
-        // 최대 할당 크기보다 큰 경우
-        header = static_cast<MemoryHeader*>(::malloc(allocSize));
+        // 최대 할당 크기보다 큰 경우 메모리 할당
+        header = static_cast<MemoryHeader*>(::_aligned_malloc(allocSize, MEMORY_ALLOCATION_ALIGNMENT));
         header->allocSize = allocSize;
     }
     else

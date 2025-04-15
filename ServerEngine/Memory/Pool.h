@@ -6,7 +6,8 @@
  * [| MemoryHeader ][|         Memory         ]|
  *  |header          |header + 1               |header + allocSize
  */
-struct MemoryHeader
+struct alignas(MEMORY_ALLOCATION_ALIGNMENT) MemoryHeader
+    : public SLIST_ENTRY
 {
     UInt64      allocSize;
     void*       ownerMemory = nullptr;
@@ -27,7 +28,7 @@ struct MemoryHeader
     }
 };
 
-class MemoryPool
+class alignas(MEMORY_ALLOCATION_ALIGNMENT) MemoryPool
 {
 public:
     MemoryPool(UInt64 allocSize);
@@ -37,15 +38,9 @@ public:
     MemoryHeader*   Pop();
 
 private:
-    template<typename T>
-    using Queue     = std::queue<T>;
-
-private:
-    UInt64                  mAllocSize = 0;
-    Atomic<Int64>           mAllocCount = 0;
-
-    RW_LOCK;
-    Queue<MemoryHeader*>    mHeaders;
+    SLIST_HEADER    mHeaders; // MemoryHeader 타입 메모리를 스택으로 관리
+    UInt64          mAllocSize = 0;
+    Atomic<Int64>   mAllocCount = 0;
 };
 
 /*

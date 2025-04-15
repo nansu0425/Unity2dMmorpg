@@ -51,8 +51,9 @@ private:
         }
         while (true)
         {
-            Resource resource(threadId);
-            // std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            Resource* resoucre = ::NewObject<Resource>(threadId);
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            ::DeleteObject(resoucre);
         }
     }
 
