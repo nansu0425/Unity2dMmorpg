@@ -51,9 +51,7 @@ private:
         }
         while (true)
         {
-            Resource* resoucre = ObjectPool<Resource>::Pop(threadId);
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
-            ObjectPool<Resource>::Push(resoucre);
+            SharedPtr<Resource> resoucre = ObjectPool<Resource>::MakeShared(threadId);
         }
     }
 
@@ -64,8 +62,7 @@ private:
 
 int main()
 {
-    Workers* workers = ObjectPool<Workers>::Pop(4);
-    ObjectPool<Workers>::Push(workers);
+    SharedPtr<Workers> workers = ObjectPool<Workers>::MakeShared(4);
 
     return 0;
 }
