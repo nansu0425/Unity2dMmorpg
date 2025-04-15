@@ -11,20 +11,27 @@
  */
 class DeadlockDetector
 {
+private:
+    template<typename K, typename V>
+    using HashMap   = std::unordered_map<K, V>;
+    template<typename K>
+    using HashSet   = std::unordered_set<K>;
+    template<typename T>
+    using Vector    = std::vector<T>;
+
 public:
-    void    PushLock(const Char8* name);
-    void    PopLock(const Char8* name);
-    void    CheckCycle();
+    void            PushLock(const Char8* name);
+    void            PopLock(const Char8* name);
+    void            CheckCycle();
 
 private:
-    SRWLOCK         mLock = SRWLOCK_INIT;
-
+    SRWLOCK                         mLock = SRWLOCK_INIT;
     HashMap<const Char8*, Int32>    mNameToId;
     HashMap<Int32, const Char8*>    mIdToName;
     HashMap<Int32, HashSet<Int32>>  mlockGraph;
 
 private:
-    void    Dfs(Int32 current);
+    void            Dfs(Int32 current);
 
     Vector<Int32>   mVisitHistory;
     Int32           mNextVisitOrder = 0;

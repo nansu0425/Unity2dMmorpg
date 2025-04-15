@@ -3,6 +3,24 @@
 #include "GameServer/Pch.h"
 #include "ServerEngine/Concurrency/Thread.h"
 
+class Resource
+{
+public:
+    Resource(Int32 threadId)
+        : mThreadId(::NewObject<Int32>(threadId))
+    {
+        std::cout << *mThreadId << ": Resource created" << std::endl;
+    }
+    ~Resource()
+    {
+        std::cout << *mThreadId << ": Resource destroyed" << std::endl;
+        ::DeleteObject(mThreadId);
+    }
+
+private:
+    Int32* mThreadId = nullptr;
+};
+
 class Workers
 {
 public:
@@ -31,10 +49,11 @@ private:
             mData.push_back(tThreadId);
             threadId = mData.back();
         }
-        
-        std::cout << "Worker thread ID: " << threadId << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        std::cout << "Worker finished" << std::endl;
+        while (true)
+        {
+            Resource resource(threadId);
+            // std::this_thread::sleep_for(std::chrono::milliseconds(1));
+        }
     }
 
 private:

@@ -1,4 +1,4 @@
-﻿/*    ServerEngine/Memory/Core.h    */
+﻿/*    ServerEngine/Memory/Object.h    */
 
 #pragma once
 

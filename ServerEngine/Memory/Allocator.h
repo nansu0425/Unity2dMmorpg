@@ -24,6 +24,13 @@ private:
     static constexpr UInt64     kPageSize = 4096;
 };
 
+class PoolAllocator
+{
+public:
+    static void*    Alloc(UInt64 size);
+    static void     Free(void* memory);
+};
+
 template<typename T>
 class ContainerAllocator
 {

@@ -29,7 +29,8 @@
     <ClInclude Include="Core\Types.h" />
     <ClInclude Include="Memory\Allocator.h" />
     <ClInclude Include="Memory\Container.h" />
-    <ClInclude Include="Memory\Core.h" />
+    <ClInclude Include="Memory\Object.h" />
+    <ClInclude Include="Memory\Pool.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -39,6 +40,7 @@
     <ClCompile Include="Core\Global.cpp" />
     <ClCompile Include="Core\Tls.cpp" />
     <ClCompile Include="Memory\Allocator.cpp" />
+    <ClCompile Include="Memory\Pool.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

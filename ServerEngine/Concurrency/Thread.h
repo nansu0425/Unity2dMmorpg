@@ -4,6 +4,10 @@
 
 class ThreadManager
 {
+private:
+    template<typename T>
+    using Vector = std::vector<T>;
+
 public:
     ThreadManager();
     ~ThreadManager();

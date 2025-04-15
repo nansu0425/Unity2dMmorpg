@@ -1,6 +1,7 @@
 ﻿/*    ServerEngine/Memory/Allocator.cpp    */
 
 #include "ServerEngine/Pch.h"
+#include "ServerEngine/Memory/Pool.h"
 
 void* BaseAllocator::Alloc(UInt64 size)
 {
@@ -26,4 +27,14 @@ void StompAllocator::Free(void* memory)
     const UInt64 data = reinterpret_cast<UInt64>(memory);
     const UInt64 base = data - (data % kPageSize);
     ::VirtualFree(reinterpret_cast<void*>(base), 0, MEM_RELEASE);
+}
+
+void* PoolAllocator::Alloc(UInt64 size)
+{
+    return gMemoryPoolManager->Pop(size);
+}
+
+void PoolAllocator::Free(void* memory)
+{
+    gMemoryPoolManager->Push(memory);
 }
