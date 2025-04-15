@@ -37,13 +37,7 @@
 #define WRITE_GUARD_IDX(idx)    RwSpinLock::WriteGuard writeGuard_##idx(mLocks[idx], typeid(*this).name());
 #define WRITE_GUARD             WRITE_GUARD_IDX(0)
 
-#ifdef _DEBUG
-#define ALLOC_MEMORY(size)      PoolAllocator::Alloc(size)
-#define FREE_MEMORY(memory)     PoolAllocator::Free(memory)
-#else
-#define ALLOC_MEMORY(size)      BaseAllocator::Alloc(size)
-#define FREE_MEMORY(memory)     BaseAllocator::Free(memory)
-#endif // _DEBUG
+#define USE_STOMP_ALLOCATOR     false
 
 #define TEXT8(quote)            quote
 #define TEXT16(quote)           L##quote

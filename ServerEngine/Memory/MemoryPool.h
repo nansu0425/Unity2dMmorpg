@@ -40,7 +40,8 @@ public:
 private:
     SLIST_HEADER    mHeaders; // MemoryHeader 타입 메모리를 스택으로 관리
     UInt64          mAllocSize = 0;
-    Atomic<Int64>   mAllocCount = 0;
+    Atomic<Int32>   mUseCount = 0;
+    Atomic<Int32>   mPoolingCount = 0;
 };
 
 /*

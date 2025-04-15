@@ -22,7 +22,8 @@ void MemoryPool::Push(MemoryHeader* header)
     ASSERT_CRASH_DEBUG(header->allocSize == mAllocSize, "INVALID_MEMORY_HEADER");
     // 헤더 반납
     ::InterlockedPushEntrySList(&mHeaders, header);
-    mAllocCount.fetch_sub(1);
+    mUseCount.fetch_sub(1);
+    mPoolingCount.fetch_add(1);
 }
 
 MemoryHeader* MemoryPool::Pop()
@@ -35,8 +36,12 @@ MemoryHeader* MemoryPool::Pop()
         header = static_cast<MemoryHeader*>(::_aligned_malloc(mAllocSize, MEMORY_ALLOCATION_ALIGNMENT));
         header->allocSize = mAllocSize;
     }
+    else
+    {
+        mPoolingCount.fetch_sub(1);
+    }
     ASSERT_CRASH_DEBUG(header->allocSize == mAllocSize, "INVALID_MEMORY_HEADER");
-    mAllocCount.fetch_add(1);
+    mUseCount.fetch_add(1);
 
     return header;
 }
@@ -67,8 +72,10 @@ MemoryPoolManager::~MemoryPoolManager()
 void MemoryPoolManager::Push(void* memory)
 {
     MemoryHeader* header = MemoryHeader::DetachHeader(memory);
+#if USE_STOMP_ALLOCATOR
+    StompAllocator::Free(header);
+#else
     const UInt64 allocSize = header->allocSize;
-
     if (allocSize > kMaxAllocSize)
     {
         // 최대 할당 크기보다 큰 경우 메모리 해제
@@ -79,13 +86,16 @@ void MemoryPoolManager::Push(void* memory)
         // 메모리 풀에 반납
         mPoolTable[allocSize]->Push(header);
     }
+#endif // USE_STOMP_ALLOCATOR
 }
 
 void* MemoryPoolManager::Pop(UInt64 size)
 {
     MemoryHeader* header = nullptr;
     const UInt64 allocSize = sizeof(MemoryHeader) + size;
-    
+#if USE_STOMP_ALLOCATOR
+    header = static_cast<MemoryHeader*>(StompAllocator::Alloc(allocSize));
+#else
     if (allocSize > kMaxAllocSize)
     {
         // 최대 할당 크기보다 큰 경우 메모리 할당
@@ -97,7 +107,7 @@ void* MemoryPoolManager::Pop(UInt64 size)
         // 메모리 풀에서 가져온다
         header = mPoolTable[allocSize]->Pop();
     }
-
+#endif // USE_STOMP_ALLOCATOR
     return MemoryHeader::AttachHeader(header);
 }
 
