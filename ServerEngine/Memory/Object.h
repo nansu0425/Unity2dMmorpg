@@ -4,6 +4,8 @@
 
 #include "ServerEngine/Memory/Allocator.h"
 
+class UniquePtrDeleter;
+
 /*
  * 오브젝트 메모리는 클래스 별 전용 MemoryPool로 관리
  * USE_STOMP_ALLOCATOR가 true면, StompAllocator로 메모리 관리
@@ -35,7 +37,6 @@ public:
         new (memory) T(std::forward<Args>(args)...);
         return memory;
     }
-
     
 public:
     using value_type = T;
@@ -70,13 +71,15 @@ public:
         sMemoryPool.Push(MemoryHeader::DetachHeader(object));
 #endif // USE_STOMP_ALLOCATOR
     }
+    
+public: // ObjectPool을 사용하는 스마트 포인터 선언
+    using SharedPtr     = std::shared_ptr<T>;
+    using UniquePtr     = std::unique_ptr<T, UniquePtrDeleter>;
 
-public:
     template<typename... Args>
-    static SharedPtr<T> MakeShared(Args&&... args)
-    {
-        return std::allocate_shared<T>(ObjectPool<T>(), std::forward<Args>(args)...);
-    }
+    static SharedPtr    MakeShared(Args&&... args);
+    template<typename... Args>
+    static UniquePtr    MakeUnique(Args&&... args);
 
 private:
     static constexpr UInt64     kAllocSize = sizeof(MemoryHeader) + sizeof(T);
@@ -87,6 +90,42 @@ private:
 
 template<typename T>
 MemoryPool       ObjectPool<T>::sMemoryPool(kAllocSize);
+
+/*
+ * UniquePtr의 Deleter로 사용하기 위한 인터페이스 구현
+ */
+class UniquePtrDeleter
+{
+private:
+    using DeleterFunction = void (*)(void*);
+
+public:
+    UniquePtrDeleter() : mDeleteObject(DeleteNothing)                                           {}
+    explicit UniquePtrDeleter(DeleterFunction deleterFunction) : mDeleteObject(deleterFunction) {}
+
+    // UniquePtr가 객체를 소멸할 때 호출
+    void operator()(void* object) const { mDeleteObject(object); }
+    // 타입에 맞는 UniquePtrDeleter 생성
+    template<typename T>
+    static UniquePtrDeleter Create()    { return UniquePtrDeleter(DeleteObject<T>); }
+
+private:
+    // UniquePtr가 nullptr일 때 설정되는 Deleter 함수
+    static void     DeleteNothing(void* object) noexcept
+    {}
+    // 객체 소멸 작업을 수행
+    template<typename T>
+    static void     DeleteObject(void* object) noexcept
+    {
+        // 소멸자 호출 후 메모리 해제
+        static_cast<T*>(object)->~T();
+        ObjectPool<T>().deallocate(static_cast<T*>(object), 1);
+    }
+
+private:
+    DeleterFunction     mDeleteObject = nullptr;
+
+};
 
 template<typename T, typename... Args>
 inline T* NewObject(Args&&... args)
@@ -101,4 +140,20 @@ inline void DeleteObject(T* object)
 {
     object->~T();
     PoolAllocator::Free(object);
+}
+
+template<typename T>
+template<typename... Args>
+inline typename ObjectPool<T>::SharedPtr ObjectPool<T>::MakeShared(Args&&... args)
+{
+    return std::allocate_shared<T>(ObjectPool(), std::forward<Args>(args)...);
+}
+
+template<typename T>
+template<typename... Args>
+inline typename ObjectPool<T>::UniquePtr ObjectPool<T>::MakeUnique(Args&&... args)
+{
+    T* memory = ObjectPool().allocate(1);
+    new (memory) T(std::forward<Args>(args)...);
+    return UniquePtr(memory, UniquePtrDeleter::Create<T>());
 }
