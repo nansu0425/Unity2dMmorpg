@@ -73,7 +73,8 @@ private:
         }
         while (true)
         {
-            auto resoucre = ObjectPoolAllocator<Resource>::MakeUnique(threadId, workerNumber);
+            ObjectPool<ResourceBase>::SharedPtr resoucre1 = ObjectPool<Resource>::MakeShared(threadId, workerNumber);
+            ObjectPool<ResourceBase>::UniquePtr resoucre2 = ObjectPool<Resource>::MakeUnique(threadId, workerNumber);
         }
     }
 
@@ -84,8 +85,8 @@ private:
 
 int main()
 {
-    auto workers = ObjectPoolAllocator<Workers>::MakeShared(4);
-    ObjectPoolAllocator<Int32>::UniquePtr data = nullptr;
+    auto workers = ObjectPool<Workers>::MakeUnique(4);
+    ObjectPool<Int32>::UniquePtr data = nullptr;
 
     return 0;
 }
