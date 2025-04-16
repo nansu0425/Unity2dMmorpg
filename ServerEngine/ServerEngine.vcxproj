@@ -27,8 +27,7 @@
     <ClInclude Include="Core\Pch.h" />
     <ClInclude Include="Core\Tls.h" />
     <ClInclude Include="Core\Types.h" />
-    <ClInclude Include="Memory\Allocator.h" />
-    <ClInclude Include="Memory\Container.h" />
+    <ClInclude Include="Memory\MemoryAllocator.h" />
     <ClInclude Include="Memory\Object.h" />
     <ClInclude Include="Memory\MemoryPool.h" />
     <ClInclude Include="Pch.h" />
@@ -39,7 +38,7 @@
     <ClCompile Include="Concurrency\Thread.cpp" />
     <ClCompile Include="Core\Global.cpp" />
     <ClCompile Include="Core\Tls.cpp" />
-    <ClCompile Include="Memory\Allocator.cpp" />
+    <ClCompile Include="Memory\MemoryAllocator.cpp" />
     <ClCompile Include="Memory\MemoryPool.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -1,7 +1,6 @@
-﻿/*    ServerEngine/Memory/Pool.cpp    */
+﻿/*    ServerEngine/Memory/MemoryPool.cpp    */
 
 #include "ServerEngine/Pch.h"
-#include "ServerEngine/Memory/MemoryPool.h"
 
 MemoryPool::MemoryPool(UInt64 allocSize)
     : mAllocSize(allocSize)

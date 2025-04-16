@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ServerEngine/Memory/Allocator.h"
+#include "ServerEngine/Memory/MemoryAllocator.h"
 
 class UniquePtrDeleter;
 

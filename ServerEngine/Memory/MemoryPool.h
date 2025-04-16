@@ -1,10 +1,10 @@
-﻿/*    ServerEngine/Memory/Pool.h    */
+﻿/*    ServerEngine/Memory/MemoryPool.h    */
 
 #pragma once
 
 /*
- * [| MemoryHeader ][|         Memory         ]|
- *  |header          |header + 1               |header + allocSize
+ * [|     MemoryHeader     ][|                   Memory                   ]|
+ *  |header                  |header + sizeof(MemoryHeader)                |header + allocSize
  */
 struct alignas(MEMORY_ALLOCATION_ALIGNMENT) MemoryHeader
     : public SLIST_ENTRY
