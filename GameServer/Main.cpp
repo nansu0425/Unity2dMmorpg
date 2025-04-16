@@ -7,14 +7,14 @@ class ResourceBase
 {
 public:
     ResourceBase(Int32 threadId)
-        : mThreadId(::NewObject<Int32>(threadId))
+        : mThreadId(ObjectPool<Int32>::Pop(threadId))
     {
         std::cout << *mThreadId << ": Resource created\n";
     }
     ~ResourceBase()
     {
         std::cout << *mThreadId << ": Resource destroyed\n";
-        ::DeleteObject(mThreadId);
+        ObjectPool<Int32>::Push(mThreadId);
     }
 
 protected:
@@ -27,14 +27,14 @@ class Resource
 public:
     Resource(Int32 threadId, UInt64 workerNumber)
         : ResourceBase(threadId)
-        , mWorkerNumber(::NewObject<UInt64>(workerNumber))
+        , mWorkerNumber(MemoryPoolAllocator::New<UInt64>(workerNumber))
     {
         std::cout << *mThreadId << ": worker number is " << *mWorkerNumber << "\n";
     }
 
     ~Resource()
     {
-        ::DeleteObject(mWorkerNumber);
+        MemoryPoolAllocator::Delete(mWorkerNumber);
     }
 
 private:
@@ -73,7 +73,7 @@ private:
         }
         while (true)
         {
-            ObjectPool<ResourceBase>::UniquePtr resoucre = ObjectPool<Resource>::MakeUnique(threadId, workerNumber);
+            auto resoucre = ObjectPoolAllocator<Resource>::MakeUnique(threadId, workerNumber);
         }
     }
 
@@ -84,8 +84,8 @@ private:
 
 int main()
 {
-    ObjectPool<Workers>::SharedPtr workers = ObjectPool<Workers>::MakeShared(4);
-    ObjectPool<Int32>::SharedPtr data = nullptr;
+    auto workers = ObjectPoolAllocator<Workers>::MakeShared(4);
+    ObjectPoolAllocator<Int32>::UniquePtr data = nullptr;
 
     return 0;
 }

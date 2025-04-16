@@ -40,10 +40,13 @@
     <ClInclude Include="Memory\MemoryAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\Object.h">
+    <ClInclude Include="Memory\ObjectPool.h">
       <Filter>Memory</Filter>
     </ClInclude>
     <ClInclude Include="Memory\MemoryPool.h">
+      <Filter>Memory</Filter>
+    </ClInclude>
+    <ClInclude Include="Memory\ObjectAllocator.h">
       <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>
