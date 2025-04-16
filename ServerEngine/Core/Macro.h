@@ -39,5 +39,13 @@
 
 #define USE_STOMP_ALLOCATOR     false
 
-#define TEXT8(quote)            quote
-#define TEXT16(quote)           L##quote
+#define TEXT_8(quote)           quote
+#define TEXT_16(quote)          L##quote
+
+#define SIZE_16(arg)            static_cast<Int16>(sizeof(arg))
+#define SIZE_32(arg)            static_cast<Int32>(sizeof(arg))
+#define SIZE_64(arg)            static_cast<Int64>(sizeof(arg))
+#define NUM_ELEM_16(array)      static_cast<Int16>(sizeof(array) / sizeof(array[0]))
+#define NUM_ELEM_32(array)      static_cast<Int32>(sizeof(array) / sizeof(array[0]))
+#define NUM_ELEM_64(array)      static_cast<Int64>(sizeof(array) / sizeof(array[0]))
+

@@ -30,6 +30,8 @@
     <ClInclude Include="Memory\MemoryAllocator.h" />
     <ClInclude Include="Memory\ObjectPool.h" />
     <ClInclude Include="Memory\MemoryPool.h" />
+    <ClInclude Include="Network\NetAddress.h" />
+    <ClInclude Include="Network\SocketUtils.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <ItemGroup>
@@ -40,6 +42,8 @@
     <ClCompile Include="Core\Tls.cpp" />
     <ClCompile Include="Memory\MemoryAllocator.cpp" />
     <ClCompile Include="Memory\MemoryPool.cpp" />
+    <ClCompile Include="Network\NetAddress.cpp" />
+    <ClCompile Include="Network\SocketUtils.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

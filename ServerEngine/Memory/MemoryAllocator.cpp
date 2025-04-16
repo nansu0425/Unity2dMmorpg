@@ -1,4 +1,4 @@
-﻿/*    ServerEngine/Memory/Allocator.cpp    */
+﻿/*    ServerEngine/Memory/MemoryAllocator.cpp    */
 
 #include "ServerEngine/Pch.h"
 #include "ServerEngine/Memory/MemoryPool.h"

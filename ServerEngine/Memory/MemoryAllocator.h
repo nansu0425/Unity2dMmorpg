@@ -1,4 +1,4 @@
-﻿/*    ServerEngine/Memory/Allocator.h    */
+﻿/*    ServerEngine/Memory/MemoryAllocator.h    */
 
 #pragma once
 

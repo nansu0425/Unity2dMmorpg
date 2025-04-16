@@ -149,14 +149,14 @@ template<typename T>
 template<typename... Args>
 inline typename ObjectPool<T>::SharedPtr ObjectPool<T>::MakeShared(Args&&... args)
 {
-    return std::allocate_shared<T>(SmartPointerAllocator(), std::forward<Args>(args)...);
+    return std::allocate_shared<T>(ObjectPool<T>::SmartPointerAllocator(), std::forward<Args>(args)...);
 }
 
 template<typename T>
 template<typename... Args>
 inline typename ObjectPool<T>::UniquePtr ObjectPool<T>::MakeUnique(Args&&... args)
 {
-    T* memory = SmartPointerAllocator().allocate(1);
+    T* memory = ObjectPool<T>::SmartPointerAllocator().allocate(1);
     new (memory) T(std::forward<Args>(args)...);
     return UniquePtr(memory, ObjectPoolUniquePtrDeleter::Create<T>());
 }
