@@ -72,7 +72,7 @@ void MemoryPoolManager::Push(void* memory)
 {
     MemoryHeader* header = MemoryHeader::DetachHeader(memory);
 #if USE_STOMP_ALLOCATOR
-    StompAllocator::Free(header);
+    StompMemoryAllocator::Free(header);
 #else
     const UInt64 allocSize = header->allocSize;
     if (allocSize > kMaxAllocSize)
@@ -93,7 +93,7 @@ void* MemoryPoolManager::Pop(UInt64 size)
     MemoryHeader* header = nullptr;
     const UInt64 allocSize = sizeof(MemoryHeader) + size;
 #if USE_STOMP_ALLOCATOR
-    header = static_cast<MemoryHeader*>(StompAllocator::Alloc(allocSize));
+    header = static_cast<MemoryHeader*>(StompMemoryAllocator::Alloc(allocSize));
 #else
     if (allocSize > kMaxAllocSize)
     {

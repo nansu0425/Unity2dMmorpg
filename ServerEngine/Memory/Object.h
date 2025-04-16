@@ -19,7 +19,7 @@ public:
     {
         object->~T();
 #if USE_STOMP_ALLOCATOR
-        StompAllocator::Free(MemoryHeader::DetachHeader(object));
+        StompMemoryAllocator::Free(MemoryHeader::DetachHeader(object));
 #else
         sMemoryPool.Push(MemoryHeader::DetachHeader(object));
 #endif // USE_STOMP_ALLOCATOR
@@ -29,7 +29,7 @@ public:
     static T* Pop(Args&&... args)
     {
 #if USE_STOMP_ALLOCATOR
-        MemoryHeader* header = static_cast<MemoryHeader*>(StompAllocator::Alloc(kAllocSize));
+        MemoryHeader* header = static_cast<MemoryHeader*>(StompMemoryAllocator::Alloc(kAllocSize));
         T* memory = static_cast<T*>(MemoryHeader::AttachHeader(header));
 #else
         T* memory = static_cast<T*>(MemoryHeader::AttachHeader(sMemoryPool.Pop()));
@@ -51,7 +51,7 @@ public:
         ASSERT_CRASH_DEBUG(count == 1, "TOO_MANY_COUNT");
 
 #if USE_STOMP_ALLOCATOR
-        MemoryHeader* header = static_cast<MemoryHeader*>(StompAllocator::Alloc(kAllocSize));
+        MemoryHeader* header = static_cast<MemoryHeader*>(StompMemoryAllocator::Alloc(kAllocSize));
         T* memory = static_cast<T*>(MemoryHeader::AttachHeader(header));
 #else
         T* memory = static_cast<T*>(MemoryHeader::AttachHeader(sMemoryPool.Pop()));
@@ -66,7 +66,7 @@ public:
         ASSERT_CRASH_DEBUG(count == 1, "TOO_MANY_COUNT");
 
 #if USE_STOMP_ALLOCATOR
-        StompAllocator::Free(MemoryHeader::DetachHeader(object));
+        StompMemoryAllocator::Free(MemoryHeader::DetachHeader(object));
 #else
         sMemoryPool.Push(MemoryHeader::DetachHeader(object));
 #endif // USE_STOMP_ALLOCATOR
@@ -130,7 +130,7 @@ private:
 template<typename T, typename... Args>
 inline T* NewObject(Args&&... args)
 {
-    T* memory = static_cast<T*>(PoolAllocator::Alloc(sizeof(T)));
+    T* memory = static_cast<T*>(MemoryPoolAllocator::Alloc(sizeof(T)));
     new (memory) T(std::forward<Args>(args)...);
     return memory;
 }
@@ -139,7 +139,7 @@ template<typename T>
 inline void DeleteObject(T* object)
 {
     object->~T();
-    PoolAllocator::Free(object);
+    MemoryPoolAllocator::Free(object);
 }
 
 template<typename T>

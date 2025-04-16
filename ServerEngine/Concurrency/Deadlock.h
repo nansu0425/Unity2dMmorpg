@@ -11,14 +11,6 @@
  */
 class DeadlockDetector
 {
-private:
-    template<typename K, typename V>
-    using HashMap   = std::unordered_map<K, V>;
-    template<typename K>
-    using HashSet   = std::unordered_set<K>;
-    template<typename T>
-    using Vector    = std::vector<T>;
-
 public:
     void            PushLock(const Char8* name);
     void            PopLock(const Char8* name);

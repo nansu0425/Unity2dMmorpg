@@ -79,7 +79,7 @@ private:
 
 private:
     RW_LOCK;
-    PoolAllocator::Vector<Int32> mData;
+    MemoryPoolAllocator::Vector<Int32> mData;
 };
 
 int main()

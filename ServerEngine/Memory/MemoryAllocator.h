@@ -4,7 +4,7 @@
 
 #include "ServerEngine/Memory/MemoryPool.h"
 
-class BaseAllocator
+class BaseMemoryAllocator
 {
 public:
     static void*    Alloc(UInt64 size);
@@ -16,7 +16,7 @@ public:
  * Data         : [|       [|                  Data                   ]|
  * Address      :  |base    |base + offset                             |base + size
  */
-class StompAllocator
+class StompMemoryAllocator
 {
 public:
     static void*    Alloc(UInt64 size);
@@ -26,7 +26,7 @@ private:
     static constexpr UInt64     kPageSize = 4096;
 };
 
-class PoolAllocator
+class MemoryPoolAllocator
 {
 public:
     static void*    Alloc(UInt64 size);
@@ -43,8 +43,8 @@ public:
         template<typename U>
         constexpr ContainerInterface(const ContainerInterface<U>&) noexcept {}
 
-        __declspec(allocator) T* allocate(const UInt64 count)               { return static_cast<T*>(PoolAllocator::Alloc(count * sizeof(T))); }
-        void deallocate(T* const base, const UInt64 count) noexcept         { PoolAllocator::Free(base); }
+        __declspec(allocator) T* allocate(const UInt64 count)               { return static_cast<T*>(Alloc(count * sizeof(T))); }
+        void deallocate(T* const base, const UInt64 count) noexcept         { Free(base); }
     };
 
     template<typename T>
@@ -75,6 +75,6 @@ public:
 };
 
 template<typename L, typename R>
-bool operator==(const PoolAllocator::ContainerInterface<L>&, const PoolAllocator::ContainerInterface<R>&) noexcept { return true; }
+bool operator==(const MemoryPoolAllocator::ContainerInterface<L>&, const MemoryPoolAllocator::ContainerInterface<R>&) noexcept { return true; }
 template<typename L, typename R>
-bool operator!=(const PoolAllocator::ContainerInterface<L>&, const PoolAllocator::ContainerInterface<R>&) noexcept { return false; }
+bool operator!=(const MemoryPoolAllocator::ContainerInterface<L>&, const MemoryPoolAllocator::ContainerInterface<R>&) noexcept { return false; }
