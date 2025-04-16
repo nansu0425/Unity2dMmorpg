@@ -27,14 +27,14 @@ class Resource
 public:
     Resource(Int32 threadId, UInt64 workerNumber)
         : ResourceBase(threadId)
-        , mWorkerNumber(MemoryPoolAllocator::New<UInt64>(workerNumber))
+        , mWorkerNumber(ObjectPool<UInt64>::Pop(workerNumber))
     {
         std::cout << *mThreadId << ": worker number is " << *mWorkerNumber << "\n";
     }
 
     ~Resource()
     {
-        MemoryPoolAllocator::Delete(mWorkerNumber);
+        ObjectPool<UInt64>::Push(mWorkerNumber);
     }
 
 private:
@@ -73,20 +73,20 @@ private:
         }
         while (true)
         {
-            ObjectPool<ResourceBase>::SharedPtr resoucre1 = ObjectPool<Resource>::MakeShared(threadId, workerNumber);
-            ObjectPool<ResourceBase>::UniquePtr resoucre2 = ObjectPool<Resource>::MakeUnique(threadId, workerNumber);
+            PoolObjectAllocator::SharedPtr<ResourceBase> resoucre1 = PoolObjectAllocator::MakeShared<Resource>(threadId, workerNumber);
+            PoolObjectAllocator::UniquePtr<ResourceBase> resoucre2 = PoolObjectAllocator::MakeUnique<Resource>(threadId, workerNumber);
         }
     }
 
 private:
     RW_LOCK;
-    MemoryPoolAllocator::Vector<Int32> mData;
+    PoolMemoryAllocator::Vector<Int32> mData;
 };
 
 int main()
 {
-    auto workers = ObjectPool<Workers>::MakeUnique(4);
-    ObjectPool<Int32>::UniquePtr data = nullptr;
+    auto workers = PoolObjectAllocator::MakeUnique<Workers>(4);
+    PoolObjectAllocator::UniquePtr<Int32> data = nullptr;
 
     return 0;
 }

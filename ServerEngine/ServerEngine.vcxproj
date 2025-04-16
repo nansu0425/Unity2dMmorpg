@@ -28,6 +28,7 @@
     <ClInclude Include="Core\Tls.h" />
     <ClInclude Include="Core\Types.h" />
     <ClInclude Include="Memory\MemoryAllocator.h" />
+    <ClInclude Include="Memory\ObjectAllocator.h" />
     <ClInclude Include="Memory\ObjectPool.h" />
     <ClInclude Include="Memory\MemoryPool.h" />
     <ClInclude Include="Network\NetAddress.h" />

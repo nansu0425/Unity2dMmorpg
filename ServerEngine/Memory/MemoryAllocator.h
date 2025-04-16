@@ -15,6 +15,7 @@ public:
  * Stomp Memory : [|    Page|    ][    Page    ]   ...   [    Page    ]|
  * Data         : [|       [|                  Data                   ]|
  * Address      :  |base    |base + offset                             |base + size
+ * USE_STOMP_ALLOCATOR 매크로를 true로 설정하면 메모리 풀 사용 시 Stomp 메모리 할당기 사용
  */
 class StompMemoryAllocator
 {
@@ -26,27 +27,14 @@ private:
     static constexpr UInt64     kPageSize = 4096;
 };
 
-class MemoryPoolAllocator
+/*
+ * 전역 메모리 풀 매니저를 사용하는 메모리 할당기
+ */
+class PoolMemoryAllocator
 {
 public:
     static void*    Alloc(UInt64 size);
     static void     Free(void* memory);
-
-public:
-    template<typename T, typename... Args>
-    static T* New(Args&&... args)
-    {
-        T* memory = static_cast<T*>(Alloc(sizeof(T)));
-        new (memory) T(std::forward<Args>(args)...);
-        return memory;
-    }
-
-    template<typename T>
-    static void Delete(T* object)
-    {
-        object->~T();
-        Free(object);
-    }
 
 public:
     template<typename T>
@@ -60,7 +48,7 @@ public:
         constexpr ContainerAdapter(const ContainerAdapter<U>&) noexcept {}
 
         __declspec(allocator) T* allocate(const UInt64 count)           { return static_cast<T*>(Alloc(count * sizeof(T))); }
-        void deallocate(T* const base, const UInt64 count) noexcept     { Free(base); }
+        void deallocate(T* const memory, const UInt64 count) noexcept   { Free(memory); }
     };
 
     template<typename T>
@@ -90,7 +78,54 @@ public:
     using String16  = std::basic_string<Char16, std::char_traits<Char16>, ContainerAdapter<Char16>>;
 };
 
-template<typename L, typename R>
-bool operator==(const MemoryPoolAllocator::ContainerAdapter<L>&, const MemoryPoolAllocator::ContainerAdapter<R>&) noexcept { return true; }
-template<typename L, typename R>
-bool operator!=(const MemoryPoolAllocator::ContainerAdapter<L>&, const MemoryPoolAllocator::ContainerAdapter<R>&) noexcept { return false; }
+/*
+ * 오브젝트 타입별 전용 메모리 풀을 사용하는 메모리 할당기
+ */
+template<typename T>
+class ObjectPoolMemoryAllocator
+{
+public:
+    using value_type = T;
+
+    constexpr ObjectPoolMemoryAllocator() noexcept                                      {}
+    template<typename U>
+    constexpr ObjectPoolMemoryAllocator(const ObjectPoolMemoryAllocator<U>&) noexcept   {}
+
+    __declspec(allocator) T* allocate(const UInt64 count)
+    {
+        ASSERT_CRASH_DEBUG(count == 1, "TOO_MANY_COUNT");
+
+#if USE_STOMP_ALLOCATOR
+        MemoryHeader* header = static_cast<MemoryHeader*>(StompMemoryAllocator::Alloc(kAllocSize));
+        header->allocSize = kAllocSize;
+        T* memory = static_cast<T*>(MemoryHeader::AttachHeader(header));
+#else
+        T* memory = static_cast<T*>(MemoryHeader::AttachHeader(sMemoryPool.Pop()));
+#endif // USE_STOMP_ALLOCATOR
+
+        return memory;
+    }
+
+    void deallocate(T* const memory, const UInt64 count) noexcept
+    {
+        ASSERT_CRASH_DEBUG(count == 1, "TOO_MANY_COUNT");
+
+#if USE_STOMP_ALLOCATOR
+        MemoryHeader* header = MemoryHeader::DetachHeader(memory);
+        ASSERT_CRASH_DEBUG(header->allocSize == kAllocSize, "INVALID_ALLOC_SIZE");
+        StompMemoryAllocator::Free(header);
+#else
+        sMemoryPool.Push(MemoryHeader::DetachHeader(memory));
+#endif // USE_STOMP_ALLOCATOR
+    }
+
+
+private:
+    static constexpr UInt64     kAllocSize = sizeof(MemoryHeader) + sizeof(T);
+
+private:
+    static MemoryPool           sMemoryPool;
+};
+
+template<typename T>
+MemoryPool      ObjectPoolMemoryAllocator<T>::sMemoryPool(kAllocSize);

@@ -29,12 +29,12 @@ void StompMemoryAllocator::Free(void* memory)
     ::VirtualFree(reinterpret_cast<void*>(base), 0, MEM_RELEASE);
 }
 
-void* MemoryPoolAllocator::Alloc(UInt64 size)
+void* PoolMemoryAllocator::Alloc(UInt64 size)
 {
     return gMemoryPoolManager->Pop(size);
 }
 
-void MemoryPoolAllocator::Free(void* memory)
+void PoolMemoryAllocator::Free(void* memory)
 {
     gMemoryPoolManager->Push(memory);
 }
