@@ -110,26 +110,37 @@ void TestMemory_custom()
     }
 }
 
-void MemoryChunkPoolTest()
+void BlockMemoryPoolTest()
 {
-    while (true)
+    Byte* blocks[10'000] = {};
+
+    for (Int32 i = 0; i < 1000; ++i)
     {
-        Byte* chunk1 = gMemoryChunkPool->Pop();
-        Byte* chunk2 = gMemoryChunkPool->Pop();
-        Byte* chunk3 = gMemoryChunkPool->Pop();
-        Byte* chunk4 = gMemoryChunkPool->Pop();
-        Byte* chunk5 = gMemoryChunkPool->Pop();
-        Byte* chunk6 = gMemoryChunkPool->Pop();
-        Byte* chunk7 = gMemoryChunkPool->Pop();
-        Byte* chunk8 = gMemoryChunkPool->Pop();
-        gMemoryChunkPool->Push(chunk8);
-        gMemoryChunkPool->Push(chunk7);
-        gMemoryChunkPool->Push(chunk6);
-        gMemoryChunkPool->Push(chunk5);
-        gMemoryChunkPool->Push(chunk4);
-        gMemoryChunkPool->Push(chunk3);
-        gMemoryChunkPool->Push(chunk2);
-        gMemoryChunkPool->Push(chunk1);
+        for (Int32 i = 0; i < 10'000; ++i)
+        {
+            blocks[i] = tBlockMemoryPool->Pop();
+        }
+        for (Int32 i = 0; i < 10'000; ++i)
+        {
+            tBlockMemoryPool->Push(blocks[i]);
+        }
+    }
+}
+
+void MallocTest()
+{
+    Byte* blocks[10'000] = {};
+
+    for (Int32 i = 0; i < 1000; ++i)
+    {
+        for (Int32 i = 0; i < 10'000; ++i)
+        {
+            blocks[i] = static_cast<Byte*>(::malloc(64));
+        }
+        for (Int32 i = 0; i < 10'000; ++i)
+        {
+            ::free(blocks[i]);
+        }
     }
 }
 
@@ -161,11 +172,31 @@ int main()
     //duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     //std::cout << "TestMemory_custom: " << duration.count() << " ms\n";
 
+    // 실행 시간 측정 시작
+    auto start = std::chrono::high_resolution_clock::now();
     for (Int32 i = 0; i < 4; ++i)
     {
-        gThreadManager->Launch(MemoryChunkPoolTest);
+        gThreadManager->Launch(BlockMemoryPoolTest);
     }
     gThreadManager->Join();
+    // 실행 시간 측정 종료
+    auto end = std::chrono::high_resolution_clock::now();
+    // ms 단위 실행 시간 계산
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "BlockMemoryPoolTest: " << duration.count() << " ms\n";
+
+    // 실행 시간 측정 시작
+    start = std::chrono::high_resolution_clock::now();
+    for (Int32 i = 0; i < 4; ++i)
+    {
+        gThreadManager->Launch(MallocTest);
+    }
+    gThreadManager->Join();
+    // 실행 시간 측정 종료
+    end = std::chrono::high_resolution_clock::now();
+    // ms 단위 실행 시간 계산
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "MallocTest: " << duration.count() << " ms\n";
 
     return 0;
 }

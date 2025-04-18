@@ -22,7 +22,7 @@ void MemoryPool::Push(MemoryHeader* header)
     // 헤더 반납
     ::InterlockedPushEntrySList(&mHeaders, header);
     mUseCount.fetch_sub(1);
-    mPoolingCount.fetch_add(1);
+    mPooledNodeCount.fetch_add(1);
 }
 
 MemoryHeader* MemoryPool::Pop()
@@ -37,7 +37,7 @@ MemoryHeader* MemoryPool::Pop()
     }
     else
     {
-        mPoolingCount.fetch_sub(1);
+        mPooledNodeCount.fetch_sub(1);
     }
     ASSERT_CRASH_DEBUG(header->allocSize == mAllocSize, "INVALID_MEMORY_HEADER");
     mUseCount.fetch_add(1);
@@ -125,51 +125,40 @@ void MemoryPoolManager::InitPools(Int32 startPoolSize, Int32 endPoolSize, Int32 
     }
 }
 
-MemoryChunkPool::MemoryChunkPool()
+ChunkMemoryPool::ChunkMemoryPool()
 {
-    ::InitializeSListHead(&mChunkNodePool);
-    AddChunkNodes(AllocChunks(kInitChunkCount), kInitChunkCount);
+    ::InitializeSListHead(&mPooledNodes);
+    ChargeNodes(AllocChunks(kInitNodeCount), kInitNodeCount);
 }
 
-Byte* MemoryChunkPool::Pop()
+ChunkMemoryPool::Node* ChunkMemoryPool::Pop()
 {
-    Node* node = static_cast<Node*>(::InterlockedPopEntrySList(&mChunkNodePool));
+    Node* node = static_cast<Node*>(::InterlockedPopEntrySList(&mPooledNodes));
     // 노드가 없는 경우
     if (node == nullptr)
     {
-        // 청크 생성 및 노드 추가
-        AddChunkNodes(AllocChunks(kRefillChunkCount), kRefillChunkCount);
-        node = static_cast<Node*>(::InterlockedPopEntrySList(&mChunkNodePool));
+        // 부족한 노드를 채운다
+        ChargeNodes(AllocChunks(kChargeChunkCount), kChargeChunkCount);
+        node = static_cast<Node*>(::InterlockedPopEntrySList(&mPooledNodes));
         ASSERT_CRASH(node != nullptr, "SLIST_EMPTY");
     }
-    mChunkNodeCount.fetch_sub(1);
-    Byte* chunk = node->chunk;
-    // 청크 정보를 제거하고 노드를 풀링
-    node->chunk = nullptr;
-    ::InterlockedPushEntrySList(&mEmptyNodePool, node);
-    mEmptyNodeCount.fetch_add(1);
+    node->Next = nullptr;
+    mPooledNodeCount.fetch_sub(1);
 
-    return chunk;
+    return node;
 }
 
-void MemoryChunkPool::Push(Byte* chunk)
+void ChunkMemoryPool::Push(Node* node)
 {
-    Node* node = static_cast<Node*>(::InterlockedPopEntrySList(&mEmptyNodePool));
-    if (node == nullptr)
-    {
-        node = CreateNode();
-    }
-    else
-    {
-        mEmptyNodeCount.fetch_sub(1);
-    }
-    node->chunk = chunk;
-    // 청크 노드 풀링
-    ::InterlockedPushEntrySList(&mChunkNodePool, node);
-    mChunkNodeCount.fetch_add(1);
+#ifdef _DEBUG
+    ::memset(node->chunk, 0x00, kChunkSize);
+#endif // _DEBUG
+
+    ::InterlockedPushEntrySList(&mPooledNodes, node);
+    mPooledNodeCount.fetch_add(1);
 }
 
-void MemoryChunkPool::AddChunkNodes(Byte* chunks, Int64 count)
+void ChunkMemoryPool::ChargeNodes(Byte* chunks, Int64 count)
 {
     for (Int64 i = 0; i < count; ++i)
     {
@@ -177,24 +166,90 @@ void MemoryChunkPool::AddChunkNodes(Byte* chunks, Int64 count)
         Node* node = CreateNode();
         node->chunk = chunks + (i * kChunkSize);
         // 노드 추가
-        ::InterlockedPushEntrySList(&mChunkNodePool, node);
-        mChunkNodeCount.fetch_add(1);
+        ::InterlockedPushEntrySList(&mPooledNodes, node);
+        mPooledNodeCount.fetch_add(1);
     }
 }
 
-Byte* MemoryChunkPool::AllocChunks(Int64 count)
+Byte* ChunkMemoryPool::AllocChunks(Int64 count)
 {
     Byte* chunks = static_cast<Byte*>(::VirtualAlloc(nullptr, kChunkSize * count, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
     ASSERT_CRASH(chunks != nullptr, "VIRTUAL_ALLOC_FAILED");
-    mTotalChunkCount.fetch_add(count);
+    mTotalNodeCount.fetch_add(count);
 
     return chunks;
 }
 
-MemoryChunkPool::Node* MemoryChunkPool::CreateNode()
+ChunkMemoryPool::Node* ChunkMemoryPool::CreateNode()
 {
     Node* node = static_cast<Node*>(::_aligned_malloc(sizeof(Node), MEMORY_ALLOCATION_ALIGNMENT));
     ASSERT_CRASH(node != nullptr, "ALIGNED_MALLOC_FAILED");
 
     return node;
+}
+
+BlockMemoryPool::BlockMemoryPool(Int64 blockSize)
+    : mBlockSize(blockSize)
+{
+    ASSERT_CRASH((blockSize > 0) && (ChunkMemoryPool::kChunkSize % blockSize == 0), "INVALID_BLOCK_SIZE");
+    ChargeBlocks();
+}
+
+BlockMemoryPool::~BlockMemoryPool()
+{
+    while (Node* node = mPooledNodes)
+    {
+        // 노드 반납
+        mPooledNodes = static_cast<Node*>(node->Next);
+        node->Next = nullptr;
+        --mPooledNodeCount;
+        gChunkMemoryPool->Push(node);
+    }
+}
+
+Byte* BlockMemoryPool::Pop()
+{
+    BlockHeader* header = mPooledBlocks;
+    if (header == nullptr)
+    {
+        ChargeBlocks();
+        header = mPooledBlocks;
+        ASSERT_CRASH(header != nullptr, "POOLED_BLOCKS_EMPTY");
+    }
+    mPooledBlocks = header->next;
+    header->next = nullptr;
+    --mPooledBlockCount;
+
+    return reinterpret_cast<Byte*>(header);
+}
+
+void BlockMemoryPool::Push(Byte* block)
+{
+#ifdef _DEBUG
+    ::memset(block, 0x00, mBlockSize);
+#endif // _DEBUG
+
+    BlockHeader* header = reinterpret_cast<BlockHeader*>(block);
+    header->next = mPooledBlocks;
+    mPooledBlocks = header;
+    ++mPooledBlockCount;
+}
+
+void BlockMemoryPool::ChargeBlocks()
+{
+    // 청크 메모리 풀에서 가져온 노드를 풀에 넣는다
+    Node* node = gChunkMemoryPool->Pop();
+    node->Next = mPooledNodes;
+    mPooledNodes = node;
+    ++mPooledNodeCount;
+
+    // 청크를 블록으로 나누어 풀에 추가
+    for (Int64 i = 0; i < ChunkMemoryPool::kChunkSize / mBlockSize; ++i)
+    {
+        BlockHeader* header = reinterpret_cast<BlockHeader*>(node->chunk + (i * mBlockSize));
+        header->next = mPooledBlocks;
+        mPooledBlocks = header;
+        ++mPooledBlockCount;
+        ++mTotalBlockCount;
+    }
 }

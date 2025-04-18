@@ -6,27 +6,27 @@
 #include "ServerEngine/Memory/MemoryPool.h"
 #include "ServerEngine/Network/SocketUtils.h"
 
+ChunkMemoryPool*        gChunkMemoryPool = nullptr;
 DeadlockDetector*       gDeadlockDetector = nullptr;
 ThreadManager*          gThreadManager = nullptr;
 MemoryPoolManager*      gMemoryPoolManager = nullptr;
-MemoryChunkPool*        gMemoryChunkPool = nullptr;
 
 GlobalContext::GlobalContext()
 {
+    gChunkMemoryPool    = new ChunkMemoryPool();
     gThreadManager      = new ThreadManager();
     gDeadlockDetector   = new DeadlockDetector();
     gMemoryPoolManager  = new MemoryPoolManager();
-    gMemoryChunkPool    = new MemoryChunkPool();
     SocketUtils::Init();
 }
 
 GlobalContext::~GlobalContext()
 {
     SocketUtils::Cleanup();
-    delete              gMemoryChunkPool;
     delete              gMemoryPoolManager;
     delete              gDeadlockDetector;
     delete              gThreadManager;
+    delete              gChunkMemoryPool;
 }
 
 GlobalContext           gGlobalContext;

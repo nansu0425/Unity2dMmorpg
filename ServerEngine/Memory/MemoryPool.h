@@ -41,7 +41,7 @@ private:
     SLIST_HEADER    mHeaders; // MemoryHeader 타입 메모리를 스택으로 관리
     UInt64          mAllocSize = 0;
     Atomic<Int32>   mUseCount = 0;
-    Atomic<Int32>   mPoolingCount = 0;
+    Atomic<Int32>   mPooledNodeCount = 0;
 };
 
 /*
@@ -76,7 +76,7 @@ private:
     MemoryPool*         mPoolTable[kMaxAllocSize + 1];
 };
 
-class alignas(MEMORY_ALLOCATION_ALIGNMENT) MemoryChunkPool
+class alignas(MEMORY_ALLOCATION_ALIGNMENT) ChunkMemoryPool
 {
 public:
     struct alignas(MEMORY_ALLOCATION_ALIGNMENT) Node
@@ -88,25 +88,53 @@ public:
     enum Config : Int64
     {
         kChunkSize = 64 * 1024,
-        kInitChunkCount = 16,
-        kRefillChunkCount = 4,
+        kInitNodeCount = 16,
+        kChargeChunkCount = 4,
     };
 
 public:
-    MemoryChunkPool();
+    ChunkMemoryPool();
 
-    Byte*   Pop();
-    void    Push(Byte* chunk);
+    Node*   Pop();
+    void    Push(Node* node);
 
 private:
-    void    AddChunkNodes(Byte* chunks, Int64 count);
+    void    ChargeNodes(Byte* chunks, Int64 count);
     Byte*   AllocChunks(Int64 count);
     Node*   CreateNode();
 
 private:
-    SLIST_HEADER    mChunkNodePool; // Chunk 포인터를 갖고 있는 노드 풀
-    SLIST_HEADER    mEmptyNodePool; // Chunk를 정보를 갖고 있지 않은 노드 풀
-    Atomic<Int64>   mChunkNodeCount = 0;
-    Atomic<Int64>   mEmptyNodeCount = 0;
-    Atomic<Int64>   mTotalChunkCount = 0;
+    SLIST_HEADER    mPooledNodes; // 스택 구조로 풀링하는 Chunk 노드 리스트
+    Atomic<Int64>   mPooledNodeCount = 0;
+    Atomic<Int64>   mTotalNodeCount = 0;
+};
+
+class BlockMemoryPool
+{
+public:
+    using Node  = ChunkMemoryPool::Node;
+
+    struct BlockHeader
+    {
+        BlockHeader*  next = nullptr;
+    };
+
+public:
+    BlockMemoryPool(Int64 blockSize);
+    ~BlockMemoryPool();
+
+    Byte*   Pop();
+    void    Push(Byte* block);
+
+private:
+    void    ChargeBlocks();
+
+private:
+    const Int64     mBlockSize = 0;
+    Node*           mPooledNodes = nullptr; // 청크 메모리 풀에서 가져온 노드를 스택 구조로 관리
+    BlockHeader*    mPooledBlocks = nullptr; // 고정 크기 블록을 스택 구조로 관리
+    
+    Int64           mPooledNodeCount = 0;
+    Int64           mPooledBlockCount = 0;
+    Int64           mTotalBlockCount = 0;
 };
