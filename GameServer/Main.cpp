@@ -83,10 +83,64 @@ private:
     PoolMemoryAllocator::Vector<Int32> mData;
 };
 
+constexpr Int32 gTestCount = 1000;
+constexpr Int32 gDataSize = 1000;
+
+void TestMemory_std()
+{
+    for (Int32 i = 0; i < gTestCount; ++i)
+    {
+        Vector<UniquePtr<Int32>> data(gDataSize);
+        for (Int32 j = 0; j < gDataSize; ++j)
+        {
+            data[j] = std::make_unique<Int32>(j);
+        }
+    }
+}
+
+void TestMemory_custom()
+{
+    for (Int32 i = 0; i < gTestCount; ++i)
+    {
+        PoolMemoryAllocator::Vector<PoolObjectAllocator::UniquePtr<Int32>> data(gDataSize);
+        for (Int32 j = 0; j < gDataSize; ++j)
+        {
+            data[j] = PoolObjectAllocator::MakeUnique<Int32>(j);
+        }
+    }
+}
+
 int main()
 {
-    auto workers = PoolObjectAllocator::MakeUnique<Workers>(4);
-    PoolObjectAllocator::UniquePtr<Int32> data = nullptr;
+    /*auto workers = PoolObjectAllocator::MakeUnique<Workers>(4);
+    PoolObjectAllocator::UniquePtr<Int32> data = nullptr;*/
+
+
+    // 실행 시간 측정 시작
+    auto start = std::chrono::high_resolution_clock::now();
+    for (Int32 i = 0; i < 4; ++i)
+    {
+        gThreadManager->Launch(TestMemory_std);
+    }
+    gThreadManager->Join();
+    // 실행 시간 측정 종료
+    auto end = std::chrono::high_resolution_clock::now();
+    // ms 단위 실행 시간 계산
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "TestMemory_std: " << duration.count() << " ms\n";
+    
+    // 실행 시간 측정 시작
+    start = std::chrono::high_resolution_clock::now();
+    for (Int32 i = 0; i < 4; ++i)
+    {
+        gThreadManager->Launch(TestMemory_custom);
+    }
+    gThreadManager->Join();
+    // 실행 시간 측정 종료
+    end = std::chrono::high_resolution_clock::now();
+    // ms 단위 실행 시간 계산
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "TestMemory_custom: " << duration.count() << " ms\n";
 
     return 0;
 }
