@@ -5,6 +5,7 @@
 extern class ThreadManager*         gThreadManager;
 extern class DeadlockDetector*      gDeadlockDetector;
 extern class MemoryPoolManager*     gMemoryPoolManager;
+extern class MemoryChunkPool*       gMemoryChunkPool;
 
 class GlobalContext
 {

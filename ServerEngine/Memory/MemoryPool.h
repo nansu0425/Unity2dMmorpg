@@ -75,3 +75,38 @@ private:
     MemoryPool*         mPools[kPoolCount];
     MemoryPool*         mPoolTable[kMaxAllocSize + 1];
 };
+
+class alignas(MEMORY_ALLOCATION_ALIGNMENT) MemoryChunkPool
+{
+public:
+    struct alignas(MEMORY_ALLOCATION_ALIGNMENT) Node
+        : public SLIST_ENTRY
+    {
+        Byte* chunk = nullptr;
+    };
+
+    enum Config : Int64
+    {
+        kChunkSize = 64 * 1024,
+        kInitChunkCount = 16,
+        kRefillChunkCount = 4,
+    };
+
+public:
+    MemoryChunkPool();
+
+    Byte*   Pop();
+    void    Push(Byte* chunk);
+
+private:
+    void    AddChunkNodes(Byte* chunks, Int64 count);
+    Byte*   AllocChunks(Int64 count);
+    Node*   CreateNode();
+
+private:
+    SLIST_HEADER    mChunkNodePool; // Chunk 포인터를 갖고 있는 노드 풀
+    SLIST_HEADER    mEmptyNodePool; // Chunk를 정보를 갖고 있지 않은 노드 풀
+    Atomic<Int64>   mChunkNodeCount = 0;
+    Atomic<Int64>   mEmptyNodeCount = 0;
+    Atomic<Int64>   mTotalChunkCount = 0;
+};

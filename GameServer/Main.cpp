@@ -110,37 +110,62 @@ void TestMemory_custom()
     }
 }
 
+void MemoryChunkPoolTest()
+{
+    while (true)
+    {
+        Byte* chunk1 = gMemoryChunkPool->Pop();
+        Byte* chunk2 = gMemoryChunkPool->Pop();
+        Byte* chunk3 = gMemoryChunkPool->Pop();
+        Byte* chunk4 = gMemoryChunkPool->Pop();
+        Byte* chunk5 = gMemoryChunkPool->Pop();
+        Byte* chunk6 = gMemoryChunkPool->Pop();
+        Byte* chunk7 = gMemoryChunkPool->Pop();
+        Byte* chunk8 = gMemoryChunkPool->Pop();
+        gMemoryChunkPool->Push(chunk8);
+        gMemoryChunkPool->Push(chunk7);
+        gMemoryChunkPool->Push(chunk6);
+        gMemoryChunkPool->Push(chunk5);
+        gMemoryChunkPool->Push(chunk4);
+        gMemoryChunkPool->Push(chunk3);
+        gMemoryChunkPool->Push(chunk2);
+        gMemoryChunkPool->Push(chunk1);
+    }
+}
+
 int main()
 {
-    /*auto workers = PoolObjectAllocator::MakeUnique<Workers>(4);
-    PoolObjectAllocator::UniquePtr<Int32> data = nullptr;*/
+    //// 실행 시간 측정 시작
+    //auto start = std::chrono::high_resolution_clock::now();
+    //for (Int32 i = 0; i < 4; ++i)
+    //{
+    //    gThreadManager->Launch(TestMemory_std);
+    //}
+    //gThreadManager->Join();
+    //// 실행 시간 측정 종료
+    //auto end = std::chrono::high_resolution_clock::now();
+    //// ms 단위 실행 시간 계산
+    //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    //std::cout << "TestMemory_std: " << duration.count() << " ms\n";
+    //
+    //// 실행 시간 측정 시작
+    //start = std::chrono::high_resolution_clock::now();
+    //for (Int32 i = 0; i < 4; ++i)
+    //{
+    //    gThreadManager->Launch(TestMemory_custom);
+    //}
+    //gThreadManager->Join();
+    //// 실행 시간 측정 종료
+    //end = std::chrono::high_resolution_clock::now();
+    //// ms 단위 실행 시간 계산
+    //duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    //std::cout << "TestMemory_custom: " << duration.count() << " ms\n";
 
-
-    // 실행 시간 측정 시작
-    auto start = std::chrono::high_resolution_clock::now();
     for (Int32 i = 0; i < 4; ++i)
     {
-        gThreadManager->Launch(TestMemory_std);
+        gThreadManager->Launch(MemoryChunkPoolTest);
     }
     gThreadManager->Join();
-    // 실행 시간 측정 종료
-    auto end = std::chrono::high_resolution_clock::now();
-    // ms 단위 실행 시간 계산
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "TestMemory_std: " << duration.count() << " ms\n";
-    
-    // 실행 시간 측정 시작
-    start = std::chrono::high_resolution_clock::now();
-    for (Int32 i = 0; i < 4; ++i)
-    {
-        gThreadManager->Launch(TestMemory_custom);
-    }
-    gThreadManager->Join();
-    // 실행 시간 측정 종료
-    end = std::chrono::high_resolution_clock::now();
-    // ms 단위 실행 시간 계산
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "TestMemory_custom: " << duration.count() << " ms\n";
 
     return 0;
 }

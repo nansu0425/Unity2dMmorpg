@@ -9,18 +9,21 @@
 DeadlockDetector*       gDeadlockDetector = nullptr;
 ThreadManager*          gThreadManager = nullptr;
 MemoryPoolManager*      gMemoryPoolManager = nullptr;
+MemoryChunkPool*        gMemoryChunkPool = nullptr;
 
 GlobalContext::GlobalContext()
 {
     gThreadManager      = new ThreadManager();
     gDeadlockDetector   = new DeadlockDetector();
     gMemoryPoolManager  = new MemoryPoolManager();
+    gMemoryChunkPool    = new MemoryChunkPool();
     SocketUtils::Init();
 }
 
 GlobalContext::~GlobalContext()
 {
     SocketUtils::Cleanup();
+    delete              gMemoryChunkPool;
     delete              gMemoryPoolManager;
     delete              gDeadlockDetector;
     delete              gThreadManager;

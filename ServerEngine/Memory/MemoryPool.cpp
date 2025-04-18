@@ -124,3 +124,77 @@ void MemoryPoolManager::InitPools(Int32 startPoolSize, Int32 endPoolSize, Int32 
         ++poolIdx;
     }
 }
+
+MemoryChunkPool::MemoryChunkPool()
+{
+    ::InitializeSListHead(&mChunkNodePool);
+    AddChunkNodes(AllocChunks(kInitChunkCount), kInitChunkCount);
+}
+
+Byte* MemoryChunkPool::Pop()
+{
+    Node* node = static_cast<Node*>(::InterlockedPopEntrySList(&mChunkNodePool));
+    // 노드가 없는 경우
+    if (node == nullptr)
+    {
+        // 청크 생성 및 노드 추가
+        AddChunkNodes(AllocChunks(kRefillChunkCount), kRefillChunkCount);
+        node = static_cast<Node*>(::InterlockedPopEntrySList(&mChunkNodePool));
+        ASSERT_CRASH(node != nullptr, "SLIST_EMPTY");
+    }
+    mChunkNodeCount.fetch_sub(1);
+    Byte* chunk = node->chunk;
+    // 청크 정보를 제거하고 노드를 풀링
+    node->chunk = nullptr;
+    ::InterlockedPushEntrySList(&mEmptyNodePool, node);
+    mEmptyNodeCount.fetch_add(1);
+
+    return chunk;
+}
+
+void MemoryChunkPool::Push(Byte* chunk)
+{
+    Node* node = static_cast<Node*>(::InterlockedPopEntrySList(&mEmptyNodePool));
+    if (node == nullptr)
+    {
+        node = CreateNode();
+    }
+    else
+    {
+        mEmptyNodeCount.fetch_sub(1);
+    }
+    node->chunk = chunk;
+    // 청크 노드 풀링
+    ::InterlockedPushEntrySList(&mChunkNodePool, node);
+    mChunkNodeCount.fetch_add(1);
+}
+
+void MemoryChunkPool::AddChunkNodes(Byte* chunks, Int64 count)
+{
+    for (Int64 i = 0; i < count; ++i)
+    {
+        // 노드 생성
+        Node* node = CreateNode();
+        node->chunk = chunks + (i * kChunkSize);
+        // 노드 추가
+        ::InterlockedPushEntrySList(&mChunkNodePool, node);
+        mChunkNodeCount.fetch_add(1);
+    }
+}
+
+Byte* MemoryChunkPool::AllocChunks(Int64 count)
+{
+    Byte* chunks = static_cast<Byte*>(::VirtualAlloc(nullptr, kChunkSize * count, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
+    ASSERT_CRASH(chunks != nullptr, "VIRTUAL_ALLOC_FAILED");
+    mTotalChunkCount.fetch_add(count);
+
+    return chunks;
+}
+
+MemoryChunkPool::Node* MemoryChunkPool::CreateNode()
+{
+    Node* node = static_cast<Node*>(::_aligned_malloc(sizeof(Node), MEMORY_ALLOCATION_ALIGNMENT));
+    ASSERT_CRASH(node != nullptr, "ALIGNED_MALLOC_FAILED");
+
+    return node;
+}
