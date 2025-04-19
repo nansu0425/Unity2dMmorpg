@@ -118,11 +118,13 @@ void BlockMemoryPoolTest()
     {
         for (Int32 i = 0; i < 10'000; ++i)
         {
-            blocks[i] = tBlockMemoryPool->Pop();
+            // 1~1024 랜덤 숫자
+            Int64 size = rand() % 1024 + 1;
+            blocks[i] = static_cast<Byte*>(BlockMemoryAllocator::Alloc(size));
         }
         for (Int32 i = 0; i < 10'000; ++i)
         {
-            tBlockMemoryPool->Push(blocks[i]);
+            BlockMemoryAllocator::Free(blocks[i]);
         }
     }
 }
@@ -135,7 +137,9 @@ void MallocTest()
     {
         for (Int32 i = 0; i < 10'000; ++i)
         {
-            blocks[i] = static_cast<Byte*>(::malloc(64));
+            // 1~1024 랜덤 숫자
+            Int64 size = rand() % 1024 + 1;
+            blocks[i] = static_cast<Byte*>(::malloc(size));
         }
         for (Int32 i = 0; i < 10'000; ++i)
         {

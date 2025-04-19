@@ -129,3 +129,10 @@ private:
 
 template<typename T>
 MemoryPool      ObjectPoolMemoryAllocator<T>::sMemoryPool(kAllocSize);
+
+class BlockMemoryAllocator
+{
+public:
+    static void*    Alloc(UInt64 size);
+    static void     Free(void* memory);
+};

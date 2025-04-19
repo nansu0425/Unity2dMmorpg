@@ -56,7 +56,7 @@ MemoryPoolManager::MemoryPoolManager()
     InitPools(2048 + 256, 4096, 256, poolIdx, allocSize);
 
     ASSERT_CRASH(poolIdx == kPoolCount, "INVALID_POOL_COUNT");
-    ASSERT_CRASH(allocSize == kMaxAllocSize + 1, "INVALID_ALLOC_MAPPING");
+    ASSERT_CRASH(allocSize == kMaxBlockSize + 1, "INVALID_ALLOC_MAPPING");
 }
 
 MemoryPoolManager::~MemoryPoolManager()
@@ -75,7 +75,7 @@ void MemoryPoolManager::Push(void* memory)
     StompMemoryAllocator::Free(header);
 #else
     const UInt64 allocSize = header->allocSize;
-    if (allocSize > kMaxAllocSize)
+    if (allocSize > kMaxBlockSize)
     {
         // 최대 할당 크기보다 큰 경우 메모리 해제
         ::_aligned_free(header);
@@ -95,7 +95,7 @@ void* MemoryPoolManager::Pop(UInt64 size)
 #if USE_STOMP_ALLOCATOR
     header = static_cast<MemoryHeader*>(StompMemoryAllocator::Alloc(allocSize));
 #else
-    if (allocSize > kMaxAllocSize)
+    if (allocSize > kMaxBlockSize)
     {
         // 최대 할당 크기보다 큰 경우 메모리 할당
         header = static_cast<MemoryHeader*>(::_aligned_malloc(allocSize, MEMORY_ALLOCATION_ALIGNMENT));
@@ -128,7 +128,7 @@ void MemoryPoolManager::InitPools(Int32 startPoolSize, Int32 endPoolSize, Int32 
 ChunkMemoryPool::ChunkMemoryPool()
 {
     ::InitializeSListHead(&mPooledNodes);
-    ChargeNodes(AllocChunks(kInitNodeCount), kInitNodeCount);
+    AllocChunks(kInitChunkCount);
 }
 
 ChunkMemoryPool::Node* ChunkMemoryPool::Pop()
@@ -138,9 +138,9 @@ ChunkMemoryPool::Node* ChunkMemoryPool::Pop()
     if (node == nullptr)
     {
         // 부족한 노드를 채운다
-        ChargeNodes(AllocChunks(kChargeChunkCount), kChargeChunkCount);
+        AllocChunks(kChargeChunkCount);
         node = static_cast<Node*>(::InterlockedPopEntrySList(&mPooledNodes));
-        ASSERT_CRASH(node != nullptr, "SLIST_EMPTY");
+        ASSERT_CRASH(node != nullptr, "POOLED_NODE_EMPTY");
     }
     node->Next = nullptr;
     mPooledNodeCount.fetch_sub(1);
@@ -153,13 +153,19 @@ void ChunkMemoryPool::Push(Node* node)
 #ifdef _DEBUG
     ::memset(node->chunk, 0x00, kChunkSize);
 #endif // _DEBUG
-
+    ASSERT_CRASH_DEBUG(node->Next == nullptr, "NODE_CORRUPTION");
     ::InterlockedPushEntrySList(&mPooledNodes, node);
     mPooledNodeCount.fetch_add(1);
 }
 
-void ChunkMemoryPool::ChargeNodes(Byte* chunks, Int64 count)
+void ChunkMemoryPool::AllocChunks(Int64 count)
 {
+    // 연속된 청크를 할당 받는다
+    Byte* chunks = static_cast<Byte*>(::VirtualAlloc(nullptr, kChunkSize * count, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
+    ASSERT_CRASH(chunks != nullptr, "VIRTUAL_ALLOC_FAILED");
+    mTotalNodeCount.fetch_add(count);
+
+    // 연속된 청크들을 쪼개서 노드에 할당
     for (Int64 i = 0; i < count; ++i)
     {
         // 노드 생성
@@ -169,15 +175,6 @@ void ChunkMemoryPool::ChargeNodes(Byte* chunks, Int64 count)
         ::InterlockedPushEntrySList(&mPooledNodes, node);
         mPooledNodeCount.fetch_add(1);
     }
-}
-
-Byte* ChunkMemoryPool::AllocChunks(Int64 count)
-{
-    Byte* chunks = static_cast<Byte*>(::VirtualAlloc(nullptr, kChunkSize * count, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
-    ASSERT_CRASH(chunks != nullptr, "VIRTUAL_ALLOC_FAILED");
-    mTotalNodeCount.fetch_add(count);
-
-    return chunks;
 }
 
 ChunkMemoryPool::Node* ChunkMemoryPool::CreateNode()
@@ -207,8 +204,9 @@ BlockMemoryPool::~BlockMemoryPool()
     }
 }
 
-Byte* BlockMemoryPool::Pop()
+BlockMemoryPool::BlockHeader* BlockMemoryPool::Pop()
 {
+    // 풀에서 블록을 꺼낸다
     BlockHeader* header = mPooledBlocks;
     if (header == nullptr)
     {
@@ -216,20 +214,22 @@ Byte* BlockMemoryPool::Pop()
         header = mPooledBlocks;
         ASSERT_CRASH(header != nullptr, "POOLED_BLOCKS_EMPTY");
     }
+
+    ASSERT_CRASH_DEBUG(header->blockSize == mBlockSize, "INVALID_BLOCK");
     mPooledBlocks = header->next;
     header->next = nullptr;
     --mPooledBlockCount;
 
-    return reinterpret_cast<Byte*>(header);
+    return header;
 }
 
-void BlockMemoryPool::Push(Byte* block)
+void BlockMemoryPool::Push(BlockHeader* header)
 {
 #ifdef _DEBUG
-    ::memset(block, 0x00, mBlockSize);
+    ::memset(header + 1, 0x00, mBlockSize - SIZE_64(BlockHeader));
 #endif // _DEBUG
-
-    BlockHeader* header = reinterpret_cast<BlockHeader*>(block);
+    
+    ASSERT_CRASH_DEBUG(header->blockSize == mBlockSize, "INVALID_BLOCK");
     header->next = mPooledBlocks;
     mPooledBlocks = header;
     ++mPooledBlockCount;
@@ -246,10 +246,82 @@ void BlockMemoryPool::ChargeBlocks()
     // 청크를 블록으로 나누어 풀에 추가
     for (Int64 i = 0; i < ChunkMemoryPool::kChunkSize / mBlockSize; ++i)
     {
+        // 헤더 설정
         BlockHeader* header = reinterpret_cast<BlockHeader*>(node->chunk + (i * mBlockSize));
         header->next = mPooledBlocks;
+        header->blockSize = mBlockSize;
+
         mPooledBlocks = header;
         ++mPooledBlockCount;
         ++mTotalBlockCount;
+    }
+}
+
+BlockMemoryPoolManager::BlockMemoryPoolManager()
+{
+    InitPools();
+}
+
+BlockMemoryPoolManager::~BlockMemoryPoolManager()
+{
+    for (BlockMemoryPool* pool : mBlockPools)
+    {
+        delete pool;
+        pool = nullptr;
+    }
+}
+
+Byte* BlockMemoryPoolManager::Pop(Int64 payloadSize)
+{
+    BlockHeader* header = nullptr;
+    Int64 allocSize = SIZE_64(BlockHeader) + payloadSize;
+
+    if (allocSize > kMaxBlockSize)
+    {
+        // 최대 할당 크기보다 큰 경우 메모리 할당
+        header = static_cast<BlockHeader*>(::_aligned_malloc(allocSize, 64));
+        header->next = nullptr;
+        header->blockSize = allocSize;
+    }
+    else
+    {
+        header = mSizeToPool[allocSize]->Pop();
+    }
+    
+    return reinterpret_cast<Byte*>(header + 1);
+}
+
+void BlockMemoryPoolManager::Push(Byte* payload)
+{
+    BlockHeader* header = reinterpret_cast<BlockHeader*>(payload) - 1;
+    ASSERT_CRASH_DEBUG(header->next == nullptr, "BLOCK_CORRUPTION");
+
+    if (header->blockSize > kMaxBlockSize)
+    {
+        // 최대 할당 크기보다 큰 경우 메모리 해제
+        ::_aligned_free(header);
+        return;
+    }
+    else
+    {
+        mSizeToPool[header->blockSize]->Push(header);
+    }
+}
+
+void BlockMemoryPoolManager::InitPools()
+{
+    Int64 blockSize = kMinBlockSize;
+    Int64 sizeToPoolIdx = 0;
+    while (blockSize <= kMaxBlockSize)
+    {
+        // 블록 풀 생성
+        mBlockPools.push_back(new BlockMemoryPool(blockSize));
+        // 블록 풀에 매핑
+        for (; sizeToPoolIdx <= blockSize; ++sizeToPoolIdx)
+        {
+            mSizeToPool[sizeToPoolIdx] = mBlockPools.back();
+        }
+
+        blockSize <<= 1;
     }
 }

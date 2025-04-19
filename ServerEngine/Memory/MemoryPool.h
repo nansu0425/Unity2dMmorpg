@@ -68,12 +68,12 @@ private:
     enum : Int32
     {
         kPoolCount      = (1024 / 32) + (1024 / 128) + (2048 / 256),
-        kMaxAllocSize   = 4096,
+        kMaxBlockSize   = 4096,
     };
 
 private:
     MemoryPool*         mPools[kPoolCount];
-    MemoryPool*         mPoolTable[kMaxAllocSize + 1];
+    MemoryPool*         mPoolTable[kMaxBlockSize + 1];
 };
 
 class alignas(MEMORY_ALLOCATION_ALIGNMENT) ChunkMemoryPool
@@ -82,14 +82,14 @@ public:
     struct alignas(MEMORY_ALLOCATION_ALIGNMENT) Node
         : public SLIST_ENTRY
     {
-        Byte* chunk = nullptr;
+        Byte*   chunk = nullptr;
     };
 
     enum Config : Int64
     {
-        kChunkSize = 64 * 1024,
-        kInitNodeCount = 16,
-        kChargeChunkCount = 4,
+        kChunkSize          = 0x0001'0000,  // allocation granularity 배수로 설정
+        kInitChunkCount     = 1024,
+        kChargeChunkCount   = 16,
     };
 
 public:
@@ -99,8 +99,7 @@ public:
     void    Push(Node* node);
 
 private:
-    void    ChargeNodes(Byte* chunks, Int64 count);
-    Byte*   AllocChunks(Int64 count);
+    void    AllocChunks(Int64 count);
     Node*   CreateNode();
 
 private:
@@ -116,18 +115,19 @@ public:
 
     struct BlockHeader
     {
-        BlockHeader*  next = nullptr;
+        BlockHeader*    next;
+        Int64           blockSize;
     };
 
 public:
     BlockMemoryPool(Int64 blockSize);
     ~BlockMemoryPool();
 
-    Byte*   Pop();
-    void    Push(Byte* block);
+    BlockHeader*    Pop();
+    void            Push(BlockHeader* header);
 
 private:
-    void    ChargeBlocks();
+    void            ChargeBlocks();
 
 private:
     const Int64     mBlockSize = 0;
@@ -137,4 +137,31 @@ private:
     Int64           mPooledNodeCount = 0;
     Int64           mPooledBlockCount = 0;
     Int64           mTotalBlockCount = 0;
+};
+
+class BlockMemoryPoolManager
+{
+public:
+    enum Config : Int64
+    {
+        kMinBlockSize   = 32,
+        kMaxBlockSize   = 1024,
+    };
+
+public:
+    BlockMemoryPoolManager();
+    ~BlockMemoryPoolManager();
+
+    Byte*   Pop(Int64 payloadSize);
+    void    Push(Byte* payload);
+
+private:
+    using BlockHeader   = BlockMemoryPool::BlockHeader;
+
+private:
+    void    InitPools();
+
+private:
+    Vector<BlockMemoryPool*>    mBlockPools;
+    BlockMemoryPool*            mSizeToPool[kMaxBlockSize + 1] = {};
 };

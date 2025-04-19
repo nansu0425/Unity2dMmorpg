@@ -38,3 +38,13 @@ void PoolMemoryAllocator::Free(void* memory)
 {
     gMemoryPoolManager->Push(memory);
 }
+
+void* BlockMemoryAllocator::Alloc(UInt64 size)
+{
+    return tBlockMemoryPoolManager->Pop(static_cast<Int64>(size));
+}
+
+void BlockMemoryAllocator::Free(void* memory)
+{
+    tBlockMemoryPoolManager->Push(static_cast<Byte*>(memory));
+}

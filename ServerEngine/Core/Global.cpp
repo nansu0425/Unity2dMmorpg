@@ -14,7 +14,7 @@ MemoryPoolManager*      gMemoryPoolManager = nullptr;
 GlobalContext::GlobalContext()
 {
     gChunkMemoryPool    = new ChunkMemoryPool();
-    gThreadManager      = new ThreadManager();
+    gThreadManager      = new ThreadManager(); // TLS 영역 초기화
     gDeadlockDetector   = new DeadlockDetector();
     gMemoryPoolManager  = new MemoryPoolManager();
     SocketUtils::Init();

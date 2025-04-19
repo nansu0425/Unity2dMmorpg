@@ -44,15 +44,15 @@ void ThreadManager::InitTls()
     static Atomic<Int32> sThreadId = 1;
     tThreadId = sThreadId.fetch_add(1);
     ASSERT_CRASH(tThreadId > 0, "THREAD_ID_OVERFLOW");
-    // 스레드 로컬 메모리 풀 생성
-    tBlockMemoryPool = new BlockMemoryPool(64);
+    // 메모리 풀 생성
+    tBlockMemoryPoolManager = new BlockMemoryPoolManager();
 }
 
 void ThreadManager::DestroyTls()
 {
-    // 스레드 로컬 메모리 풀 삭제
-    delete tBlockMemoryPool;
-    tBlockMemoryPool = nullptr;
+    // 메모리 풀 삭제
+    delete tBlockMemoryPoolManager;
+    tBlockMemoryPoolManager = nullptr;
     // 스레드 id 초기화
     tThreadId = 0;
 }
