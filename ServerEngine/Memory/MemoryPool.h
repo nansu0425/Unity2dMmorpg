@@ -126,6 +126,8 @@ public:
     BlockHeader*    Pop();
     void            Push(BlockHeader* header);
 
+    Int64           GetBlockSize() const { return mBlockSize; }
+
 private:
     void            ChargeBlocks();
 
@@ -152,8 +154,8 @@ public:
     BlockMemoryPoolManager();
     ~BlockMemoryPoolManager();
 
-    Byte*   Pop(Int64 payloadSize);
-    void    Push(Byte* payload);
+    Byte*   Pop(Int64 allocSize);
+    void    Push(Byte* block, Int64 allocSize);
 
 private:
     using BlockHeader   = BlockMemoryPool::BlockHeader;

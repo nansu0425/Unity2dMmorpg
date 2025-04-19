@@ -226,11 +226,11 @@ BlockMemoryPool::BlockHeader* BlockMemoryPool::Pop()
 void BlockMemoryPool::Push(BlockHeader* header)
 {
 #ifdef _DEBUG
-    ::memset(header + 1, 0x00, mBlockSize - SIZE_64(BlockHeader));
+    ::memset(header, 0x00, mBlockSize);
 #endif // _DEBUG
     
-    ASSERT_CRASH_DEBUG(header->blockSize == mBlockSize, "INVALID_BLOCK");
     header->next = mPooledBlocks;
+    header->blockSize = mBlockSize;
     mPooledBlocks = header;
     ++mPooledBlockCount;
 }
@@ -271,55 +271,53 @@ BlockMemoryPoolManager::~BlockMemoryPoolManager()
     }
 }
 
-Byte* BlockMemoryPoolManager::Pop(Int64 payloadSize)
+Byte* BlockMemoryPoolManager::Pop(Int64 allocSize)
 {
     BlockHeader* header = nullptr;
-    Int64 allocSize = SIZE_64(BlockHeader) + payloadSize;
 
     if (allocSize > kMaxBlockSize)
     {
-        // 최대 할당 크기보다 큰 경우 메모리 할당
+        // 최대 블록 크기보다 큰 경우 메모리 할당
         header = static_cast<BlockHeader*>(::_aligned_malloc(allocSize, 64));
-        header->next = nullptr;
-        header->blockSize = allocSize;
     }
     else
     {
         header = mSizeToPool[allocSize]->Pop();
+        ASSERT_CRASH_DEBUG(header->blockSize >= allocSize, "INVALID_BLOCK");
+        header->blockSize = 0;
     }
     
-    return reinterpret_cast<Byte*>(header + 1);
+    return reinterpret_cast<Byte*>(header);
 }
 
-void BlockMemoryPoolManager::Push(Byte* payload)
+void BlockMemoryPoolManager::Push(Byte* block, Int64 allocSize)
 {
-    BlockHeader* header = reinterpret_cast<BlockHeader*>(payload) - 1;
-    ASSERT_CRASH_DEBUG(header->next == nullptr, "BLOCK_CORRUPTION");
+    BlockHeader* header = reinterpret_cast<BlockHeader*>(block);
 
-    if (header->blockSize > kMaxBlockSize)
+    if (allocSize > kMaxBlockSize)
     {
-        // 최대 할당 크기보다 큰 경우 메모리 해제
+        // 최대 블록 크기보다 큰 경우 메모리 해제
         ::_aligned_free(header);
-        return;
     }
     else
     {
-        mSizeToPool[header->blockSize]->Push(header);
+        mSizeToPool[allocSize]->Push(header);
     }
 }
 
 void BlockMemoryPoolManager::InitPools()
 {
     Int64 blockSize = kMinBlockSize;
-    Int64 sizeToPoolIdx = 0;
+    Int64 allocSize = 0;
+
     while (blockSize <= kMaxBlockSize)
     {
         // 블록 풀 생성
         mBlockPools.push_back(new BlockMemoryPool(blockSize));
-        // 블록 풀에 매핑
-        for (; sizeToPoolIdx <= blockSize; ++sizeToPoolIdx)
+        // 할당 크기에 맞는 블록 풀에 매핑
+        for (; allocSize <= blockSize; ++allocSize)
         {
-            mSizeToPool[sizeToPoolIdx] = mBlockPools.back();
+            mSizeToPool[allocSize] = mBlockPools.back();
         }
 
         blockSize <<= 1;

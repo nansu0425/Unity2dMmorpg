@@ -3,128 +3,42 @@
 #include "GameServer/Pch.h"
 #include "ServerEngine/Concurrency/Thread.h"
 
-class ResourceBase
-{
-public:
-    ResourceBase(Int32 threadId)
-        : mThreadId(ObjectPool<Int32>::Pop(threadId))
-    {
-        std::cout << *mThreadId << ": Resource created\n";
-    }
-    ~ResourceBase()
-    {
-        std::cout << *mThreadId << ": Resource destroyed\n";
-        ObjectPool<Int32>::Push(mThreadId);
-    }
-
-protected:
-    Int32* mThreadId = 0;
-};
-
 class Resource
-    : public ResourceBase
 {
 public:
-    Resource(Int32 threadId, UInt64 workerNumber)
-        : ResourceBase(threadId)
-        , mWorkerNumber(ObjectPool<UInt64>::Pop(workerNumber))
+    static void* operator new(size_t size)
     {
-        std::cout << *mThreadId << ": worker number is " << *mWorkerNumber << "\n";
+        return BlockMemoryAllocator::Alloc(size);
     }
 
-    ~Resource()
+    static void operator delete(void* memory) noexcept
     {
-        ObjectPool<UInt64>::Push(mWorkerNumber);
+        BlockMemoryAllocator::Free(memory, sizeof(Resource));
     }
 
 private:
-    UInt64* mWorkerNumber = nullptr;
+    UInt64   mA = 0xAAAA'AAAA;
+    UInt64   mB = 0xBBBB'BBBB;
+    UInt64   mC = 0xCCCC'CCCC;
+    UInt64   mD = 0xDDDD'DDDD;
 };
-
-class Workers
-{
-public:
-    Workers(const Int32 workerCount)
-    {
-        for (Int32 i = 0; i < workerCount; ++i)
-        {
-            gThreadManager->Launch([this]()
-                                   {
-                                       Run();
-                                   });
-        }
-    }
-
-    ~Workers()
-    {
-        gThreadManager->Join();
-    }
-
-private:
-    void Run()
-    {
-        Int32 threadId = 0;
-        UInt64 workerNumber = 0;
-        {
-            WRITE_GUARD;
-            mData.push_back(tThreadId);
-            threadId = mData.back();
-            workerNumber = mData.size();
-        }
-        while (true)
-        {
-            PoolObjectAllocator::SharedPtr<ResourceBase> resoucre1 = PoolObjectAllocator::MakeShared<Resource>(threadId, workerNumber);
-            PoolObjectAllocator::UniquePtr<ResourceBase> resoucre2 = PoolObjectAllocator::MakeUnique<Resource>(threadId, workerNumber);
-        }
-    }
-
-private:
-    RW_LOCK;
-    PoolMemoryAllocator::Vector<Int32> mData;
-};
-
-constexpr Int32 gTestCount = 1000;
-constexpr Int32 gDataSize = 1000;
-
-void TestMemory_std()
-{
-    for (Int32 i = 0; i < gTestCount; ++i)
-    {
-        Vector<UniquePtr<Int32>> data(gDataSize);
-        for (Int32 j = 0; j < gDataSize; ++j)
-        {
-            data[j] = std::make_unique<Int32>(j);
-        }
-    }
-}
-
-void TestMemory_custom()
-{
-    for (Int32 i = 0; i < gTestCount; ++i)
-    {
-        PoolMemoryAllocator::Vector<PoolObjectAllocator::UniquePtr<Int32>> data(gDataSize);
-        for (Int32 j = 0; j < gDataSize; ++j)
-        {
-            data[j] = PoolObjectAllocator::MakeUnique<Int32>(j);
-        }
-    }
-}
 
 void BlockMemoryPoolTest()
 {
     Byte* blocks[10'000] = {};
+    UInt64 size[10'000] = {};
 
     for (Int32 i = 0; i < 1000; ++i)
     {
         for (Int32 i = 0; i < 10'000; ++i)
         {
-            // 1~1024 랜덤 숫자
-            Int64 size = rand() % 1024 + 1;
-            blocks[i] = static_cast<Byte*>(BlockMemoryAllocator::Alloc(size));
+            // 1~1024 범위 내에서 랜덤한 크기 할당
+            // size[i] = (rand() % 1024) + 1;
+            blocks[i] = static_cast<Byte*>(BlockMemoryAllocator::Alloc(800));
         }
         for (Int32 i = 0; i < 10'000; ++i)
         {
-            BlockMemoryAllocator::Free(blocks[i]);
+            BlockMemoryAllocator::Free(blocks[i], 800);
         }
     }
 }
@@ -137,9 +51,9 @@ void MallocTest()
     {
         for (Int32 i = 0; i < 10'000; ++i)
         {
-            // 1~1024 랜덤 숫자
-            Int64 size = rand() % 1024 + 1;
-            blocks[i] = static_cast<Byte*>(::malloc(size));
+            // 1~1024 범위 내에서 랜덤한 크기 할당
+            // UInt64 size = (rand() % 1024) + 1;
+            blocks[i] = static_cast<Byte*>(::malloc(800));
         }
         for (Int32 i = 0; i < 10'000; ++i)
         {
@@ -154,53 +68,30 @@ int main()
     //auto start = std::chrono::high_resolution_clock::now();
     //for (Int32 i = 0; i < 4; ++i)
     //{
-    //    gThreadManager->Launch(TestMemory_std);
+    //    gThreadManager->Launch(BlockMemoryPoolTest);
     //}
     //gThreadManager->Join();
     //// 실행 시간 측정 종료
     //auto end = std::chrono::high_resolution_clock::now();
     //// ms 단위 실행 시간 계산
     //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    //std::cout << "TestMemory_std: " << duration.count() << " ms\n";
-    //
+    //std::cout << "BlockMemoryPoolTest: " << duration.count() << " ms\n";
+
     //// 실행 시간 측정 시작
     //start = std::chrono::high_resolution_clock::now();
     //for (Int32 i = 0; i < 4; ++i)
     //{
-    //    gThreadManager->Launch(TestMemory_custom);
+    //    gThreadManager->Launch(MallocTest);
     //}
     //gThreadManager->Join();
     //// 실행 시간 측정 종료
     //end = std::chrono::high_resolution_clock::now();
     //// ms 단위 실행 시간 계산
     //duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    //std::cout << "TestMemory_custom: " << duration.count() << " ms\n";
+    //std::cout << "MallocTest: " << duration.count() << " ms\n";
 
-    // 실행 시간 측정 시작
-    auto start = std::chrono::high_resolution_clock::now();
-    for (Int32 i = 0; i < 4; ++i)
-    {
-        gThreadManager->Launch(BlockMemoryPoolTest);
-    }
-    gThreadManager->Join();
-    // 실행 시간 측정 종료
-    auto end = std::chrono::high_resolution_clock::now();
-    // ms 단위 실행 시간 계산
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "BlockMemoryPoolTest: " << duration.count() << " ms\n";
-
-    // 실행 시간 측정 시작
-    start = std::chrono::high_resolution_clock::now();
-    for (Int32 i = 0; i < 4; ++i)
-    {
-        gThreadManager->Launch(MallocTest);
-    }
-    gThreadManager->Join();
-    // 실행 시간 측정 종료
-    end = std::chrono::high_resolution_clock::now();
-    // ms 단위 실행 시간 계산
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "MallocTest: " << duration.count() << " ms\n";
+    Resource* resource = new Resource();
+    delete resource;
 
     return 0;
 }
