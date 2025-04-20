@@ -323,3 +323,223 @@ void BlockMemoryPoolManager::InitPools()
         blockSize <<= 1;
     }
 }
+
+GlobalBlockMemoryPool::GlobalBlockMemoryPool(Config config)
+    : mConfig(config)
+{
+    ASSERT_CRASH((mConfig.chunkSize % 0x0001'0000 == 0) && // 청크의 크기는 64KB의 배수여야 한다
+                 (mConfig.chunkSize % mConfig.blockSize == 0) && // 청크의 크기는 블록 크기로 나누어 떨어져야 한다
+                 (mConfig.blockSize >= SIZE_64(BlockMemoryHeader)), // 블록 크기는 헤더 크기보다 커야 한다
+                 "INVALID_CONFIG");
+
+    ::InitializeSListHead(&mPooledBlocks);
+    AddBlocks(mConfig.initChunkCount);
+}
+
+GlobalBlockMemoryPool::~GlobalBlockMemoryPool()
+{}
+
+BlockMemoryHeader* GlobalBlockMemoryPool::Pop()
+{
+    BlockMemoryHeader* header = static_cast<BlockMemoryHeader*>(::InterlockedPopEntrySList(&mPooledBlocks));
+
+    if (header == nullptr)
+    {
+        // 블록이 없는 경우 블록 추가
+        AddBlocks(mConfig.chargeChunkCount);
+        header = static_cast<BlockMemoryHeader*>(::InterlockedPopEntrySList(&mPooledBlocks));
+        ASSERT_CRASH(header != nullptr, "POOLED_BLOCKS_EMPTY");
+    }
+
+    ASSERT_CRASH_DEBUG((header->blockSize == mConfig.blockSize) &&
+                       (header->poolIdx == mConfig.poolIdx),
+                       "INVALID_BLOCK");
+    mPooledBlockCount.fetch_sub(1);
+
+    return header;
+}
+
+void GlobalBlockMemoryPool::Push(BlockMemoryHeader* header)
+{
+    ASSERT_CRASH_DEBUG((header->blockSize == mConfig.blockSize) &&
+                       (header->poolIdx == mConfig.poolIdx),
+                       "INVALID_BLOCK");
+    ::InterlockedPushEntrySList(&mPooledBlocks, header);
+    mPooledBlockCount.fetch_add(1);
+}
+
+void GlobalBlockMemoryPool::AddBlocks(Int64 chunkCount)
+{
+    Byte* chunks = AllocChunks(chunkCount);
+    const Int64 blockCount = chunkCount * mConfig.chunkSize / mConfig.blockSize;
+    Byte* block = chunks;
+
+    // 청크를 블록으로 나누어 풀에 추가
+    for (Int64 i = 0; i < blockCount; ++i)
+    {
+        // 헤더 설정
+        BlockMemoryHeader* header = reinterpret_cast<BlockMemoryHeader*>(block);
+        header->blockSize = mConfig.blockSize;
+        header->poolIdx = mConfig.poolIdx;
+        // 블록 추가
+        ::InterlockedPushEntrySList(&mPooledBlocks, reinterpret_cast<BlockMemoryHeader*>(block));
+        mPooledBlockCount.fetch_add(1);
+        mTotalBlockCount.fetch_add(1);
+        block += mConfig.blockSize;
+    }
+}
+
+Byte* GlobalBlockMemoryPool::AllocChunks(Int64 count)
+{
+    // 연속된 청크를 할당 받는다
+    Byte* chunks = static_cast<Byte*>(::VirtualAlloc(nullptr, mConfig.chunkSize * count, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE));
+    ASSERT_CRASH(chunks != nullptr, "VIRTUAL_ALLOC_FAILED");
+
+    return chunks;
+}
+
+GlobalBlockMemoryPoolManager::GlobalBlockMemoryPoolManager()
+{}
+
+BlockMemoryHeader* GlobalBlockMemoryPoolManager::Pop(Int64 poolIdx)
+{
+    ASSERT_CRASH_DEBUG((0 <= poolIdx) &&
+                       (poolIdx < kBlockPoolCount),
+                       "INVALID_POOL_INDEX");
+    return mBlockPools[poolIdx].Pop();
+}
+
+void GlobalBlockMemoryPoolManager::Push(BlockMemoryHeader* header)
+{
+    ASSERT_CRASH_DEBUG((0 <= header->poolIdx) &&
+                       (header->poolIdx < kBlockPoolCount),
+                       "INVALID_POOL_INDEX");
+    mBlockPools[header->poolIdx].Push(header);
+}
+
+TlsBlockMemoryPool::TlsBlockMemoryPool(Config config)
+    : mConfig(config)
+{
+    AddBlocks(mConfig.initBlockCount);
+}
+
+TlsBlockMemoryPool::~TlsBlockMemoryPool()
+{
+    while (BlockMemoryHeader* header = mPooledBlocks)
+    {
+        // 블록 반납
+        mPooledBlocks = static_cast<BlockMemoryHeader*>(header->Next);
+        header->Next = nullptr;
+        --mPooledBlockCount;
+        gBlockMemoryPoolManager->Push(header);
+    }
+    ASSERT_CRASH(mPooledBlockCount == 0, "INVALID_BLOCK_COUNT");
+}
+
+Byte* TlsBlockMemoryPool::Pop()
+{
+    BlockMemoryHeader* header = mPooledBlocks;
+
+    if (header == nullptr)
+    {
+        // 블록이 없는 경우 블록 추가
+        AddBlocks(mConfig.chargeBlockCount);
+        header = mPooledBlocks;
+        ASSERT_CRASH(header != nullptr, "POOLED_BLOCKS_EMPTY");
+    }
+    ASSERT_CRASH_DEBUG((header->blockSize == mConfig.blockSize) &&
+                       (header->poolIdx == mConfig.poolIdx),
+                       "INVALID_BLOCK");
+    mPooledBlocks = static_cast<BlockMemoryHeader*>(header->Next);
+    header->Next = nullptr;
+    --mPooledBlockCount;
+#ifdef _DEBUG
+    ::memset(header, 0x00, SIZE_64(BlockMemoryHeader));
+#endif // _DEBUG
+
+    return reinterpret_cast<Byte*>(header);
+}
+
+void TlsBlockMemoryPool::Push(Byte* block)
+{
+    BlockMemoryHeader* header = reinterpret_cast<BlockMemoryHeader*>(block);
+#ifdef _DEBUG
+    ::memset(header, 0x00, mConfig.blockSize);
+#endif // _DEBUG
+
+    header->Next = mPooledBlocks;
+    header->blockSize = mConfig.blockSize;
+    header->poolIdx = mConfig.poolIdx;
+
+    mPooledBlocks = header;
+    ++mPooledBlockCount;
+}
+
+void TlsBlockMemoryPool::AddBlocks(Int64 blockCount)
+{
+    Int64 prevCount = mPooledBlockCount;
+
+    for (Int64 i = 0; i < blockCount; ++i)
+    {
+        // 전역 블록 풀에서 블록을 가져온다
+        BlockMemoryHeader* header = gBlockMemoryPoolManager->Pop(mConfig.poolIdx);
+        ASSERT_CRASH_DEBUG((header->blockSize == mConfig.blockSize) &&
+                           (header->poolIdx == mConfig.poolIdx),
+                           "INVALID_BLOCK");
+        // 블록 추가
+        header->Next = mPooledBlocks;
+        mPooledBlocks = header;
+        ++mPooledBlockCount;
+    }
+
+    ASSERT_CRASH_DEBUG((mPooledBlockCount - prevCount) == blockCount, "INVALID_BLOCK_COUNT");
+}
+
+TlsBlockMemoryPoolManager::TlsBlockMemoryPoolManager()
+{
+    Int64 allocSize = 1;
+    Int64 blockSize = kMinBlockSize;
+
+    for (Int64 i = 0; i < kBlockPoolCount; ++i)
+    {
+        ASSERT_CRASH(blockSize == mBlockPools[i].GetBlockSize(), "INVALID_BLOCK_SIZE");
+        // 할당 크기에 맞는 블록 풀 매핑
+        for (; allocSize <= blockSize; ++allocSize)
+        {
+            mSizeToPool[allocSize] = &mBlockPools[i];
+        }
+        blockSize <<= 1;
+    }
+}
+
+Byte* TlsBlockMemoryPoolManager::Pop(Int64 allocSize)
+{
+    Byte* block = nullptr;
+
+    if (allocSize > kMaxBlockSize)
+    {
+        // 최대 블록 크기보다 큰 경우 메모리 할당
+        block = static_cast<Byte*>(::_aligned_malloc(allocSize, MEMORY_ALLOCATION_ALIGNMENT));
+    }
+    else
+    {
+        // 블록 풀에서 블록을 가져온다
+        block = mSizeToPool[allocSize]->Pop();
+    }
+
+    return block;
+}
+
+void TlsBlockMemoryPoolManager::Push(Byte* block, Int64 allocSize)
+{
+    if (allocSize > kMaxBlockSize)
+    {
+        // 최대 블록 크기보다 큰 경우 메모리 해제
+        ::_aligned_free(block);
+    }
+    else
+    {
+        // 블록 풀에 반납
+        mSizeToPool[allocSize]->Push(block);
+    }
+}

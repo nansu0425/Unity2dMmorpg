@@ -33,12 +33,12 @@ void BlockMemoryPoolTest()
         for (Int32 i = 0; i < 10'000; ++i)
         {
             // 1~1024 범위 내에서 랜덤한 크기 할당
-            // size[i] = (rand() % 1024) + 1;
-            blocks[i] = static_cast<Byte*>(BlockMemoryAllocator::Alloc(800));
+            size[i] = (rand() % 1024) + 1;
+            blocks[i] = static_cast<Byte*>(BlockMemoryAllocator::Alloc(size[i]));
         }
         for (Int32 i = 0; i < 10'000; ++i)
         {
-            BlockMemoryAllocator::Free(blocks[i], 800);
+            BlockMemoryAllocator::Free(blocks[i], size[i]);
         }
     }
 }
@@ -52,8 +52,8 @@ void MallocTest()
         for (Int32 i = 0; i < 10'000; ++i)
         {
             // 1~1024 범위 내에서 랜덤한 크기 할당
-            // UInt64 size = (rand() % 1024) + 1;
-            blocks[i] = static_cast<Byte*>(::malloc(800));
+            UInt64 size = (rand() % 1024) + 1;
+            blocks[i] = static_cast<Byte*>(::malloc(size));
         }
         for (Int32 i = 0; i < 10'000; ++i)
         {
@@ -64,34 +64,34 @@ void MallocTest()
 
 int main()
 {
-    //// 실행 시간 측정 시작
-    //auto start = std::chrono::high_resolution_clock::now();
-    //for (Int32 i = 0; i < 4; ++i)
-    //{
-    //    gThreadManager->Launch(BlockMemoryPoolTest);
-    //}
-    //gThreadManager->Join();
-    //// 실행 시간 측정 종료
-    //auto end = std::chrono::high_resolution_clock::now();
-    //// ms 단위 실행 시간 계산
-    //auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    //std::cout << "BlockMemoryPoolTest: " << duration.count() << " ms\n";
+    // 실행 시간 측정 시작
+    auto start = std::chrono::high_resolution_clock::now();
+    for (Int32 i = 0; i < 4; ++i)
+    {
+        gThreadManager->Launch(BlockMemoryPoolTest);
+    }
+    gThreadManager->Join();
+    // 실행 시간 측정 종료
+    auto end = std::chrono::high_resolution_clock::now();
+    // ms 단위 실행 시간 계산
+    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "BlockMemoryPoolTest: " << duration.count() << " ms\n";
 
-    //// 실행 시간 측정 시작
-    //start = std::chrono::high_resolution_clock::now();
-    //for (Int32 i = 0; i < 4; ++i)
-    //{
-    //    gThreadManager->Launch(MallocTest);
-    //}
-    //gThreadManager->Join();
-    //// 실행 시간 측정 종료
-    //end = std::chrono::high_resolution_clock::now();
-    //// ms 단위 실행 시간 계산
-    //duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    //std::cout << "MallocTest: " << duration.count() << " ms\n";
+    // 실행 시간 측정 시작
+    start = std::chrono::high_resolution_clock::now();
+    for (Int32 i = 0; i < 4; ++i)
+    {
+        gThreadManager->Launch(MallocTest);
+    }
+    gThreadManager->Join();
+    // 실행 시간 측정 종료
+    end = std::chrono::high_resolution_clock::now();
+    // ms 단위 실행 시간 계산
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    std::cout << "MallocTest: " << duration.count() << " ms\n";
 
-    Resource* resource = new Resource();
-    delete resource;
+    /*Resource* resource = new Resource();
+    delete resource;*/
 
     return 0;
 }

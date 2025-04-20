@@ -6,17 +6,19 @@
 #include "ServerEngine/Memory/MemoryPool.h"
 #include "ServerEngine/Network/SocketUtils.h"
 
-ChunkMemoryPool*        gChunkMemoryPool = nullptr;
-DeadlockDetector*       gDeadlockDetector = nullptr;
-ThreadManager*          gThreadManager = nullptr;
-MemoryPoolManager*      gMemoryPoolManager = nullptr;
+ChunkMemoryPool*                gChunkMemoryPool = nullptr;
+DeadlockDetector*               gDeadlockDetector = nullptr;
+ThreadManager*                  gThreadManager = nullptr;
+MemoryPoolManager*              gMemoryPoolManager = nullptr;
+GlobalBlockMemoryPoolManager*   gBlockMemoryPoolManager = nullptr;
 
 GlobalContext::GlobalContext()
 {
-    gChunkMemoryPool    = new ChunkMemoryPool();
-    gThreadManager      = new ThreadManager(); // TLS 영역 초기화
-    gDeadlockDetector   = new DeadlockDetector();
-    gMemoryPoolManager  = new MemoryPoolManager();
+    gChunkMemoryPool            = new ChunkMemoryPool();
+    gBlockMemoryPoolManager     = new GlobalBlockMemoryPoolManager();
+    gThreadManager              = new ThreadManager(); // TLS 영역 초기화
+    gDeadlockDetector           = new DeadlockDetector();
+    gMemoryPoolManager          = new MemoryPoolManager();
     SocketUtils::Init();
 }
 
@@ -26,6 +28,7 @@ GlobalContext::~GlobalContext()
     delete              gMemoryPoolManager;
     delete              gDeadlockDetector;
     delete              gThreadManager;
+    delete              gBlockMemoryPoolManager;
     delete              gChunkMemoryPool;
 }
 
