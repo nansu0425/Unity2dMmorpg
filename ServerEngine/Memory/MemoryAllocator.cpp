@@ -41,10 +41,10 @@ void PoolMemoryAllocator::Free(void* memory)
 
 void* BlockMemoryAllocator::Alloc(UInt64 size)
 {
-    return tBlockMemoryPoolManager->Pop(static_cast<Int64>(size));
+    return tBlockMemoryPoolManager.Pop(static_cast<Int64>(size));
 }
 
 void BlockMemoryAllocator::Free(void* memory, UInt64 size)
 {
-    tBlockMemoryPoolManager->Push(static_cast<Byte*>(memory), static_cast<Int64>(size));
+    tBlockMemoryPoolManager.Push(static_cast<Byte*>(memory), static_cast<Int64>(size));
 }

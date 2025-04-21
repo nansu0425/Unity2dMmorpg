@@ -135,4 +135,19 @@ class BlockMemoryAllocator
 public:
     static void*    Alloc(UInt64 size);
     static void     Free(void* memory, UInt64 size);
+
+public:
+    template<typename T>
+    class ContainerAdapter
+    {
+    public:
+        using value_type = T;
+
+        constexpr ContainerAdapter() noexcept                           {}
+        template<typename U>
+        constexpr ContainerAdapter(const ContainerAdapter<U>&) noexcept {}
+
+        __declspec(allocator) T* allocate(const UInt64 count)           { return static_cast<T*>(Alloc(count * sizeof(T))); }
+        void deallocate(T* const memory, const UInt64 count) noexcept   { Free(memory, count * sizeof(T)); }
+    };
 };

@@ -3,7 +3,14 @@
 #include "GameServer/Pch.h"
 #include "ServerEngine/Concurrency/Thread.h"
 
-class Resource
+constexpr Int64 gThreadCount = 4;
+UInt64 gExecTime[gThreadCount] = {};
+constexpr Int64 gMemoryCount = 10'000;
+void* gMemory[gMemoryCount] = {};
+Int64 gMemorySize[gMemoryCount] = {};
+constexpr Int64 gTestCount = 1000;
+
+class Resource_Block
 {
 public:
     static void* operator new(size_t size)
@@ -13,7 +20,7 @@ public:
 
     static void operator delete(void* memory) noexcept
     {
-        BlockMemoryAllocator::Free(memory, sizeof(Resource));
+        BlockMemoryAllocator::Free(memory, sizeof(Resource_Block));
     }
 
 private:
@@ -23,75 +30,109 @@ private:
     UInt64   mD = 0xDDDD'DDDD;
 };
 
-void BlockMemoryPoolTest()
+class Resource_Malloc
 {
-    Byte* blocks[10'000] = {};
-    UInt64 size[10'000] = {};
+private:
+    UInt64   mA = 0xAAAA'AAAA;
+    UInt64   mB = 0xBBBB'BBBB;
+    UInt64   mC = 0xCCCC'CCCC;
+    UInt64   mD = 0xDDDD'DDDD;
+};
 
-    for (Int32 i = 0; i < 1000; ++i)
+void BlockMemoryPoolTest(Int64 idx)
+{
+    // 실행 시간 측정 시작
+    auto start = std::chrono::high_resolution_clock::now();
+    for (Int32 i = 0; i < gTestCount; ++i)
     {
-        for (Int32 i = 0; i < 10'000; ++i)
+        // std::vector<std::unique_ptr<Resource_Block>, BlockMemoryAllocator::ContainerAdapter<std::unique_ptr<Resource_Block>>> resources;
+
+        for (Int64 i = gMemoryCount / gThreadCount * idx; i < gMemoryCount / gThreadCount * (idx + 1); ++i)
         {
-            // 1~1024 범위 내에서 랜덤한 크기 할당
-            size[i] = (rand() % 1024) + 1;
-            blocks[i] = static_cast<Byte*>(BlockMemoryAllocator::Alloc(size[i]));
+            // resources.push_back(std::make_unique<Resource_Block>());
+            // 1~4096 범위의 랜덤 사이즈 메모리 할당
+            gMemorySize[i] = rand() % 4096 + 1;
+            gMemory[i] = BlockMemoryAllocator::Alloc(gMemorySize[i]);
         }
-        for (Int32 i = 0; i < 10'000; ++i)
+
+        for (Int64 i = gMemoryCount / gThreadCount * idx; i < gMemoryCount / gThreadCount * (idx + 1); ++i)
         {
-            BlockMemoryAllocator::Free(blocks[i], size[i]);
+            BlockMemoryAllocator::Free(gMemory[i], gMemorySize[i]);
+            gMemory[i] = nullptr;
         }
     }
+    // 실행 시간 측정 종료
+    auto end = std::chrono::high_resolution_clock::now();
+    gExecTime[idx] = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 }
 
-void MallocTest()
+void MallocTest(Int64 idx)
 {
-    Byte* blocks[10'000] = {};
-
-    for (Int32 i = 0; i < 1000; ++i)
+    // 실행 시간 측정 시작
+    auto start = std::chrono::high_resolution_clock::now();
+    for (Int64 i = 0; i < gTestCount; ++i)
     {
-        for (Int32 i = 0; i < 10'000; ++i)
+        // std::vector<std::unique_ptr<Resource_Malloc>> resources;
+
+        for (Int64 i = gMemoryCount / gThreadCount * idx; i < gMemoryCount / gThreadCount * (idx + 1); ++i)
         {
-            // 1~1024 범위 내에서 랜덤한 크기 할당
-            UInt64 size = (rand() % 1024) + 1;
-            blocks[i] = static_cast<Byte*>(::malloc(size));
+            // resources.push_back(std::make_unique<Resource_Malloc>());
+            // 1~4096 범위의 랜덤 사이즈 메모리 할당
+            gMemorySize[i] = rand() % 4096 + 1;
+            gMemory[i] = ::malloc(gMemorySize[i]);
         }
-        for (Int32 i = 0; i < 10'000; ++i)
+
+        for (Int64 i = gMemoryCount / gThreadCount * idx; i < gMemoryCount / gThreadCount * (idx + 1); ++i)
         {
-            ::free(blocks[i]);
+            ::free(gMemory[i]);
+            gMemory[i] = nullptr;
         }
     }
+    // 실행 시간 측정 종료
+    auto end = std::chrono::high_resolution_clock::now();
+    gExecTime[idx] = std::chrono::duration_cast<std::chrono::milliseconds>(end - start).count();
 }
 
 int main()
 {
-    // 실행 시간 측정 시작
-    auto start = std::chrono::high_resolution_clock::now();
-    for (Int32 i = 0; i < 4; ++i)
+    
+    for (Int32 i = 0; i < gThreadCount; ++i)
     {
-        gThreadManager->Launch(BlockMemoryPoolTest);
+        gThreadManager->Launch([i]()
+                               {
+                                   BlockMemoryPoolTest(i);
+                               });
     }
     gThreadManager->Join();
-    // 실행 시간 측정 종료
-    auto end = std::chrono::high_resolution_clock::now();
-    // ms 단위 실행 시간 계산
-    auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "BlockMemoryPoolTest: " << duration.count() << " ms\n";
-
-    // 실행 시간 측정 시작
-    start = std::chrono::high_resolution_clock::now();
-    for (Int32 i = 0; i < 4; ++i)
+    // 실행 시간 평균 계산 후 출력
+    UInt64 totalTime = 0;
+    for (Int32 i = 0; i < gThreadCount; ++i)
     {
-        gThreadManager->Launch(MallocTest);
+        totalTime += gExecTime[i];
+        gExecTime[i] = 0;
+    }
+    UInt64 avgTime = totalTime / gThreadCount;
+    std::cout << "BlockMemoryPoolTest average time: " << avgTime << " ms" << std::endl;
+
+    for (Int32 i = 0; i < gThreadCount; ++i)
+    {
+        gThreadManager->Launch([i]()
+                               {
+                                   MallocTest(i);
+                               });
     }
     gThreadManager->Join();
-    // 실행 시간 측정 종료
-    end = std::chrono::high_resolution_clock::now();
-    // ms 단위 실행 시간 계산
-    duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << "MallocTest: " << duration.count() << " ms\n";
+    // 실행 시간 평균 계산 후 출력
+    totalTime = 0;
+    for (Int32 i = 0; i < gThreadCount; ++i)
+    {
+        totalTime += gExecTime[i];
+        gExecTime[i] = 0;
+    }
+    avgTime = totalTime / gThreadCount;
+    std::cout << "MallocTest average time: " << avgTime << " ms" << std::endl;
 
-    /*Resource* resource = new Resource();
-    delete resource;*/
+    // UniquePtr<Resource_Block> resource = std::make_unique<Resource_Block>();
 
     return 0;
 }
