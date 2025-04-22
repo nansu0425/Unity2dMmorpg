@@ -15,12 +15,12 @@ NetAddress::NetAddress(String16View ip, UInt16 port)
     mAddress.sin_port = ::htons(port);
 }
 
-PoolMemoryAllocator::String16 NetAddress::GetIp() const
+String16 NetAddress::GetIp() const
 {
     Char16 buffer[100] = {};
     ::InetNtop(AF_INET, &mAddress.sin_addr, OUT buffer, NUM_ELEM_64(buffer));
 
-    return PoolMemoryAllocator::String16(buffer);
+    return String16(buffer);
 }
 
 IN_ADDR NetAddress::Ip2Addr(String16View ip)

@@ -7,9 +7,6 @@
     <Filter Include="Concurrency">
       <UniqueIdentifier>{bf2a8b0b-e5f3-495d-953a-b34f9435ca9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Memory">
-      <UniqueIdentifier>{bea8fd23-eec9-467b-ba4f-8c06426b6fde}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Network">
       <UniqueIdentifier>{3f1b2998-d8f4-4816-a21f-edd9bb6694de}</UniqueIdentifier>
     </Filter>
@@ -40,23 +37,11 @@
     <ClInclude Include="Concurrency\Deadlock.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="Memory\MemoryAllocator.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\ObjectPool.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\MemoryPool.h">
-      <Filter>Memory</Filter>
-    </ClInclude>
     <ClInclude Include="Network\NetAddress.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="Network\SocketUtils.h">
       <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="Memory\ObjectAllocator.h">
-      <Filter>Memory</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -75,12 +60,6 @@
     </ClCompile>
     <ClCompile Include="Concurrency\Deadlock.cpp">
       <Filter>Concurrency</Filter>
-    </ClCompile>
-    <ClCompile Include="Memory\MemoryAllocator.cpp">
-      <Filter>Memory</Filter>
-    </ClCompile>
-    <ClCompile Include="Memory\MemoryPool.cpp">
-      <Filter>Memory</Filter>
     </ClCompile>
     <ClCompile Include="Network\NetAddress.cpp">
       <Filter>Network</Filter>

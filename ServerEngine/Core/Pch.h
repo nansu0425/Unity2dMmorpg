@@ -2,6 +2,7 @@
 
 #pragma once
 
+// Windows
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <WinSock2.h>
@@ -9,6 +10,10 @@
 #include <WS2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
 
+// 메모리 할당기로 mimalloc 사용
+#include <mimalloc.h>
+
+// STL
 #include <iostream>
 #include <shared_mutex>
 #include <thread>
@@ -31,4 +36,3 @@
 #include "ServerEngine/Core/Global.h"
 #include "ServerEngine/Core/Tls.h"
 #include "ServerEngine/Concurrency/Lock.h"
-#include "ServerEngine/Memory/ObjectAllocator.h"

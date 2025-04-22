@@ -27,10 +27,6 @@
     <ClInclude Include="Core\Pch.h" />
     <ClInclude Include="Core\Tls.h" />
     <ClInclude Include="Core\Types.h" />
-    <ClInclude Include="Memory\MemoryAllocator.h" />
-    <ClInclude Include="Memory\ObjectAllocator.h" />
-    <ClInclude Include="Memory\ObjectPool.h" />
-    <ClInclude Include="Memory\MemoryPool.h" />
     <ClInclude Include="Network\NetAddress.h" />
     <ClInclude Include="Network\SocketUtils.h" />
     <ClInclude Include="Pch.h" />
@@ -41,8 +37,6 @@
     <ClCompile Include="Concurrency\Thread.cpp" />
     <ClCompile Include="Core\Global.cpp" />
     <ClCompile Include="Core\Tls.cpp" />
-    <ClCompile Include="Memory\MemoryAllocator.cpp" />
-    <ClCompile Include="Memory\MemoryPool.cpp" />
     <ClCompile Include="Network\NetAddress.cpp" />
     <ClCompile Include="Network\SocketUtils.cpp" />
     <ClCompile Include="Pch.cpp">
@@ -108,25 +102,40 @@
     <OutDir>$(SolutionDir)Libraries\$(Configuration)\</OutDir>
     <IntDir>Object\$(Configuration)\</IntDir>
     <LibraryPath>$(SolutionDir)Libraries;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)ThirdParty\mimalloc\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)Libraries\$(Configuration)\</OutDir>
     <IntDir>Object\$(Configuration)\</IntDir>
     <LibraryPath>$(SolutionDir)Libraries;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)ThirdParty\mimalloc\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Libraries\$(Configuration)\</OutDir>
     <IntDir>Object\$(Configuration)\</IntDir>
     <LibraryPath>$(SolutionDir)Libraries;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)ThirdParty\mimalloc\include\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Libraries\$(Configuration)\</OutDir>
     <IntDir>Object\$(Configuration)\</IntDir>
     <LibraryPath>$(SolutionDir)Libraries;$(LibraryPath)</LibraryPath>
-    <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir);$(SolutionDir)ThirdParty\mimalloc\include\;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <VcpkgInstalledDir>$(SolutionDir)vcpkg_installed</VcpkgInstalledDir>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <VcpkgInstalledDir>$(SolutionDir)vcpkg_installed</VcpkgInstalledDir>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgInstalledDir>$(SolutionDir)vcpkg_installed</VcpkgInstalledDir>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <VcpkgInstalledDir>$(SolutionDir)vcpkg_installed</VcpkgInstalledDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
