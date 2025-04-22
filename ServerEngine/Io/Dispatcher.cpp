@@ -19,14 +19,14 @@ IoEventDispatcher::~IoEventDispatcher()
     }
 }
 
-Int64 IoEventDispatcher::Register(IIoObjectOwner* owner)
+Int64 IoEventDispatcher::Register(SharedPtr<IIoObjectOwner> owner)
 {
     if (NULL == ::CreateIoCompletionPort(owner->GetIoObject(), mIocp, 0, 0))
     {
         return ::GetLastError();
     }
 
-    return 0;
+    return SUCCESS;
 }
 
 Int64 IoEventDispatcher::Dispatch(UInt32 timeoutMs)
@@ -43,8 +43,5 @@ Int64 IoEventDispatcher::Dispatch(UInt32 timeoutMs)
     SharedPtr<IIoObjectOwner> owner = event->owner;
     owner->DispatchIoEvent(event, numBytes);
 
-    return 0;
+    return SUCCESS;
 }
-
-// TEMP
-IoEventDispatcher gIoEventDispatcher;

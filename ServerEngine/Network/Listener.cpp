@@ -5,11 +5,10 @@
 #include "ServerEngine/Io/Event.h"
 #include "ServerEngine/Network/Socket.h"
 #include "ServerEngine/Network/Session.h"
+#include "ServerEngine/Network/Service.h"
 
 Listener::Listener()
-{
-    mAcceptEvents = new AcceptEvent[kAcceptCount];
-}
+{}
 
 Listener::~Listener()
 {
@@ -19,16 +18,23 @@ Listener::~Listener()
     mAcceptEvents = nullptr;
 }
 
-Int64 Listener::StartAccept(const NetAddress& address)
+Int64 Listener::StartAccept(SharedPtr<ServerService> service)
 {
     Int64 result = SUCCESS;
+
+    if (nullptr == (mService = std::move(service)))
+    {
+        result = FAILURE;
+        return result;
+    }
+    
     // 리슨 소켓 생성
     if (result = SocketUtils::CreateSocket(mSocket))
     {
         return result;
     }
     // 리슨 소켓을 io 매니저에 등록
-    if (result = gIoEventDispatcher.Register(this))
+    if (result = mService->GetIoDispatcher()->Register(shared_from_this()))
     {
         return result;
     }
@@ -43,7 +49,7 @@ Int64 Listener::StartAccept(const NetAddress& address)
         return result;
     }
 
-    if (result = SocketUtils::BindAddress(mSocket, address))
+    if (result = SocketUtils::BindAddress(mSocket, mService->GetAddress()))
     {
         return result;
     }
@@ -53,8 +59,10 @@ Int64 Listener::StartAccept(const NetAddress& address)
         return result;
     }
 
-    // accept 이벤트 등록
-    for (Int64 i = 0; i < kAcceptCount; ++i)
+    // accept 이벤트 생성 및 등록
+    const Int64 acceptCount = mService->GetMaxSessionCount();
+    mAcceptEvents = new AcceptEvent[acceptCount];
+    for (Int64 i = 0; i < acceptCount; ++i)
     {
         RegisterAccept(&mAcceptEvents[i]);
     }
@@ -83,7 +91,7 @@ void Listener::DispatchIoEvent(IoEvent* event, Int64 numBytes)
 void Listener::RegisterAccept(AcceptEvent* event)
 {
     event->owner = shared_from_this();
-    SharedPtr<Session> session = std::make_shared<Session>();
+    SharedPtr<Session> session = mService->CreateSession();
     event->Init();
     event->session = std::move(session);
 

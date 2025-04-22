@@ -3,7 +3,8 @@
 #pragma once
 
 #define OUT
-#define SUCCESS 0
+#define SUCCESS     0
+#define FAILURE     -1
 
 // 의도적으로 크래시를 발생시킨다
 #define CRASH(cause)                        \

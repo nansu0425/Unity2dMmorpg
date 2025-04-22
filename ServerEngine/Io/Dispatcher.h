@@ -20,12 +20,9 @@ public:
 
     HANDLE  GetIocp() const { return mIocp; }
 
-    Int64   Register(IIoObjectOwner* owner);
+    Int64   Register(SharedPtr<IIoObjectOwner> owner);
     Int64   Dispatch(UInt32 timeoutMs = INFINITE);
 
 private:
     HANDLE  mIocp = INVALID_HANDLE_VALUE;
 };
-
-// TEMP
-extern IoEventDispatcher gIoEventDispatcher;

@@ -7,6 +7,7 @@
 
 struct AcceptEvent;
 struct IoEvent;
+class ServerService;
 
 class Listener
     : public IIoObjectOwner
@@ -16,24 +17,19 @@ public:
     ~Listener();
 
 public:     // 외부에서 호출하는 함수
-    Int64   StartAccept(const NetAddress& address);
+    Int64   StartAccept(SharedPtr<ServerService> service);
     void    CloseSocket();
 
 public:     // IIoObjectOwner 인터페이스 구현
     virtual HANDLE  GetIoObject() override;
     virtual void    DispatchIoEvent(IoEvent* event, Int64 numBytes = 0) override;
 
-private:
-    enum Constants : Int64
-    {
-        kAcceptCount = 1,
-    };
-
 private:    // 내부 처리 함수
     void    RegisterAccept(AcceptEvent* event);
     void    ProcessAccept(AcceptEvent* event, Int64 numBytes);
 
 protected:
-    SOCKET          mSocket = INVALID_SOCKET;
-    AcceptEvent*    mAcceptEvents = nullptr;
+    SOCKET                      mSocket = INVALID_SOCKET;
+    AcceptEvent*                mAcceptEvents = nullptr;
+    SharedPtr<ServerService>    mService;
 };
