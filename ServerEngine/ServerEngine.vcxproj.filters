@@ -10,6 +10,9 @@
     <Filter Include="Network">
       <UniqueIdentifier>{3f1b2998-d8f4-4816-a21f-edd9bb6694de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Io">
+      <UniqueIdentifier>{556c3f77-5b44-4ea3-bf3b-6e13c9baf12d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Types.h">
@@ -43,6 +46,18 @@
     <ClInclude Include="Network\SocketUtils.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="Io\IoManager.h">
+      <Filter>Io</Filter>
+    </ClInclude>
+    <ClInclude Include="Io\IoEvent.h">
+      <Filter>Io</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Listener.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Session.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -65,6 +80,18 @@
       <Filter>Network</Filter>
     </ClCompile>
     <ClCompile Include="Network\SocketUtils.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Io\IoManager.cpp">
+      <Filter>Io</Filter>
+    </ClCompile>
+    <ClCompile Include="Io\IoEvent.cpp">
+      <Filter>Io</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Listener.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Session.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>

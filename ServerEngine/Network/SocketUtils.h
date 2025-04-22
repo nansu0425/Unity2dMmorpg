@@ -3,10 +3,12 @@
 #pragma once
 
 class NetAddress;
+class Session;
+class AcceptEvent;
 
 /*
  * 소켓 처리 유틸리티 클래스
- * 정수를 반환하는 함수가 0이 아닌 값을 반환하면 에러 코드
+ * 함수가 반환하는 값이 SUCCESS가 아니면 에러 코드
  */
 class SocketUtils
 {
@@ -14,20 +16,22 @@ public:
     static void                 Init();
     static void                 Cleanup();
 
-    static Int32                BindWindowsFunction(SOCKET socket, GUID guid, LPVOID* function);
-    static Int32                CreateSocket(SOCKET& socket);
+    static Int64                BindWindowsFunction(SOCKET socket, GUID guid, LPVOID* function);
+    static Int64                CreateSocket(SOCKET& socket);
 
-    static Int32                SetLinger(SOCKET socket, UInt16 onOff, UInt16 lingerTime);
-    static Int32                SetReuseAddress(SOCKET socket, Bool enable);
-    static Int32                SetNoDelay(SOCKET socket, Bool enable);
-    static Int32                SetRecvBufferSize(SOCKET socket, Int32 size);
-    static Int32                SetSendBufferSize(SOCKET socket, Int32 size);
-    static Int32                SetUpdateAcceptSocket(SOCKET socket, SOCKET listenSocket);
+    static Int64                SetLinger(SOCKET socket, UInt16 onOff, UInt16 lingerTime);
+    static Int64                SetReuseAddress(SOCKET socket, Bool enable);
+    static Int64                SetNoDelay(SOCKET socket, Bool enable);
+    static Int64                SetRecvBufferSize(SOCKET socket, Int64 size);
+    static Int64                SetSendBufferSize(SOCKET socket, Int64 size);
+    static Int64                SetUpdateAcceptSocket(SOCKET socket, SOCKET listenSocket);
 
-    static Int32                BindAddress(SOCKET socket, const NetAddress& address);
-    static Int32                BindAnyAddress(SOCKET socket, UInt16 port);
-    static Int32                Listen(SOCKET socket, Int32 backlog = SOMAXCONN);
-    static Int32                CloseSocket(SOCKET& socket);
+    static Int64                BindAddress(SOCKET socket, const NetAddress& address);
+    static Int64                BindAnyAddress(SOCKET socket, UInt16 port);
+    static Int64                Listen(SOCKET socket, Int32 backlog = SOMAXCONN);
+    static Int64                CloseSocket(SOCKET& socket);
+
+    static Int64                AcceptAsync(SOCKET listenSocket, Session* session, Int64& numBytes, AcceptEvent* event);
 
 private:
     static LPFN_CONNECTEX       sConnectEx;
@@ -36,12 +40,12 @@ private:
 };
 
 template<typename T>
-static Int32 SetSocketOpt(SOCKET socket, Int32 level, Int32 optName, const T& optVal)
+static Int64 SetSocketOpt(SOCKET socket, Int32 level, Int32 optName, const T& optVal)
 {
-    if (SOCKET_ERROR == ::setsockopt(socket, level, optName, reinterpret_cast<const char*>(&optVal), sizeof(optVal)))
+    if (SOCKET_ERROR == ::setsockopt(socket, level, optName, reinterpret_cast<const char*>(&optVal), SIZE_32(optVal)))
     {
         return ::WSAGetLastError();
     }
 
-    return 0;
+    return SUCCESS;
 }
