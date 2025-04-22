@@ -2,8 +2,10 @@
 
 #pragma once
 
-#include "ServerEngine/Io/IoManager.h"
-#include "ServerEngine/Network/NetAddress.h"
+#include "ServerEngine/Io/Dispatcher.h"
+#include "ServerEngine/Network/Address.h"
+
+struct IoEvent;
 
 class Session
     : public IIoObjectOwner
@@ -19,7 +21,7 @@ public:     // 외부에서 호출하는 함수
 
 public:     // IIoObjectOwner 인터페이스 구현
     virtual HANDLE      GetIoObject() override;
-    virtual void        DispatchIoEvent(class IoEvent* event, Int64 numBytes = 0) override;
+    virtual void        DispatchIoEvent(IoEvent* event, Int64 numBytes = 0) override;
 
 public:
     Byte*           mRecvBuffer[1'000] = {};

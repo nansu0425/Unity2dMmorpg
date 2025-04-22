@@ -2,8 +2,8 @@
 
 #include "DummyClient/Pch.h"
 #include "ServerEngine/Concurrency/Thread.h"
-#include "ServerEngine/Network/SocketUtils.h"
-#include "ServerEngine/Network/NetAddress.h"
+#include "ServerEngine/Network/Socket.h"
+#include "ServerEngine/Network/Address.h"
 
 void ClientThread()
 {

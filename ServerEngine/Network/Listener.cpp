@@ -2,8 +2,8 @@
 
 #include "ServerEngine/Pch.h"
 #include "ServerEngine/Network/Listener.h"
-#include "ServerEngine/Io/IoEvent.h"
-#include "ServerEngine/Network/SocketUtils.h"
+#include "ServerEngine/Io/Event.h"
+#include "ServerEngine/Network/Socket.h"
 #include "ServerEngine/Network/Session.h"
 
 Listener::Listener()
@@ -28,7 +28,7 @@ Int64 Listener::StartAccept(const NetAddress& address)
         return result;
     }
     // 리슨 소켓을 io 매니저에 등록
-    if (result = gIoManager.RegisterIoObject(this))
+    if (result = gIoEventDispatcher.Register(this))
     {
         return result;
     }
@@ -74,7 +74,7 @@ HANDLE Listener::GetIoObject()
 
 void Listener::DispatchIoEvent(IoEvent* event, Int64 numBytes)
 {
-    ASSERT_CRASH_DEBUG(event->GetType() == IoEventType::Accept, "INVALID_EVENT_TYPE");
+    ASSERT_CRASH_DEBUG(event->type == IoEventType::Accept, "INVALID_EVENT_TYPE");
 
     AcceptEvent* acceptEvent = static_cast<AcceptEvent*>(event);
     ProcessAccept(acceptEvent, numBytes);
@@ -82,14 +82,15 @@ void Listener::DispatchIoEvent(IoEvent* event, Int64 numBytes)
 
 void Listener::RegisterAccept(AcceptEvent* event)
 {
-    Session* session = new Session();
+    event->owner = shared_from_this();
+    SharedPtr<Session> session = std::make_shared<Session>();
     event->Init();
-    event->SetSession(session);
+    event->session = std::move(session);
 
     Int64 numBytes = 0;
     Int64 result = SUCCESS;
     // 성공적으로 비동기 작업이 시작되지 않은 경우
-    if (WSA_IO_PENDING != (result = SocketUtils::AcceptAsync(mSocket, session, OUT numBytes, event)))
+    if (WSA_IO_PENDING != (result = SocketUtils::AcceptAsync(mSocket, event->session.get(), OUT numBytes, event)))
     {
         std::cout << "AcceptAsync failed: " << result << std::endl;
         RegisterAccept(event);
@@ -98,14 +99,13 @@ void Listener::RegisterAccept(AcceptEvent* event)
 
 void Listener::ProcessAccept(AcceptEvent* event, Int64 numBytes)
 {
-    Session* session = event->GetSession();
-    event->SetSession(nullptr);
+    SharedPtr<Session> session = std::move(event->session);
+    event->owner.reset();
     Int64 result = SUCCESS;
 
     if (result = SocketUtils::SetUpdateAcceptSocket(session->GetSocket(), mSocket))
     {
         std::cout << "SetUpdateAcceptSocket failed: " << result << std::endl;
-        delete session;
         RegisterAccept(event);
         return;
     }
@@ -116,7 +116,6 @@ void Listener::ProcessAccept(AcceptEvent* event, Int64 numBytes)
     if (result = ::getpeername(session->GetSocket(), OUT reinterpret_cast<SOCKADDR*>(&sockAddress), &sockAddressLength))
     {
         std::cout << "getpeername failed: " << result << std::endl;
-        delete session;
         RegisterAccept(event);
         return;
     }
@@ -124,7 +123,6 @@ void Listener::ProcessAccept(AcceptEvent* event, Int64 numBytes)
     session->SetNetAddress(NetAddress(sockAddress));
 
     std::cout << "Client connected!" << std::endl;
-    delete session;
 
     RegisterAccept(event);
 }

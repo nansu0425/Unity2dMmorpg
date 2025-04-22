@@ -1,7 +1,7 @@
-﻿/*    ServerEngine/Network/NetAddress.cpp    */
+﻿/*    ServerEngine/Network/Address.cpp    */
 
 #include "ServerEngine/Pch.h"
-#include "ServerEngine/Network/NetAddress.h"
+#include "ServerEngine/Network/Address.h"
 
 NetAddress::NetAddress(SOCKADDR_IN address)
     : mAddress(address)

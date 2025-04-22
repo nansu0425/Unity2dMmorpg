@@ -40,16 +40,16 @@
     <ClInclude Include="Concurrency\Deadlock.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
-    <ClInclude Include="Network\NetAddress.h">
+    <ClInclude Include="Network\Address.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Network\SocketUtils.h">
+    <ClInclude Include="Network\Socket.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Io\IoManager.h">
+    <ClInclude Include="Io\Dispatcher.h">
       <Filter>Io</Filter>
     </ClInclude>
-    <ClInclude Include="Io\IoEvent.h">
+    <ClInclude Include="Io\Event.h">
       <Filter>Io</Filter>
     </ClInclude>
     <ClInclude Include="Network\Listener.h">
@@ -76,16 +76,16 @@
     <ClCompile Include="Concurrency\Deadlock.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
-    <ClCompile Include="Network\NetAddress.cpp">
+    <ClCompile Include="Network\Address.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Network\SocketUtils.cpp">
+    <ClCompile Include="Network\Socket.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Io\IoManager.cpp">
+    <ClCompile Include="Io\Dispatcher.cpp">
       <Filter>Io</Filter>
     </ClCompile>
-    <ClCompile Include="Io\IoEvent.cpp">
+    <ClCompile Include="Io\Event.cpp">
       <Filter>Io</Filter>
     </ClCompile>
     <ClCompile Include="Network\Listener.cpp">

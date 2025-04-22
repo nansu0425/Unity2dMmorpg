@@ -1,4 +1,4 @@
-﻿/*    ServerEngine/Network/NetAddress.h    */
+﻿/*    ServerEngine/Network/Address.h    */
 
 #pragma once
 

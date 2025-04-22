@@ -1,10 +1,10 @@
-﻿/*    ServerEngine/Network/SocketUtils.h    */
+﻿/*    ServerEngine/Network/Socket.h    */
 
 #pragma once
 
 class NetAddress;
 class Session;
-class AcceptEvent;
+struct AcceptEvent;
 
 /*
  * 소켓 처리 유틸리티 클래스
