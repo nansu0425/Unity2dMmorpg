@@ -50,5 +50,7 @@ struct RecvEvent
 struct SendEvent
     : public IoEvent
 {
+    Vector<Byte>    buffer; // 전송할 데이터
+
     SendEvent() : IoEvent(IoEventType::Send) {}
 };

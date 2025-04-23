@@ -151,6 +151,16 @@ Int64 SocketUtils::RecvAsync(SOCKET socket, WSABUF* buffer, Int64* numBytes, Int
     return SUCCESS;
 }
 
+Int64 SocketUtils::SendAsync(SOCKET socket, WSABUF* buffers, Int64 bufferCount, Int64* numBytes, SendEvent* event)
+{
+    if (SOCKET_ERROR == ::WSASend(socket, buffers, static_cast<DWORD>(bufferCount), OUT reinterpret_cast<LPDWORD>(numBytes), 0, event, nullptr))
+    {
+        return ::WSAGetLastError();
+    }
+
+    return SUCCESS;
+}
+
 LPFN_CONNECTEX           SocketUtils::sConnectEx = nullptr;
 LPFN_DISCONNECTEX        SocketUtils::sDisconnectEx = nullptr;
 LPFN_ACCEPTEX            SocketUtils::sAcceptEx = nullptr;

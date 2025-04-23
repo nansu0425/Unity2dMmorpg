@@ -6,6 +6,7 @@ class NetAddress;
 class Session;
 struct AcceptEvent;
 struct RecvEvent;
+struct SendEvent;
 
 /*
  * 소켓 처리 유틸리티 클래스
@@ -34,6 +35,7 @@ public:
 
     static Int64                AcceptAsync(SOCKET listenSocket, Session* session, Int64* numBytes, AcceptEvent* event);
     static Int64                RecvAsync(SOCKET socket, WSABUF* buffer, Int64* numBytes, Int64* flags, RecvEvent* event);
+    static Int64                SendAsync(SOCKET socket, WSABUF* buffers, Int64 bufferCount, Int64* numBytes, SendEvent* event);
 
 private:
     static LPFN_CONNECTEX       sConnectEx;

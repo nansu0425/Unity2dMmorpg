@@ -31,18 +31,31 @@ void ClientThread()
 
     std::cout << "Connected to 127.0.0.1:7777" << std::endl;
 
-    // 4. 1초 마다 데이터 전송
+    // 4. 1초 마다 데이터 전송 및 수신
     while (true)
     {
-        Char8 data[32] = "Hello, Server!";
-        Int64 bytesSent = ::send(clientSocket, data, SIZE_32(data), 0);
+        Char8 sendBuffer[32] = "Echo Test";
+
+        // 데이터 전송
+        Int64 bytesSent = ::send(clientSocket, sendBuffer, SIZE_32(sendBuffer), 0);
         if (SOCKET_ERROR == bytesSent)
         {
             result = ::WSAGetLastError();
             std::cerr << "Send failed: " << result << std::endl;
             break;
         }
-        std::cout << "Sent: " << data << std::endl;
+
+        // 데이터 수신
+        Char8 recvBuffer[32] = {};
+        Int64 bytesReceived = ::recv(clientSocket, recvBuffer, SIZE_32(recvBuffer), 0);
+        if (SOCKET_ERROR == bytesReceived)
+        {
+            result = ::WSAGetLastError();
+            std::cerr << "Receive failed: " << result << std::endl;
+            break;
+        }
+        std::cout << "Received: " << recvBuffer << std::endl;
+
         Sleep(1000);
     }
 

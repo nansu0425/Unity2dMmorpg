@@ -6,11 +6,34 @@
 #include "ServerEngine/Network/Service.h"
 #include "ServerEngine/Network/Session.h"
 
+class GameSession
+    : public Session
+{
+protected:
+    virtual void    OnConnect() override {}
+
+    virtual Int64   OnRecv(Byte* buffer, Int64 numBytes) override
+    {
+        std::cout << "Received: " << numBytes << " bytes" << std::endl;
+        // 수신한 데이터를 그대로 전송
+        Send(buffer, numBytes);
+        return numBytes;
+    }
+
+    virtual void    OnSend(Int64 numBytes) override
+    {
+        // 전송 완료 처리
+        std::cout << "Sent " << numBytes << " bytes" << std::endl;
+    }
+
+    virtual void    OnDisconnect() override {}
+};
+
 Service::Config gConfig =
 {
     NetAddress(TEXT_16("127.0.0.1"), 7777),
     std::make_shared<IoEventDispatcher>(),
-    std::make_shared<Session>,
+    std::make_shared<GameSession>,
     100,
 };
 

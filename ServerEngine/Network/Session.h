@@ -22,6 +22,7 @@ public:
     virtual ~Session();
 
 public:     // 외부에서 호출하는 함수
+    void                Send(const Byte* buffer, Int64 numBytes);
     void                Disconnect(String16View cause);
 
     SharedPtr<Service>  GetService() const { return mService.lock(); }
@@ -39,19 +40,19 @@ private:    // IIoObjectOwner 인터페이스 구현
 private:    // 입출력 요청 및 처리
     void    RegisterConnect();
     void    RegisterRecv();
-    void    RegisterSend();
+    void    RegisterSend(SendEvent* event);
 
     void    ProcessConnect();
     void    ProcessRecv(Int64 numBytes);
-    void    ProcessSend(Int64 numBytes);
+    void    ProcessSend(SendEvent* event, Int64 numBytes);
 
     void    HandleError(Int64 errorCode);
 
 protected:  // 콘텐츠 코드 인터페이스
-    virtual void    OnConnect() {}
-    virtual Int64   OnRecv(Byte* buffer, Int64 numBytes) { return numBytes; }
-    virtual void    OnSend(Int64 numBytes) {}
-    virtual void    OnDisconnect() {}
+    virtual void    OnConnect() = 0;
+    virtual Int64   OnRecv(Byte* buffer, Int64 numBytes) = 0;
+    virtual void    OnSend(Int64 numBytes) = 0;
+    virtual void    OnDisconnect() = 0;
 
 public:
     Byte            mRecvBuffer[1'000] = {};

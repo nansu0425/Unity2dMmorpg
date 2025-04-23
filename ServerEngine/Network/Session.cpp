@@ -7,12 +7,23 @@
 
 Session::Session()
 {
-    ASSERT_CRASH_DEBUG(SUCCESS == SocketUtils::CreateSocket(mSocket), "CREATE_SOCKET_FAILED");
+    ASSERT_CRASH(SUCCESS == SocketUtils::CreateSocket(mSocket), "CREATE_SOCKET_FAILED");
 }
 
 Session::~Session()
 {
     ASSERT_CRASH(SUCCESS == SocketUtils::CloseSocket(mSocket), "CLOSE_SOCKET_FAILED");
+}
+
+void Session::Send(const Byte* buffer, Int64 numBytes)
+{
+    // 전송 이벤트 생성
+    SendEvent* event = new SendEvent();
+    event->owner = GetSharedPtr();
+    event->buffer.resize(numBytes);
+    ::memcpy(event->buffer.data(), buffer, numBytes);
+
+    RegisterSend(event);
 }
 
 void Session::Disconnect(String16View cause)
@@ -51,7 +62,7 @@ void Session::DispatchIoEvent(IoEvent* event, Int64 numBytes)
         ProcessRecv(numBytes);
         break;
     case IoEventType::Send:
-        ProcessSend(numBytes);
+        ProcessSend(static_cast<SendEvent*>(event), numBytes);
         break;
     default:
         CRASH("INVALID_EVENT_TYPE");
@@ -86,8 +97,31 @@ void Session::RegisterRecv()
     }
 }
 
-void Session::RegisterSend()
-{}
+void Session::RegisterSend(SendEvent* event)
+{
+    if (!IsConnected())
+    {
+        return;
+    }
+
+    WSABUF buffer;
+    buffer.buf = reinterpret_cast<CHAR*>(event->buffer.data());
+    buffer.len = static_cast<ULONG>(event->buffer.size());
+    Int64 numBytes = 0;
+
+    Int64 result = SUCCESS;
+    {
+        WRITE_GUARD;
+        result = SocketUtils::SendAsync(mSocket, &buffer, 1, OUT & numBytes, event);
+    }
+     
+    if ((result != SUCCESS) &&
+        (result != WSA_IO_PENDING))
+    {
+        HandleError(result);
+        delete event;
+    }
+}
 
 void Session::ProcessConnect()
 {
@@ -111,13 +145,23 @@ void Session::ProcessRecv(Int64 numBytes)
         return;
     }
 
-    std::cout << "Received: " << mRecvBuffer << std::endl;
+    OnRecv(mRecvBuffer, numBytes);
 
     RegisterRecv();
 }
 
-void Session::ProcessSend(Int64 numBytes)
-{}
+void Session::ProcessSend(SendEvent* event, Int64 numBytes)
+{
+    delete event;
+
+    if (numBytes == 0)
+    {
+        Disconnect(TEXT_16("Connection closed"));
+        return;
+    }
+
+    OnSend(numBytes);
+}
 
 void Session::HandleError(Int64 errorCode)
 {
