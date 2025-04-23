@@ -48,12 +48,12 @@ private:    // IIoObjectOwner 인터페이스 구현
 private:    // 입출력 요청 및 처리
     Int64   RegisterConnect();
     Int64   RegisterDisconnect(String16 cause);
-    void    RegisterRecv();
+    void    RegisterReceive();
     void    RegisterSend(SendEvent* event);
 
     void    ProcessConnect();
     void    ProcessDisconnect();
-    void    ProcessRecv(Int64 numBytes);
+    void    ProcessReceive(Int64 numBytes);
     void    ProcessSend(SendEvent* event, Int64 numBytes);
 
     void    HandleError(Int64 errorCode);
@@ -74,7 +74,7 @@ private:
 private:
     ConnectEvent        mConnectEvent;
     DisconnectEvent     mDisconnectEvent;
-    RecvEvent           mRecvEvent;
+    ReceiveEvent        mReceiveEvent;
 
 private:
     ReceiveBuffer       mReceiveBuffer;

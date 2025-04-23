@@ -7,7 +7,7 @@ class Session;
 struct ConnectEvent;
 struct DisconnectEvent;
 struct AcceptEvent;
-struct RecvEvent;
+struct ReceiveEvent;
 struct SendEvent;
 
 /*
@@ -26,7 +26,7 @@ public:
     static Int64                SetLinger(SOCKET socket, UInt16 onOff, UInt16 lingerTime);
     static Int64                SetReuseAddress(SOCKET socket, Bool enable);
     static Int64                SetNoDelay(SOCKET socket, Bool enable);
-    static Int64                SetRecvBufferSize(SOCKET socket, Int64 size);
+    static Int64                SetReceiveBufferSize(SOCKET socket, Int64 size);
     static Int64                SetSendBufferSize(SOCKET socket, Int64 size);
     static Int64                SetUpdateAcceptSocket(SOCKET socket, SOCKET listenSocket);
 
@@ -38,7 +38,7 @@ public:
     static Int64                ConnectAsync(SOCKET socket, const NetAddress& address, Int64* numBytes, ConnectEvent* event);
     static Int64                DisconnectAsync(SOCKET socket, Int64 flags, DisconnectEvent* event);
     static Int64                AcceptAsync(SOCKET listenSocket, SOCKET acceptSocket, Byte* buffer, Int64* numBytes, AcceptEvent* event);
-    static Int64                RecvAsync(SOCKET socket, WSABUF* buffer, Int64* numBytes, Int64* flags, RecvEvent* event);
+    static Int64                ReceiveAsync(SOCKET socket, WSABUF* buffer, Int64* numBytes, Int64* flags, ReceiveEvent* event);
     static Int64                SendAsync(SOCKET socket, WSABUF* buffers, Int64 bufferCount, Int64* numBytes, SendEvent* event);
 
 private:

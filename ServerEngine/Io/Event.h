@@ -10,7 +10,7 @@ enum class IoEventType : Int64
     Connect,
     Disconnect,
     Accept,
-    Recv,
+    Receive,
     Send,
 };
 
@@ -50,10 +50,10 @@ struct AcceptEvent
     AcceptEvent() : IoEvent(IoEventType::Accept) {}
 };
 
-struct RecvEvent
+struct ReceiveEvent
     : public IoEvent
 {
-    RecvEvent() : IoEvent(IoEventType::Recv) {}
+    ReceiveEvent() : IoEvent(IoEventType::Receive) {}
 };
 
 struct SendEvent

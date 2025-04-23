@@ -60,8 +60,8 @@ void Session::DispatchIoEvent(IoEvent* event, Int64 numBytes)
     case IoEventType::Disconnect:
         ProcessDisconnect();
         break;
-    case IoEventType::Recv:
-        ProcessRecv(numBytes);
+    case IoEventType::Receive:
+        ProcessReceive(numBytes);
         break;
     case IoEventType::Send:
         ProcessSend(static_cast<SendEvent*>(event), numBytes);
@@ -143,7 +143,7 @@ Int64 Session::RegisterDisconnect(String16 cause)
     return result;
 }
 
-void Session::RegisterRecv()
+void Session::RegisterReceive()
 {
     if (!IsConnected())
     {
@@ -155,15 +155,15 @@ void Session::RegisterRecv()
     buffer.len = static_cast<Int32>(mReceiveBuffer.GetFreeSize());
     Int64 numBytes = 0;
     Int64 flags = 0;
-    mRecvEvent.Init();
-    mRecvEvent.owner = GetSharedPtr();
+    mReceiveEvent.Init();
+    mReceiveEvent.owner = GetSharedPtr();
 
-    Int64 result = SocketUtils::RecvAsync(mSocket, &buffer, OUT &numBytes, OUT &flags, &mRecvEvent);
+    Int64 result = SocketUtils::ReceiveAsync(mSocket, &buffer, OUT &numBytes, OUT &flags, &mReceiveEvent);
     if ((result != SUCCESS) &&
         (result != WSA_IO_PENDING))
     {
         HandleError(result);
-        mRecvEvent.owner.reset();
+        mReceiveEvent.owner.reset();
     }
 }
 
@@ -204,7 +204,7 @@ void Session::ProcessConnect()
     // 콘텐츠 코드에서 연결 완료 처리
     OnConnected();
     // 수신 등록
-    RegisterRecv();
+    RegisterReceive();
 }
 
 void Session::ProcessDisconnect()
@@ -214,9 +214,9 @@ void Session::ProcessDisconnect()
     OnDisconnected(std::move(mDisconnectEvent.cause));
 }
 
-void Session::ProcessRecv(Int64 numBytes)
+void Session::ProcessReceive(Int64 numBytes)
 {
-    mRecvEvent.owner.reset();
+    mReceiveEvent.owner.reset();
 
     if (numBytes == 0)
     {
@@ -243,7 +243,7 @@ void Session::ProcessRecv(Int64 numBytes)
     mReceiveBuffer.Clear();
 
     // 수신 완료 후 다시 수신 등록
-    RegisterRecv();
+    RegisterReceive();
 }
 
 void Session::ProcessSend(SendEvent* event, Int64 numBytes)

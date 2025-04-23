@@ -65,7 +65,7 @@ Int64 SocketUtils::SetNoDelay(SOCKET socket, Bool enable)
     return SetSocketOpt(socket, SOL_SOCKET, TCP_NODELAY, enable);
 }
 
-Int64 SocketUtils::SetRecvBufferSize(SOCKET socket, Int64 size)
+Int64 SocketUtils::SetReceiveBufferSize(SOCKET socket, Int64 size)
 {
     return SetSocketOpt(socket, SOL_SOCKET, SO_RCVBUF, size);
 }
@@ -161,7 +161,7 @@ Int64 SocketUtils::AcceptAsync(SOCKET listenSocket, SOCKET acceptSocket, Byte* b
     return SUCCESS;
 }
 
-Int64 SocketUtils::RecvAsync(SOCKET socket, WSABUF* buffer, Int64* numBytes, Int64* flags, RecvEvent* event)
+Int64 SocketUtils::ReceiveAsync(SOCKET socket, WSABUF* buffer, Int64* numBytes, Int64* flags, ReceiveEvent* event)
 {
     if (SOCKET_ERROR == ::WSARecv(socket, buffer, 1, OUT reinterpret_cast<LPDWORD>(numBytes), OUT reinterpret_cast<LPDWORD>(flags), event, nullptr))
     {
