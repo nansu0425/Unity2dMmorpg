@@ -8,6 +8,7 @@ class IIoObjectOwner;
 enum class IoEventType : Int64
 {
     Connect,
+    Disconnect,
     Accept,
     Recv,
     Send,
@@ -31,6 +32,12 @@ struct ConnectEvent
     : public IoEvent
 {
     ConnectEvent() : IoEvent(IoEventType::Connect) {}
+};
+
+struct DisconnectEvent
+    : public IoEvent
+{
+    DisconnectEvent() : IoEvent(IoEventType::Disconnect) {}
 };
 
 struct AcceptEvent

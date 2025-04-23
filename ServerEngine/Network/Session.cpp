@@ -15,15 +15,9 @@ Session::~Session()
     ASSERT_CRASH(SUCCESS == SocketUtils::CloseSocket(mSocket), "CLOSE_SOCKET_FAILED");
 }
 
-void Session::Send(const Byte* buffer, Int64 numBytes)
+Int64 Session::Connect()
 {
-    // 전송 이벤트 생성
-    SendEvent* event = new SendEvent();
-    event->owner = GetSharedPtr();
-    event->buffer.resize(numBytes);
-    ::memcpy(event->buffer.data(), buffer, numBytes);
-
-    RegisterSend(event);
+    return RegisterConnect();
 }
 
 void Session::Disconnect(String16View cause)
@@ -38,12 +32,20 @@ void Session::Disconnect(String16View cause)
 
     OnDisconnect();
 
-    // 소켓을 닫고 세션을 서비스에서 제거
-    SocketUtils::CloseSocket(mSocket);
-    if (auto service = mService.lock())
-    {
-        service->RemoveSession(GetSharedPtr());
-    }
+    GetService()->RemoveSession(GetSharedPtr());
+
+    RegisterDisconnect();
+}
+
+void Session::Send(const Byte* buffer, Int64 numBytes)
+{
+    // 전송 이벤트 생성
+    SendEvent* event = new SendEvent();
+    event->owner = GetSharedPtr();
+    event->buffer.resize(numBytes);
+    ::memcpy(event->buffer.data(), buffer, numBytes);
+
+    RegisterSend(event);
 }
 
 HANDLE Session::GetIoObject()
@@ -58,6 +60,9 @@ void Session::DispatchIoEvent(IoEvent* event, Int64 numBytes)
     case IoEventType::Connect:
         ProcessConnect();
         break;
+    case IoEventType::Disconnect:
+        ProcessDisconnect();
+        break;
     case IoEventType::Recv:
         ProcessRecv(numBytes);
         break;
@@ -70,8 +75,75 @@ void Session::DispatchIoEvent(IoEvent* event, Int64 numBytes)
     }
 }
 
-void Session::RegisterConnect()
-{}
+Int64 Session::RegisterConnect()
+{
+    ASSERT_CRASH(GetService()->GetType() == ServiceType::Client, "INVALID_SERVICE_TYPE");
+
+    Int64 result = SUCCESS;
+
+    if (IsConnected())
+    {
+        result = FAILURE;
+        return result;
+    }
+
+    result = SocketUtils::SetReuseAddress(mSocket, true);
+    if (result != SUCCESS)
+    {
+        return result;
+    }
+
+    result = SocketUtils::BindAnyAddress(mSocket, 0);
+    if (result != SUCCESS)
+    {
+        return result;
+    }
+
+    mConnectEvent.Init();
+    mConnectEvent.owner = shared_from_this();
+
+    // 비동기 연결 요청
+    Int64 numBytes = 0;
+    result = SocketUtils::ConnectAsync(mSocket, mAddress, OUT &numBytes, &mConnectEvent);
+
+    if (result != SUCCESS)
+    {
+        if (result == WSA_IO_PENDING)
+        {
+            // 비동기 작업이 시작되었으므로 성공으로 간주
+            result = SUCCESS;
+        }
+        else
+        {
+            mConnectEvent.owner.reset();
+        }
+    }
+
+    return result;
+}
+
+Int64 Session::RegisterDisconnect()
+{
+    mDisconnectEvent.Init();
+    mDisconnectEvent.owner = GetSharedPtr();
+
+    Int64 result = SUCCESS;
+    result = SocketUtils::DisconnectAsync(mSocket, TF_REUSE_SOCKET, &mDisconnectEvent);
+    if (result != SUCCESS)
+    {
+        if (result == WSA_IO_PENDING)
+        {
+            // 비동기 작업이 시작되었으므로 성공으로 간주
+            result = SUCCESS;
+        }
+        else
+        {
+            mDisconnectEvent.owner.reset();
+        }
+    }
+
+    return result;
+}
 
 void Session::RegisterRecv()
 {
@@ -125,14 +197,20 @@ void Session::RegisterSend(SendEvent* event)
 
 void Session::ProcessConnect()
 {
-    // 연결 처리
+    mConnectEvent.owner.reset();
     mIsConnected.store(true);
-    // 세션을 서비스에 등록
+
+    // 서비스에 세션 추가
     GetService()->AddSession(GetSharedPtr());
     // 콘텐츠 코드에서 연결 완료 처리
     OnConnect();
     // 수신 등록
     RegisterRecv();
+}
+
+void Session::ProcessDisconnect()
+{
+    mDisconnectEvent.owner.reset();
 }
 
 void Session::ProcessRecv(Int64 numBytes)

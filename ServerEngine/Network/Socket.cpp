@@ -131,6 +131,26 @@ Int64 SocketUtils::CloseSocket(SOCKET& socket)
     return SUCCESS;
 }
 
+Int64 SocketUtils::ConnectAsync(SOCKET socket, const NetAddress& address, Int64* numBytes, ConnectEvent* event)
+{
+    if (FALSE == sConnectEx(socket, reinterpret_cast<const SOCKADDR*>(&address.GetAddress()), sizeof(SOCKADDR_IN), nullptr, 0, OUT reinterpret_cast<LPDWORD>(numBytes), event))
+    {
+        return ::WSAGetLastError();
+    }
+
+    return SUCCESS;
+}
+
+Int64 SocketUtils::DisconnectAsync(SOCKET socket, Int64 flags, DisconnectEvent* event)
+{
+    if (FALSE == sDisconnectEx(socket, event, static_cast<DWORD>(flags), 0))
+    {
+        return ::WSAGetLastError();
+    }
+
+    return Int64();
+}
+
 Int64 SocketUtils::AcceptAsync(SOCKET listenSocket, Session* session, Int64* numBytes, AcceptEvent* event)
 {
     if (FALSE == sAcceptEx(listenSocket, session->GetSocket(), session->mRecvBuffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, reinterpret_cast<LPDWORD>(&numBytes), static_cast<LPOVERLAPPED>(event)))

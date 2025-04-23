@@ -4,6 +4,8 @@
 
 class NetAddress;
 class Session;
+struct ConnectEvent;
+struct DisconnectEvent;
 struct AcceptEvent;
 struct RecvEvent;
 struct SendEvent;
@@ -33,6 +35,8 @@ public:
     static Int64                Listen(SOCKET socket, Int32 backlog = SOMAXCONN);
     static Int64                CloseSocket(SOCKET& socket);
 
+    static Int64                ConnectAsync(SOCKET socket, const NetAddress& address, Int64* numBytes, ConnectEvent* event);
+    static Int64                DisconnectAsync(SOCKET socket, Int64 flags, DisconnectEvent* event);
     static Int64                AcceptAsync(SOCKET listenSocket, Session* session, Int64* numBytes, AcceptEvent* event);
     static Int64                RecvAsync(SOCKET socket, WSABUF* buffer, Int64* numBytes, Int64* flags, RecvEvent* event);
     static Int64                SendAsync(SOCKET socket, WSABUF* buffers, Int64 bufferCount, Int64* numBytes, SendEvent* event);

@@ -22,8 +22,9 @@ public:
     virtual ~Session();
 
 public:     // 외부에서 호출하는 함수
-    void                Send(const Byte* buffer, Int64 numBytes);
+    Int64               Connect();
     void                Disconnect(String16View cause);
+    void                Send(const Byte* buffer, Int64 numBytes);
 
     SharedPtr<Service>  GetService() const { return mService.lock(); }
     void                SetService(SharedPtr<Service> service) { mService = std::move(service); }
@@ -38,11 +39,13 @@ private:    // IIoObjectOwner 인터페이스 구현
     virtual void        DispatchIoEvent(IoEvent* event, Int64 numBytes = 0) override;
 
 private:    // 입출력 요청 및 처리
-    void    RegisterConnect();
+    Int64   RegisterConnect();
+    Int64   RegisterDisconnect();
     void    RegisterRecv();
     void    RegisterSend(SendEvent* event);
 
     void    ProcessConnect();
+    void    ProcessDisconnect();
     void    ProcessRecv(Int64 numBytes);
     void    ProcessSend(SendEvent* event, Int64 numBytes);
 
@@ -50,9 +53,9 @@ private:    // 입출력 요청 및 처리
 
 protected:  // 콘텐츠 코드 인터페이스
     virtual void    OnConnect() = 0;
+    virtual void    OnDisconnect() = 0;
     virtual Int64   OnRecv(Byte* buffer, Int64 numBytes) = 0;
     virtual void    OnSend(Int64 numBytes) = 0;
-    virtual void    OnDisconnect() = 0;
 
 public:
     Byte            mRecvBuffer[1'000] = {};
@@ -65,5 +68,7 @@ private:
     Atomic<Bool>        mIsConnected = false;
 
 private:
+    ConnectEvent        mConnectEvent;
+    DisconnectEvent     mDisconnectEvent;
     RecvEvent           mRecvEvent;
 };

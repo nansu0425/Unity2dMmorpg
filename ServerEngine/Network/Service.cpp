@@ -61,7 +61,33 @@ ClientService::ClientService(const Config& config)
 
 Int64 ClientService::Run()
 {
-    return Int64();
+    Int64 result = SUCCESS;
+
+    if (!CanRun())
+    {
+        result = FAILURE;
+        return result;
+    }
+
+    for (Int64 i = 0; i < mConfig.maxSessionCount; ++i)
+    {
+        // 세션 생성
+        SharedPtr<Session> session = CreateSession();
+        session->SetNetAddress(mConfig.address);
+        if (nullptr == session)
+        {
+            result = FAILURE;
+            break;
+        }
+        // 비동기 연결
+        result = session->Connect();
+        if (result != SUCCESS)
+        {
+            break;
+        }
+    }
+
+    return result;
 }
 
 void ClientService::Stop()
