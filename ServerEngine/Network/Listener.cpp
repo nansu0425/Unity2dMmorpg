@@ -98,7 +98,7 @@ void Listener::RegisterAccept(AcceptEvent* event)
     Int64 numBytes = 0;
     Int64 result = SUCCESS;
     // 성공적으로 비동기 작업이 시작되지 않은 경우
-    if (WSA_IO_PENDING != (result = SocketUtils::AcceptAsync(mSocket, event->session.get(), OUT numBytes, event)))
+    if (WSA_IO_PENDING != (result = SocketUtils::AcceptAsync(mSocket, event->session.get(), OUT &numBytes, event)))
     {
         std::cout << "AcceptAsync failed: " << result << std::endl;
         RegisterAccept(event);
@@ -129,6 +129,7 @@ void Listener::ProcessAccept(AcceptEvent* event, Int64 numBytes)
     }
 
     session->SetNetAddress(NetAddress(sockAddress));
+    session->ProcessConnect();
 
     std::cout << "Client connected!" << std::endl;
 

@@ -16,15 +16,15 @@ Service::~Service()
 SharedPtr<Session> Service::CreateSession()
 {
     SharedPtr<Session> session = mConfig.sessionFactory();
-    Int64 result = SUCCESS;
+    session->SetService(shared_from_this());
+
     // IoEventDispatcher에 세션 등록
-    if (result = mConfig.ioDispatcher->Register(session))
+    if (SUCCESS == mConfig.ioDispatcher->Register(session))
     {
-        std::cerr << "Failed to register Session with IoEventDispatcher: " << result << std::endl;
-        return nullptr;
+        return session;
     }
 
-    return session;
+    return nullptr;
 }
 
 void Service::AddSession(SharedPtr<Session> session)

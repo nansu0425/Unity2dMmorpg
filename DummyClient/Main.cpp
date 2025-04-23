@@ -31,6 +31,21 @@ void ClientThread()
 
     std::cout << "Connected to 127.0.0.1:7777" << std::endl;
 
+    // 4. 1초 마다 데이터 전송
+    while (true)
+    {
+        Char8 data[32] = "Hello, Server!";
+        Int64 bytesSent = ::send(clientSocket, data, SIZE_32(data), 0);
+        if (SOCKET_ERROR == bytesSent)
+        {
+            result = ::WSAGetLastError();
+            std::cerr << "Send failed: " << result << std::endl;
+            break;
+        }
+        std::cout << "Sent: " << data << std::endl;
+        Sleep(1000);
+    }
+
     SocketUtils::CloseSocket(clientSocket);
 }
 

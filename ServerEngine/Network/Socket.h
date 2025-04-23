@@ -5,6 +5,7 @@
 class NetAddress;
 class Session;
 struct AcceptEvent;
+struct RecvEvent;
 
 /*
  * 소켓 처리 유틸리티 클래스
@@ -31,7 +32,8 @@ public:
     static Int64                Listen(SOCKET socket, Int32 backlog = SOMAXCONN);
     static Int64                CloseSocket(SOCKET& socket);
 
-    static Int64                AcceptAsync(SOCKET listenSocket, Session* session, Int64& numBytes, AcceptEvent* event);
+    static Int64                AcceptAsync(SOCKET listenSocket, Session* session, Int64* numBytes, AcceptEvent* event);
+    static Int64                RecvAsync(SOCKET socket, WSABUF* buffer, Int64* numBytes, Int64* flags, RecvEvent* event);
 
 private:
     static LPFN_CONNECTEX       sConnectEx;

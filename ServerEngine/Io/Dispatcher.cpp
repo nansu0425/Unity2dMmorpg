@@ -34,14 +34,18 @@ Int64 IoEventDispatcher::Dispatch(UInt32 timeoutMs)
     DWORD numBytes = 0;
     ULONG_PTR completionKey = 0;
     IoEvent* event = nullptr;
+    SharedPtr<IIoObjectOwner> owner = nullptr;
+    Int64 result = SUCCESS;
 
+    // 입출력 이벤트를 꺼낼 수 있을 때까지 대기
     if (FALSE == ::GetQueuedCompletionStatus(mIocp, OUT &numBytes, OUT &completionKey, OUT reinterpret_cast<LPOVERLAPPED*>(&event), timeoutMs))
     {
-        return ::GetLastError();
+        std::cerr << "GetQueuedCompletionStatus failed: " << ::GetLastError() << std::endl;    
     }
 
-    SharedPtr<IIoObjectOwner> owner = event->owner;
+    // 입출력 이벤트 전달
+    owner = event->owner;
     owner->DispatchIoEvent(event, numBytes);
 
-    return SUCCESS;
+    return result;
 }

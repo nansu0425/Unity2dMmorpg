@@ -131,9 +131,19 @@ Int64 SocketUtils::CloseSocket(SOCKET& socket)
     return SUCCESS;
 }
 
-Int64 SocketUtils::AcceptAsync(SOCKET listenSocket, Session* session, Int64& numBytes, AcceptEvent* event)
+Int64 SocketUtils::AcceptAsync(SOCKET listenSocket, Session* session, Int64* numBytes, AcceptEvent* event)
 {
     if (FALSE == sAcceptEx(listenSocket, session->GetSocket(), session->mRecvBuffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, reinterpret_cast<LPDWORD>(&numBytes), static_cast<LPOVERLAPPED>(event)))
+    {
+        return ::WSAGetLastError();
+    }
+
+    return SUCCESS;
+}
+
+Int64 SocketUtils::RecvAsync(SOCKET socket, WSABUF* buffer, Int64* numBytes, Int64* flags, RecvEvent* event)
+{
+    if (SOCKET_ERROR == ::WSARecv(socket, buffer, 1, OUT reinterpret_cast<LPDWORD>(numBytes), OUT reinterpret_cast<LPDWORD>(flags), event, nullptr))
     {
         return ::WSAGetLastError();
     }

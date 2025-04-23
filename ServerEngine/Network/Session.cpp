@@ -3,6 +3,7 @@
 #include "ServerEngine/Pch.h"
 #include "ServerEngine/Network/Session.h"
 #include "ServerEngine/Network/Socket.h"
+#include "ServerEngine/Network/Service.h"
 
 Session::Session()
 {
@@ -14,6 +15,26 @@ Session::~Session()
     ASSERT_CRASH(SUCCESS == SocketUtils::CloseSocket(mSocket), "CLOSE_SOCKET_FAILED");
 }
 
+void Session::Disconnect(String16View cause)
+{
+    // 이미 연결이 끊어진 경우
+    if (mIsConnected.exchange(false) == false)
+    {
+        return;
+    }
+
+    std::wcout << cause << std::endl;
+
+    OnDisconnect();
+
+    // 소켓을 닫고 세션을 서비스에서 제거
+    SocketUtils::CloseSocket(mSocket);
+    if (auto service = mService.lock())
+    {
+        service->RemoveSession(GetSharedPtr());
+    }
+}
+
 HANDLE Session::GetIoObject()
 {
     return reinterpret_cast<HANDLE>(mSocket);
@@ -21,5 +42,93 @@ HANDLE Session::GetIoObject()
 
 void Session::DispatchIoEvent(IoEvent* event, Int64 numBytes)
 {
+    switch (event->type)
+    {
+    case IoEventType::Connect:
+        ProcessConnect();
+        break;
+    case IoEventType::Recv:
+        ProcessRecv(numBytes);
+        break;
+    case IoEventType::Send:
+        ProcessSend(numBytes);
+        break;
+    default:
+        CRASH("INVALID_EVENT_TYPE");
+        break;
+    }
+}
 
+void Session::RegisterConnect()
+{}
+
+void Session::RegisterRecv()
+{
+    if (!IsConnected())
+    {
+        return;
+    }
+
+    WSABUF buffer;
+    buffer.buf = reinterpret_cast<CHAR*>(mRecvBuffer);
+    buffer.len = SIZE_32(mRecvBuffer);
+    Int64 numBytes = 0;
+    Int64 flags = 0;
+    mRecvEvent.Init();
+    mRecvEvent.owner = GetSharedPtr();
+
+    Int64 result = SocketUtils::RecvAsync(mSocket, &buffer, OUT &numBytes, OUT &flags, &mRecvEvent);
+    if ((result != SUCCESS) &&
+        (result != WSA_IO_PENDING))
+    {
+        HandleError(result);
+        mRecvEvent.owner.reset();
+    }
+}
+
+void Session::RegisterSend()
+{}
+
+void Session::ProcessConnect()
+{
+    // 연결 처리
+    mIsConnected.store(true);
+    // 세션을 서비스에 등록
+    GetService()->AddSession(GetSharedPtr());
+    // 콘텐츠 코드에서 연결 완료 처리
+    OnConnect();
+    // 수신 등록
+    RegisterRecv();
+}
+
+void Session::ProcessRecv(Int64 numBytes)
+{
+    mRecvEvent.owner.reset();
+
+    if (numBytes == 0)
+    {
+        Disconnect(TEXT_16("Connection closed"));
+        return;
+    }
+
+    std::cout << "Received: " << mRecvBuffer << std::endl;
+
+    RegisterRecv();
+}
+
+void Session::ProcessSend(Int64 numBytes)
+{}
+
+void Session::HandleError(Int64 errorCode)
+{
+    switch (errorCode)
+    {
+    case WSAECONNRESET:
+    case WSAECONNABORTED:
+        Disconnect(TEXT_16("Connection reset by peer"));
+        break;
+    default:
+        std::cerr << "Unknown error: " << errorCode << std::endl;
+        break;
+    }
 }

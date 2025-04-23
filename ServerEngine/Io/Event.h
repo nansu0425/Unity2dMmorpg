@@ -14,7 +14,7 @@ enum class IoEventType : Int64
 };
 
 /*
- * IoManager가 입출력 완료를 전달하기 위해 사용하는 구조체
+ * 입출력 작업 완료를 전달하기 위해 사용하는 구조체
  */
 struct IoEvent
     : public OVERLAPPED

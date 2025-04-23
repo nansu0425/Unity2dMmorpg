@@ -27,7 +27,11 @@ int main()
     {
         gThreadManager->Launch([serverService]()
                                {
-                                   while (SUCCESS == serverService->GetIoDispatcher()->Dispatch()) {}
+                                   Int64 result = SUCCESS;
+                                   while (result == SUCCESS)
+                                   {
+                                       result = serverService->GetIoDispatcher()->Dispatch();
+                                   }
                                });
     }
     gThreadManager->Join();
