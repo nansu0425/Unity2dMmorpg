@@ -20,21 +20,17 @@ Int64 Session::Connect()
     return RegisterConnect();
 }
 
-void Session::Disconnect(String16View cause)
+void Session::Disconnect(String16 cause)
 {
-    // 이미 연결이 끊어진 경우
+    // 연결 해제 상태로 변경
     if (mIsConnected.exchange(false) == false)
     {
         return;
     }
-
-    std::wcout << cause << std::endl;
-
-    OnDisconnect();
-
+    // 서비스에서 세션 제거
     GetService()->RemoveSession(GetSharedPtr());
 
-    RegisterDisconnect();
+    RegisterDisconnect(std::move(cause));
 }
 
 void Session::Send(const Byte* buffer, Int64 numBytes)
@@ -122,13 +118,13 @@ Int64 Session::RegisterConnect()
     return result;
 }
 
-Int64 Session::RegisterDisconnect()
+Int64 Session::RegisterDisconnect(String16 cause)
 {
     mDisconnectEvent.Init();
     mDisconnectEvent.owner = GetSharedPtr();
+    mDisconnectEvent.cause = std::move(cause);
 
-    Int64 result = SUCCESS;
-    result = SocketUtils::DisconnectAsync(mSocket, TF_REUSE_SOCKET, &mDisconnectEvent);
+    Int64 result = SocketUtils::DisconnectAsync(mSocket, TF_REUSE_SOCKET, &mDisconnectEvent);
     if (result != SUCCESS)
     {
         if (result == WSA_IO_PENDING)
@@ -138,6 +134,7 @@ Int64 Session::RegisterDisconnect()
         }
         else
         {
+            HandleError(result);
             mDisconnectEvent.owner.reset();
         }
     }
@@ -198,8 +195,9 @@ void Session::RegisterSend(SendEvent* event)
 void Session::ProcessConnect()
 {
     mConnectEvent.owner.reset();
-    mIsConnected.store(true);
 
+    // 연결 상태로 변경
+    mIsConnected.store(true);
     // 서비스에 세션 추가
     GetService()->AddSession(GetSharedPtr());
     // 콘텐츠 코드에서 연결 완료 처리
@@ -211,6 +209,8 @@ void Session::ProcessConnect()
 void Session::ProcessDisconnect()
 {
     mDisconnectEvent.owner.reset();
+
+    OnDisconnect(std::move(mDisconnectEvent.cause));
 }
 
 void Session::ProcessRecv(Int64 numBytes)
@@ -219,7 +219,7 @@ void Session::ProcessRecv(Int64 numBytes)
 
     if (numBytes == 0)
     {
-        Disconnect(TEXT_16("Connection closed"));
+        Disconnect(TEXT_16("Received: 0 bytes"));
         return;
     }
 
@@ -234,7 +234,7 @@ void Session::ProcessSend(SendEvent* event, Int64 numBytes)
 
     if (numBytes == 0)
     {
-        Disconnect(TEXT_16("Connection closed"));
+        Disconnect(TEXT_16("Sent: 0 bytes"));
         return;
     }
 
@@ -243,14 +243,16 @@ void Session::ProcessSend(SendEvent* event, Int64 numBytes)
 
 void Session::HandleError(Int64 errorCode)
 {
+    String16 errorMessage = TEXT_16("Error code: ") + std::to_wstring(errorCode);
+
     switch (errorCode)
     {
     case WSAECONNRESET:
     case WSAECONNABORTED:
-        Disconnect(TEXT_16("Connection reset by peer"));
+        Disconnect(std::move(errorMessage));
         break;
     default:
-        std::cerr << "Unknown error: " << errorCode << std::endl;
+        std::wcerr << errorMessage << std::endl;
         break;
     }
 }

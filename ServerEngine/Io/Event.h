@@ -37,6 +37,8 @@ struct ConnectEvent
 struct DisconnectEvent
     : public IoEvent
 {
+    String16    cause;
+
     DisconnectEvent() : IoEvent(IoEventType::Disconnect) {}
 };
 
