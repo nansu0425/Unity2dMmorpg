@@ -93,12 +93,12 @@ void Listener::RegisterAccept(AcceptEvent* event)
     event->owner = shared_from_this();
     SharedPtr<Session> session = mService->CreateSession();
     event->Init();
-    event->session = std::move(session);
+    event->session = session;
 
     Int64 numBytes = 0;
     Int64 result = SUCCESS;
     // 성공적으로 비동기 작업이 시작되지 않은 경우
-    if (WSA_IO_PENDING != (result = SocketUtils::AcceptAsync(mSocket, event->session.get(), OUT &numBytes, event)))
+    if (WSA_IO_PENDING != (result = SocketUtils::AcceptAsync(mSocket, session->GetSocket(), OUT session->mReceiveBuffer.AtWritePos(), OUT &numBytes, event)))
     {
         std::cout << "AcceptAsync failed: " << result << std::endl;
         RegisterAccept(event);

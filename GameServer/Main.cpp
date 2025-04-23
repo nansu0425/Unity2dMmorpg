@@ -10,13 +10,19 @@ class GameSession
     : public Session
 {
 protected:
-    virtual void    OnConnect() override
+    virtual void    OnConnected() override
     {
         // 연결 성공 처리
         std::wcout << TEXT_16("Connected to client") << std::endl;
     }
 
-    virtual Int64   OnRecv(Byte* buffer, Int64 numBytes) override
+    virtual void    OnDisconnected(String16 cause) override
+    {
+        // 연결 종료 처리
+        std::wcout << TEXT_16("Disconnected: ") << cause << std::endl;
+    }
+
+    virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) override
     {
         std::wcout << TEXT_16("Received: ") << numBytes << TEXT_16(" bytes") << std::endl;
         // 수신한 데이터를 그대로 전송
@@ -24,16 +30,10 @@ protected:
         return numBytes;
     }
 
-    virtual void    OnSend(Int64 numBytes) override
+    virtual void    OnSent(Int64 numBytes) override
     {
         // 전송 완료 처리
         std::wcout << TEXT_16("Sent: ") << numBytes << TEXT_16(" bytes") << std::endl;
-    }
-
-    virtual void    OnDisconnect(String16 cause) override
-    {
-        // 연결 종료 처리
-        std::wcout << TEXT_16("Disconnected: ") << cause << std::endl;
     }
 };
 

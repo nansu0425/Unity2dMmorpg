@@ -6,6 +6,7 @@
 #include "ServerEngine/Network/Service.h"
 
 Session::Session()
+    : mReceiveBuffer(kBufferSize)
 {
     ASSERT_CRASH(SUCCESS == SocketUtils::CreateSocket(mSocket), "CREATE_SOCKET_FAILED");
 }
@@ -150,8 +151,8 @@ void Session::RegisterRecv()
     }
 
     WSABUF buffer;
-    buffer.buf = reinterpret_cast<CHAR*>(mRecvBuffer);
-    buffer.len = SIZE_32(mRecvBuffer);
+    buffer.buf = reinterpret_cast<CHAR*>(mReceiveBuffer.AtWritePos());
+    buffer.len = static_cast<Int32>(mReceiveBuffer.GetFreeSize());
     Int64 numBytes = 0;
     Int64 flags = 0;
     mRecvEvent.Init();
@@ -201,7 +202,7 @@ void Session::ProcessConnect()
     // 서비스에 세션 추가
     GetService()->AddSession(GetSharedPtr());
     // 콘텐츠 코드에서 연결 완료 처리
-    OnConnect();
+    OnConnected();
     // 수신 등록
     RegisterRecv();
 }
@@ -210,7 +211,7 @@ void Session::ProcessDisconnect()
 {
     mDisconnectEvent.owner.reset();
 
-    OnDisconnect(std::move(mDisconnectEvent.cause));
+    OnDisconnected(std::move(mDisconnectEvent.cause));
 }
 
 void Session::ProcessRecv(Int64 numBytes)
@@ -223,8 +224,25 @@ void Session::ProcessRecv(Int64 numBytes)
         return;
     }
 
-    OnRecv(mRecvBuffer, numBytes);
+    if (!mReceiveBuffer.OnWritten(numBytes))
+    {
+        Disconnect(TEXT_16("OnWritten error"));
+        return;
+    }
 
+    // 콘텐츠 코드에서 수신 처리
+    Int64 dataSize = mReceiveBuffer.GetDataSize();
+    Int64 numBytesRead = OnReceived(mReceiveBuffer.AtReadPos(), dataSize);
+    if ((numBytesRead < 0) ||
+        (numBytesRead > dataSize) ||
+        (false == mReceiveBuffer.OnRead(numBytesRead)))
+    {
+        Disconnect(TEXT_16("OnRead error"));
+        return;
+    }
+    mReceiveBuffer.Clear();
+
+    // 수신 완료 후 다시 수신 등록
     RegisterRecv();
 }
 
@@ -238,7 +256,7 @@ void Session::ProcessSend(SendEvent* event, Int64 numBytes)
         return;
     }
 
-    OnSend(numBytes);
+    OnSent(numBytes);
 }
 
 void Session::HandleError(Int64 errorCode)

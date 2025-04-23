@@ -5,6 +5,7 @@
 #include "ServerEngine/Io/Dispatcher.h"
 #include "ServerEngine/Network/Address.h"
 #include "ServerEngine/Io/Event.h"
+#include "ServerEngine/Network/Buffer.h"
 
 class Listener;
 class IoEventDispatcher;
@@ -13,9 +14,15 @@ class Service;
 class Session
     : public IIoObjectOwner
 {
+private:
     friend class Listener;
     friend class IoEventDispatcher;
     friend class Service;
+
+    enum Constants : Int64
+    {
+        kBufferSize = 0x0001'0000,
+    };
 
 public:
     Session();
@@ -52,13 +59,10 @@ private:    // 입출력 요청 및 처리
     void    HandleError(Int64 errorCode);
 
 protected:  // 콘텐츠 코드 인터페이스
-    virtual void    OnConnect() = 0;
-    virtual void    OnDisconnect(String16 cause) = 0;
-    virtual Int64   OnRecv(Byte* buffer, Int64 numBytes) = 0;
-    virtual void    OnSend(Int64 numBytes) = 0;
-
-public:
-    Byte            mRecvBuffer[1'000] = {};
+    virtual void    OnConnected() = 0;
+    virtual void    OnDisconnected(String16 cause) = 0;
+    virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) = 0;
+    virtual void    OnSent(Int64 numBytes) = 0;
 
 private:
     RW_LOCK;
@@ -71,4 +75,7 @@ private:
     ConnectEvent        mConnectEvent;
     DisconnectEvent     mDisconnectEvent;
     RecvEvent           mRecvEvent;
+
+private:
+    ReceiveBuffer       mReceiveBuffer;
 };

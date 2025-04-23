@@ -151,9 +151,9 @@ Int64 SocketUtils::DisconnectAsync(SOCKET socket, Int64 flags, DisconnectEvent* 
     return Int64();
 }
 
-Int64 SocketUtils::AcceptAsync(SOCKET listenSocket, Session* session, Int64* numBytes, AcceptEvent* event)
+Int64 SocketUtils::AcceptAsync(SOCKET listenSocket, SOCKET acceptSocket, Byte* buffer, Int64* numBytes, AcceptEvent* event)
 {
-    if (FALSE == sAcceptEx(listenSocket, session->GetSocket(), session->mRecvBuffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, reinterpret_cast<LPDWORD>(&numBytes), static_cast<LPOVERLAPPED>(event)))
+    if (FALSE == sAcceptEx(listenSocket, acceptSocket, buffer, 0, sizeof(SOCKADDR_IN) + 16, sizeof(SOCKADDR_IN) + 16, reinterpret_cast<LPDWORD>(&numBytes), static_cast<LPOVERLAPPED>(event)))
     {
         return ::WSAGetLastError();
     }
