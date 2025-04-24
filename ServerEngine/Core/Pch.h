@@ -28,6 +28,10 @@
 #include <string>
 #include <string_view>
 
+// spdlog
+#include <spdlog/spdlog.h>
+
+// ServerEngine
 #include "ServerEngine/Core/Macro.h"
 #include "ServerEngine/Core/Types.h"
 #include "ServerEngine/Core/Global.h"

@@ -1,5 +1,6 @@
 {
   "dependencies": [
-    "mimalloc"
+    "mimalloc",
+    "spdlog"
   ]
 }
