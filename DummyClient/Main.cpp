@@ -58,8 +58,6 @@ Service::Config gConfig =
 
 int main()
 {
-    mi_version();
-
     // 서버 서비스 준비까지 잠시 대기
     std::this_thread::sleep_for(std::chrono::seconds(1));
 

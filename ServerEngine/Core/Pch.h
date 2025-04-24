@@ -10,9 +10,6 @@
 #include <WS2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
 
-// 메모리 할당기로 mimalloc 사용
-#include <mimalloc.h>
-
 // STL
 #include <iostream>
 #include <shared_mutex>
