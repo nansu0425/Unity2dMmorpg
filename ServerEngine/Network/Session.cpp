@@ -34,15 +34,20 @@ void Session::Disconnect(String16 cause)
     RegisterDisconnect(std::move(cause));
 }
 
-void Session::Send(const Byte* buffer, Int64 numBytes)
+void Session::Send(SharedPtr<SendBuffer> buffer)
 {
-    // 전송 이벤트 생성
-    SendEvent* event = new SendEvent();
-    event->owner = GetSharedPtr();
-    event->buffer.resize(numBytes);
-    ::memcpy(event->buffer.data(), buffer, numBytes);
+    {
+        WRITE_GUARD;
+        mSendQueue.push(buffer);
+    }
 
-    RegisterSend(event);
+    if (mIsSending.exchange(true) == true)
+    {
+        // 이미 전송 중인 경우
+        return;
+    }
+
+    RegisterSend();
 }
 
 HANDLE Session::GetIoObject()
@@ -64,7 +69,7 @@ void Session::DispatchIoEvent(IoEvent* event, Int64 numBytes)
         ProcessReceive(numBytes);
         break;
     case IoEventType::Send:
-        ProcessSend(static_cast<SendEvent*>(event), numBytes);
+        ProcessSend(numBytes);
         break;
     default:
         CRASH("INVALID_EVENT_TYPE");
@@ -167,29 +172,52 @@ void Session::RegisterReceive()
     }
 }
 
-void Session::RegisterSend(SendEvent* event)
+void Session::RegisterSend()
 {
     if (!IsConnected())
     {
         return;
     }
 
-    WSABUF buffer;
-    buffer.buf = reinterpret_cast<CHAR*>(event->buffer.data());
-    buffer.len = static_cast<ULONG>(event->buffer.size());
-    Int64 numBytes = 0;
-
-    Int64 result = SUCCESS;
-    {
+    { // 송신 큐의 모든 버퍼를 송신 이벤트로 옮긴다
         WRITE_GUARD;
-        result = SocketUtils::SendAsync(mSocket, &buffer, 1, OUT & numBytes, event);
+
+        Int64 dataSize = 0;
+        while (mSendQueue.size() > 0)
+        {
+            SharedPtr<SendBuffer> sendBuffer = mSendQueue.front();
+            mSendQueue.pop();
+
+            dataSize += sendBuffer->GetDataSize();
+            // TODO: 보낼 데이터가 너무 많을 경우 처리
+
+            mSendEvent.buffers.push_back(std::move(sendBuffer));
+        }
     }
-     
+
+    // Scatter-Gather 방식으로 송신하기 위해 버퍼를 모은다
+    Vector<WSABUF> buffers;
+    buffers.reserve(mSendEvent.buffers.size());
+    for (const auto& sendBuffer : mSendEvent.buffers)
+    {
+        WSABUF buffer;
+        buffer.buf = reinterpret_cast<CHAR*>(sendBuffer->GetBuffer());
+        buffer.len = static_cast<ULONG>(sendBuffer->GetDataSize());
+        buffers.push_back(buffer);
+    }
+    Int64 numBytes = 0;
+    mSendEvent.Init();
+    mSendEvent.owner = GetSharedPtr();
+
+    // 비동기 송신 요청
+    Int64 result = SocketUtils::SendAsync(mSocket, buffers.data(), buffers.size(), OUT &numBytes, &mSendEvent);
     if ((result != SUCCESS) &&
         (result != WSA_IO_PENDING))
     {
         HandleError(result);
-        delete event;
+        mSendEvent.owner.reset();
+        mSendEvent.buffers.clear();
+        mIsSending.store(false);
     }
 }
 
@@ -246,9 +274,10 @@ void Session::ProcessReceive(Int64 numBytes)
     RegisterReceive();
 }
 
-void Session::ProcessSend(SendEvent* event, Int64 numBytes)
+void Session::ProcessSend(Int64 numBytes)
 {
-    delete event;
+    mSendEvent.owner.reset();
+    mSendEvent.buffers.clear();
 
     if (numBytes == 0)
     {
@@ -256,7 +285,21 @@ void Session::ProcessSend(SendEvent* event, Int64 numBytes)
         return;
     }
 
+    // 콘텐츠 코드에서 송신 처리
     OnSent(numBytes);
+
+    { // 송신 큐가 비었으면 송신 상태를 해제
+        WRITE_GUARD;
+
+        if (mSendQueue.empty())
+        {
+            mIsSending.store(false);
+            return;
+        }
+    }
+
+    // 송신 큐에 남아 있는 버퍼가 있으면 다시 송신 등록
+    RegisterSend();
 }
 
 void Session::HandleError(Int64 errorCode)

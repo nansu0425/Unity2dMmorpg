@@ -57,3 +57,19 @@ Bool ReceiveBuffer::OnWritten(Int64 numBytes)
 
     return true;
 }
+
+SendBuffer::SendBuffer(Int64 size)
+{
+    mBuffer.resize(size);
+}
+
+SendBuffer::~SendBuffer()
+{}
+
+void SendBuffer::CopyData(const Byte* buffer, Int64 numBytes)
+{
+    ASSERT_CRASH(numBytes <= GetCapacity(), "BUFFER_OVERFLOW");
+
+    ::memcpy(mBuffer.data(), buffer, numBytes);
+    mDataSize = numBytes;
+}

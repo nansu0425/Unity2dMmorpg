@@ -5,7 +5,6 @@
 #include "ServerEngine/Io/Dispatcher.h"
 #include "ServerEngine/Network/Address.h"
 #include "ServerEngine/Io/Event.h"
-#include "ServerEngine/Network/Buffer.h"
 
 class Listener;
 class IoEventDispatcher;
@@ -31,7 +30,7 @@ public:
 public:     // 외부에서 호출하는 함수
     Int64               Connect();
     void                Disconnect(String16 cause);
-    void                Send(const Byte* buffer, Int64 numBytes);
+    void                Send(SharedPtr<SendBuffer> buffer);
 
     SharedPtr<Service>  GetService() const { return mService.lock(); }
     void                SetService(SharedPtr<Service> service) { mService = std::move(service); }
@@ -49,12 +48,12 @@ private:    // 입출력 요청 및 처리
     Int64   RegisterConnect();
     Int64   RegisterDisconnect(String16 cause);
     void    RegisterReceive();
-    void    RegisterSend(SendEvent* event);
+    void    RegisterSend();
 
     void    ProcessConnect();
     void    ProcessDisconnect();
     void    ProcessReceive(Int64 numBytes);
-    void    ProcessSend(SendEvent* event, Int64 numBytes);
+    void    ProcessSend(Int64 numBytes);
 
     void    HandleError(Int64 errorCode);
 
@@ -70,12 +69,15 @@ private:
     SOCKET              mSocket = INVALID_SOCKET;
     NetAddress          mAddress;
     Atomic<Bool>        mIsConnected = false;
+    Atomic<Bool>        mIsSending = false;
 
 private:
     ConnectEvent        mConnectEvent;
     DisconnectEvent     mDisconnectEvent;
     ReceiveEvent        mReceiveEvent;
+    SendEvent           mSendEvent;
 
 private:
-    ReceiveBuffer       mReceiveBuffer;
+    ReceiveBuffer                   mReceiveBuffer;
+    Queue<SharedPtr<SendBuffer>>    mSendQueue;
 };

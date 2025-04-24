@@ -1,0 +1,32 @@
+﻿/*    GameServer/Network/SessionManager.cpp    */
+
+#include "GameServer/Pch.h"
+#include "GameServer/Network/SessionManager.h"
+#include "GameServer/Network/Session.h"
+
+GameSessionManager gSessionManager;
+
+void GameSessionManager::AddSession(SharedPtr<GameSession> session)
+{
+    WRITE_GUARD;
+    mSessions.insert(session);
+}
+
+void GameSessionManager::RemoveSession(SharedPtr<GameSession> session)
+{
+    WRITE_GUARD;
+    auto it = mSessions.find(session);
+    if (it != mSessions.end())
+    {
+        mSessions.erase(it);
+    }
+}
+
+void GameSessionManager::Broadcast(SharedPtr<SendBuffer> sendBuffer)
+{
+    WRITE_GUARD;
+    for (auto& session : mSessions)
+    {
+        session->Send(sendBuffer);
+    }
+}

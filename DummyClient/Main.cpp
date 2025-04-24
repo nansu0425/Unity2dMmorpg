@@ -17,7 +17,9 @@ protected:
         // 연결 성공 처리
         std::wcout << TEXT_16("Connected to server") << std::endl;
         // 서버에 데이터 전송
-        Send(gSendBuffer, SIZE_64(gSendBuffer));
+        SharedPtr<SendBuffer> sendBuffer = std::make_shared<SendBuffer>(SIZE_64(gSendBuffer));
+        sendBuffer->CopyData(gSendBuffer, SIZE_64(gSendBuffer));
+        Send(sendBuffer);
     }
 
     virtual void    OnDisconnected(String16 cause) override
@@ -30,9 +32,11 @@ protected:
     {
         // 수신한 데이터 처리
         std::wcout << TEXT_16("Received: ") << numBytes << TEXT_16(" bytes") << std::endl;
+        // 1초 후에 서버에 데이터 전송
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        // 수신한 데이터를 그대로 전송
-        Send(buffer, numBytes);
+        SharedPtr<SendBuffer> sendBuffer = std::make_shared<SendBuffer>(SIZE_64(gSendBuffer));
+        sendBuffer->CopyData(gSendBuffer, SIZE_64(gSendBuffer));
+        Send(sendBuffer);
 
         return numBytes;
     }
@@ -49,7 +53,7 @@ Service::Config gConfig =
     NetAddress(TEXT_16("127.0.0.1"), 7777),
     std::make_shared<IoEventDispatcher>(),
     std::make_shared<ServerSession>,
-    2,
+    4,
 };
 
 int main()
@@ -64,7 +68,7 @@ int main()
     ASSERT_CRASH(SUCCESS == service->Run(), "CLIENT_SERVICE_RUN_FAILED");
 
     // 입출력 이벤트 처리 스레드 생성 및 실행
-    for (Int64 i = 0; i < 2; ++i)
+    for (Int64 i = 0; i < 4; ++i)
     {
         gThreadManager->Launch([service]()
                                {
