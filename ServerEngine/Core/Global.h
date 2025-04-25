@@ -2,8 +2,8 @@
 
 #pragma once
 
-extern class ThreadManager*                     gThreadManager;
-extern class DeadlockDetector*                  gDeadlockDetector;
+extern class ThreadManager*     gThreadManager;
+extern class DeadlockDetector*  gDeadlockDetector;
 
 class GlobalContext
 {
@@ -12,4 +12,4 @@ public:
     ~GlobalContext();
 };
 
-extern GlobalContext gGlobalContext;
+extern GlobalContext*   gGlobalContext;

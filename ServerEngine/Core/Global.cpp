@@ -22,4 +22,4 @@ GlobalContext::~GlobalContext()
     delete              gThreadManager;
 }
 
-GlobalContext           gGlobalContext;
+GlobalContext*          gGlobalContext;
