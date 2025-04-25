@@ -13,6 +13,9 @@
     <Filter Include="Io">
       <UniqueIdentifier>{556c3f77-5b44-4ea3-bf3b-6e13c9baf12d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Log">
+      <UniqueIdentifier>{52e8fbba-a7e2-4133-a9b9-3a6193849c7e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Types.h">
@@ -64,6 +67,9 @@
     <ClInclude Include="Network\Buffer.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="Log\Logger.h">
+      <Filter>Log</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -105,6 +111,9 @@
     </ClCompile>
     <ClCompile Include="Network\Buffer.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Log\Logger.cpp">
+      <Filter>Log</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

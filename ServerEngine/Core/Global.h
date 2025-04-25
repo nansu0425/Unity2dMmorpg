@@ -4,6 +4,7 @@
 
 extern class ThreadManager*     gThreadManager;
 extern class DeadlockDetector*  gDeadlockDetector;
+extern SharedPtr<Logger>        gLogger;
 
 class GlobalContext
 {

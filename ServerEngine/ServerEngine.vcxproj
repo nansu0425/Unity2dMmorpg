@@ -29,6 +29,7 @@
     <ClInclude Include="Core\Types.h" />
     <ClInclude Include="Io\Event.h" />
     <ClInclude Include="Io\Dispatcher.h" />
+    <ClInclude Include="Log\Logger.h" />
     <ClInclude Include="Network\Listener.h" />
     <ClInclude Include="Network\Address.h" />
     <ClInclude Include="Network\Buffer.h" />
@@ -45,6 +46,7 @@
     <ClCompile Include="Core\Tls.cpp" />
     <ClCompile Include="Io\Event.cpp" />
     <ClCompile Include="Io\Dispatcher.cpp" />
+    <ClCompile Include="Log\Logger.cpp" />
     <ClCompile Include="Network\Listener.cpp" />
     <ClCompile Include="Network\Address.cpp" />
     <ClCompile Include="Network\Buffer.cpp" />

@@ -364,3 +364,7 @@ FodyWeavers.xsd
 
 # Vcpkg
 vcpkg_installed
+
+# ServerEngine/Log
+!ServerEngine/Log/
+!ServerEngine/Log/**
