@@ -28,13 +28,11 @@
 #include <string>
 #include <string_view>
 
-// spdlog
-#include <spdlog/spdlog.h>
-
 // ServerEngine
 #include "ServerEngine/Core/Macro.h"
 #include "ServerEngine/Core/Types.h"
 #include "ServerEngine/Core/Global.h"
 #include "ServerEngine/Core/Tls.h"
+#include "ServerEngine/Log/Logger.h"
 #include "ServerEngine/Concurrency/Lock.h"
 #include "ServerEngine/Network/Buffer.h"

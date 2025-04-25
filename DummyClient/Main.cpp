@@ -58,8 +58,6 @@ Service::Config gConfig =
 
 int main()
 {
-    // 전역 객체 초기화
-    gGlobalContext = new GlobalContext();
     // 서버 서비스 준비까지 잠시 대기
     std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -83,8 +81,6 @@ int main()
 
     // 클라이언트 서비스 중지
     service->Stop();
-    // 전역 객체 해제
-    delete gGlobalContext;
 
     return 0;
 }

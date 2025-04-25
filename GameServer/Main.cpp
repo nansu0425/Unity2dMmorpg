@@ -16,8 +16,6 @@ Service::Config gConfig =
 
 int main()
 {
-    // 전역 객체 초기화
-    gGlobalContext = new GlobalContext();
     // 서버 서비스 생성 및 실행
     auto service = std::make_shared<ServerService>(gConfig);
     ASSERT_CRASH(SUCCESS == service->Run(), "SERVER_SERVICE_RUN_FAILED");
@@ -38,8 +36,6 @@ int main()
 
     // 서버 서비스 서비스 중지
     service->Stop();
-    // 전역 객체 해제
-    delete gGlobalContext; 
 
     return 0;
 }

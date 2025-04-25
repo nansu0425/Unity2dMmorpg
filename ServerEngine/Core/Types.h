@@ -63,5 +63,3 @@ using String8       = std::basic_string<Char8, std::char_traits<Char8>>;
 using String16      = std::basic_string<Char16, std::char_traits<Char16>>;
 using String8View   = std::basic_string_view<Char8>;
 using String16View  = std::basic_string_view<Char16>;
-
-using Logger        = spdlog::logger;

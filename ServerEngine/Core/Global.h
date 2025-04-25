@@ -4,7 +4,7 @@
 
 extern class ThreadManager*     gThreadManager;
 extern class DeadlockDetector*  gDeadlockDetector;
-extern SharedPtr<Logger>        gLogger;
+extern class Logger*            gLogger;
 
 class GlobalContext
 {
@@ -13,4 +13,4 @@ public:
     ~GlobalContext();
 };
 
-extern GlobalContext*   gGlobalContext;
+extern GlobalContext    gGlobalContext;

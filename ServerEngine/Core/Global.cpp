@@ -6,13 +6,13 @@
 #include "ServerEngine/Concurrency/Deadlock.h"
 #include "ServerEngine/Network/Socket.h"
 
-ThreadManager*           gThreadManager = nullptr;
-DeadlockDetector*        gDeadlockDetector = nullptr;
-SharedPtr<Logger>        gLogger = nullptr;
+ThreadManager*          gThreadManager = nullptr;
+DeadlockDetector*       gDeadlockDetector = nullptr;
+Logger*                 gLogger = nullptr;
 
 GlobalContext::GlobalContext()
 {
-    gLogger = LoggerUtils::CreateLogger();
+    gLogger = new Logger("GlobalLogger");
     gThreadManager = new ThreadManager();
     gDeadlockDetector = new DeadlockDetector();
     SocketUtils::Init();
@@ -23,7 +23,7 @@ GlobalContext::~GlobalContext()
     SocketUtils::Cleanup();
     delete gDeadlockDetector;
     delete gThreadManager;
-    LoggerUtils::ShutdownLogger();
+    delete gLogger;
 }
 
-GlobalContext*          gGlobalContext;
+GlobalContext   gGlobalContext;
