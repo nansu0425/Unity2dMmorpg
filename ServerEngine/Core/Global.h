@@ -2,9 +2,10 @@
 
 #pragma once
 
-extern class ThreadManager*     gThreadManager;
-extern class DeadlockDetector*  gDeadlockDetector;
-extern class Logger*            gLogger;
+extern class Logger*                gLogger;
+extern class ThreadManager*         gThreadManager;
+extern class DeadlockDetector*      gDeadlockDetector;
+extern class SendBufferManager*     gSendBufferManager;
 
 class GlobalContext
 {

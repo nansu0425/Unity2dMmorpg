@@ -6,7 +6,7 @@
 #include "ServerEngine/Network/Service.h"
 #include "ServerEngine/Network/Session.h"
 
-Byte gSendBuffer[] = "Hello, Server!";
+const Byte gSendData[] = "Hello, Server!";
 
 class ServerSession
     : public Session
@@ -15,9 +15,12 @@ protected:
     virtual void    OnConnected() override
     {
         gLogger->Info(TEXT_16("Connected to server"));
-        // 서버에 데이터 전송
-        SharedPtr<SendBuffer> sendBuffer = std::make_shared<SendBuffer>(SIZE_64(gSendBuffer));
-        sendBuffer->CopyData(gSendBuffer, SIZE_64(gSendBuffer));
+
+        // 송신 버퍼에 복사
+        SharedPtr<SendBuffer> sendBuffer = gSendBufferManager->Open(4096);
+        ::memcpy(sendBuffer->GetBuffer(), gSendData, SIZE_64(gSendData));
+        sendBuffer->Close(SIZE_64(gSendData));
+        // 송신 버퍼를 서버에 전송
         Send(sendBuffer);
     }
 
@@ -29,10 +32,13 @@ protected:
     virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) override
     {
         gLogger->Info(TEXT_16("Received: {} bytes"), numBytes);
-        // 1초 후에 서버에 데이터 전송
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-        SharedPtr<SendBuffer> sendBuffer = std::make_shared<SendBuffer>(SIZE_64(gSendBuffer));
-        sendBuffer->CopyData(gSendBuffer, SIZE_64(gSendBuffer));
+
+        // 송신 버퍼에 복사
+        SharedPtr<SendBuffer> sendBuffer = gSendBufferManager->Open(4096);
+        ::memcpy(sendBuffer->GetBuffer(), gSendData, SIZE_64(gSendData));
+        sendBuffer->Close(SIZE_64(gSendData));
+        // 송신 버퍼를 서버에 전송
         Send(sendBuffer);
 
         return numBytes;

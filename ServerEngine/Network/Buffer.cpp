@@ -58,18 +58,100 @@ Bool ReceiveBuffer::OnWritten(Int64 numBytes)
     return true;
 }
 
-SendBuffer::SendBuffer(Int64 size)
-{
-    mBuffer.resize(size);
-}
+SendBuffer::SendBuffer(SharedPtr<SendBufferChunk> owner, Byte* buffer, Int64 allocSize)
+    : mBuffer(buffer)
+    , mAllocSize(allocSize)
+    , mOwner(std::move(owner))
+{}
 
 SendBuffer::~SendBuffer()
 {}
 
-void SendBuffer::CopyData(const Byte* buffer, Int64 numBytes)
+void SendBuffer::Close(Int64 writtenSize)
 {
-    ASSERT_CRASH(numBytes <= GetCapacity(), "BUFFER_OVERFLOW");
+    ASSERT_CRASH(writtenSize <= mAllocSize, "BUFFER_OVERFLOW");
+    mWrittenSize = writtenSize;
+    mOwner->Close(mWrittenSize);
+}
 
-    ::memcpy(mBuffer.data(), buffer, numBytes);
-    mDataSize = numBytes;
+SharedPtr<SendBuffer> SendBufferManager::Open(Int64 allocSize)
+{
+    if (tSendBufferChunk == nullptr)
+    {
+        tSendBufferChunk = Pop();
+        tSendBufferChunk->Clear();
+    }
+
+    ASSERT_CRASH(tSendBufferChunk->IsOpen() == false, "ALREADY_OPEND");
+
+    // 더 이상 쓰기를 할 수 있는 여유 공간이 없으면 새로운 청크로 교체
+    if (tSendBufferChunk->GetFreeSize() < allocSize)
+    {
+        tSendBufferChunk = Pop();
+        tSendBufferChunk->Clear();
+    }
+
+    return tSendBufferChunk->Open(allocSize);
+}
+
+SharedPtr<SendBufferChunk> SendBufferManager::Pop()
+{
+    {
+        WRITE_GUARD;
+        // 사용 가능한 청크가 있는 경우
+        if (false == mSendChunks.empty())
+        {
+            SharedPtr<SendBufferChunk> chunk = mSendChunks.back();
+            mSendChunks.pop_back();
+            return chunk;
+        }
+    }
+    // 새로운 청크 할당
+    return SharedPtr<SendBufferChunk>(new SendBufferChunk(), PushGlobal);
+}
+
+void SendBufferManager::Push(SharedPtr<SendBufferChunk> chunk)
+{
+    WRITE_GUARD;
+    mSendChunks.push_back(chunk);
+}
+
+void SendBufferManager::PushGlobal(SendBufferChunk* chunk)
+{
+    // 청크를 재사용하기 위해 전역으로 푸시
+    gSendBufferManager->Push(SharedPtr<SendBufferChunk>(chunk, PushGlobal));
+}
+
+SendBufferChunk::SendBufferChunk()
+{}
+
+SendBufferChunk::~SendBufferChunk()
+{}
+
+SharedPtr<SendBuffer> SendBufferChunk::Open(Int64 allocSize)
+{
+    ASSERT_CRASH(allocSize <= kChunkSize, "BUFFER_OVERFLOW");
+    ASSERT_CRASH(mIsOpen == false, "ALREADY_OPEND");
+
+    if (allocSize > GetFreeSize())
+    {
+        return nullptr;
+    }
+
+    mIsOpen = true;
+
+    return std::make_shared<SendBuffer>(shared_from_this(), AtWritePos(), allocSize);
+}
+
+void SendBufferChunk::Close(Int64 writtenSize)
+{
+    ASSERT_CRASH(mIsOpen == true, "NOT_OPEND");
+    mIsOpen = false;
+    mWritePos += writtenSize;
+}
+
+void SendBufferChunk::Clear()
+{
+    mIsOpen = false;
+    mWritePos = 0;
 }

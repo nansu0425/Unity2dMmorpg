@@ -187,13 +187,13 @@ void Session::RegisterSend()
     { // 송신 큐의 모든 버퍼를 송신 이벤트로 옮긴다
         WRITE_GUARD;
 
-        Int64 dataSize = 0;
+        Int64 writtenSize = 0;
         while (mSendQueue.size() > 0)
         {
             SharedPtr<SendBuffer> sendBuffer = mSendQueue.front();
             mSendQueue.pop();
 
-            dataSize += sendBuffer->GetDataSize();
+            writtenSize += sendBuffer->GetWrittenSize();
             // TODO: 보낼 데이터가 너무 많을 경우 처리
 
             mSendEvent.buffers.push_back(std::move(sendBuffer));
@@ -207,7 +207,7 @@ void Session::RegisterSend()
     {
         WSABUF buffer;
         buffer.buf = reinterpret_cast<CHAR*>(sendBuffer->GetBuffer());
-        buffer.len = static_cast<ULONG>(sendBuffer->GetDataSize());
+        buffer.len = static_cast<ULONG>(sendBuffer->GetWrittenSize());
         buffers.push_back(buffer);
     }
     Int64 numBytes = 0;
