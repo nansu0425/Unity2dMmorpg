@@ -116,19 +116,22 @@ void DeadlockDetector::Dfs(Int32 current)
         // 순방향 간선이 아니고, next의 Dfs가 끝나지 않은 경우 역방향 간선 => 데드락
         if (!mDfsFinished[next])
         {
-            // 사이클 경로 출력
-            std::cout << "Deadlock detected: " << mIdToName[next];
+            // 사이클 경로 로그
+            String8 log = TEXT_8("Deadlock detected: ");
+
+            log += mIdToName[next];
             while (true)
             {
-                std::cout << " <- " << mIdToName[current];
+                log += " <- ";
+                log += mIdToName[current];
                 if (current == next)
                 {
                     break;
                 }
                 current = mParent[current];
             }
-            std::cout << std::endl;
 
+            gLogger->Critical(log);
             CRASH("DEADLOCK_DETECTED");
         }
     }

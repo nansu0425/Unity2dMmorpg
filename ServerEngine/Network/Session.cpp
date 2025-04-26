@@ -254,7 +254,8 @@ void Session::ProcessReceive(Int64 numBytes)
 
     if (!mReceiveBuffer.OnWritten(numBytes))
     {
-        Disconnect(TEXT_16("OnWritten error"));
+        gLogger->Error(TEXT_16("Failed to write to receive buffer: {} bytes"), numBytes);
+        Disconnect(TEXT_16("Receive buffer error"));
         return;
     }
 
@@ -265,7 +266,8 @@ void Session::ProcessReceive(Int64 numBytes)
         (numBytesRead > dataSize) ||
         (false == mReceiveBuffer.OnRead(numBytesRead)))
     {
-        Disconnect(TEXT_16("OnRead error"));
+        gLogger->Error(TEXT_16("Failed to read receive buffer.: {} bytes"), numBytes);
+        Disconnect(TEXT_16("Receive buffer error"));
         return;
     }
     mReceiveBuffer.Clear();
@@ -304,16 +306,17 @@ void Session::ProcessSend(Int64 numBytes)
 
 void Session::HandleError(Int64 errorCode)
 {
-    String16 errorMessage = TEXT_16("Error code: ") + std::to_wstring(errorCode);
+    gLogger->Error(TEXT_16("Socket error code: {}"), errorCode);
 
     switch (errorCode)
     {
     case WSAECONNRESET:
+        Disconnect(TEXT_16("WSAECONNRESET"));
+        break;
     case WSAECONNABORTED:
-        Disconnect(std::move(errorMessage));
+        Disconnect(TEXT_16("WSAECONNABORTED"));
         break;
     default:
-        std::wcerr << errorMessage << std::endl;
         break;
     }
 }

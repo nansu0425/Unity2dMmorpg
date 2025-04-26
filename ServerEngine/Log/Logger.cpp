@@ -33,7 +33,7 @@ void Logger::Init(String8View name)
 #ifdef _DEBUG
     mLogger->set_level(spdlog::level::debug);
 #else
-    logger->set_level(spdlog::level::info);
+    mLogger->set_level(spdlog::level::info);
 #endif // _DEBUG
 
     // 경고 이상일 때 즉시 버퍼를 비우고 기록

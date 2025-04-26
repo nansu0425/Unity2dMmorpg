@@ -12,7 +12,7 @@ Logger*                 gLogger = nullptr;
 
 GlobalContext::GlobalContext()
 {
-    gLogger = new Logger("GlobalLogger");
+    gLogger = new Logger(TEXT_8("GlobalLogger"));
     gThreadManager = new ThreadManager();
     gDeadlockDetector = new DeadlockDetector();
     SocketUtils::Init();

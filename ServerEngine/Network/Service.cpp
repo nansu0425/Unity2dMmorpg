@@ -37,7 +37,7 @@ void Service::AddSession(SharedPtr<Session> session)
     }
     else
     {
-        std::cerr << "Failed to add session: already exists" << std::endl;
+        gLogger->Error(TEXT_16("Failed to add session: already exists"));
     }
 }
 
@@ -51,7 +51,7 @@ void Service::RemoveSession(SharedPtr<Session> session)
     }
     else
     {
-        std::cerr << "Failed to remove session: not found" << std::endl;
+        gLogger->Error(TEXT_16("Failed to remove session: not found"));
     }
 }
 

@@ -100,7 +100,7 @@ void Listener::RegisterAccept(AcceptEvent* event)
     // 성공적으로 비동기 작업이 시작되지 않은 경우
     if (WSA_IO_PENDING != (result = SocketUtils::AcceptAsync(mSocket, session->GetSocket(), OUT session->mReceiveBuffer.AtWritePos(), OUT &numBytes, event)))
     {
-        std::cout << "AcceptAsync failed: " << result << std::endl;
+        gLogger->Error(TEXT_16("Socket error code: {}"), result);
         RegisterAccept(event);
     }
 }
@@ -113,7 +113,7 @@ void Listener::ProcessAccept(AcceptEvent* event, Int64 numBytes)
 
     if (result = SocketUtils::SetUpdateAcceptSocket(session->GetSocket(), mSocket))
     {
-        std::cout << "SetUpdateAcceptSocket failed: " << result << std::endl;
+        gLogger->Error(TEXT_16("Socket error code: {}"), result);
         RegisterAccept(event);
         return;
     }
@@ -123,15 +123,13 @@ void Listener::ProcessAccept(AcceptEvent* event, Int64 numBytes)
 
     if (result = ::getpeername(session->GetSocket(), OUT reinterpret_cast<SOCKADDR*>(&sockAddress), &sockAddressLength))
     {
-        std::cout << "getpeername failed: " << result << std::endl;
+        gLogger->Error(TEXT_16("Socket error code: {}"), result);
         RegisterAccept(event);
         return;
     }
 
     session->SetNetAddress(NetAddress(sockAddress));
     session->ProcessConnect();
-
-    std::cout << "Client connected!" << std::endl;
 
     RegisterAccept(event);
 }

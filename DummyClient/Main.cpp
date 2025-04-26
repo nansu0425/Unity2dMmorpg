@@ -14,8 +14,7 @@ class ServerSession
 protected:
     virtual void    OnConnected() override
     {
-        // 연결 성공 처리
-        std::wcout << TEXT_16("Connected to server") << std::endl;
+        gLogger->Info(TEXT_16("Connected to server"));
         // 서버에 데이터 전송
         SharedPtr<SendBuffer> sendBuffer = std::make_shared<SendBuffer>(SIZE_64(gSendBuffer));
         sendBuffer->CopyData(gSendBuffer, SIZE_64(gSendBuffer));
@@ -24,14 +23,12 @@ protected:
 
     virtual void    OnDisconnected(String16 cause) override
     {
-        // 연결 종료 처리
-        std::wcout << TEXT_16("Disconnected: ") << cause << std::endl;
+        gLogger->Info(TEXT_16("Disconnected from server: {}"), cause);
     }
 
     virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) override
     {
-        // 수신한 데이터 처리
-        std::wcout << TEXT_16("Received: ") << numBytes << TEXT_16(" bytes") << std::endl;
+        gLogger->Info(TEXT_16("Received: {} bytes"), numBytes);
         // 1초 후에 서버에 데이터 전송
         std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         SharedPtr<SendBuffer> sendBuffer = std::make_shared<SendBuffer>(SIZE_64(gSendBuffer));
@@ -43,8 +40,7 @@ protected:
 
     virtual void    OnSent(Int64 numBytes) override
     {
-        // 전송 완료 처리
-        std::wcout << TEXT_16("Sent: ") << numBytes << TEXT_16(" bytes") << std::endl;
+        gLogger->Info(TEXT_16("Sent: {} bytes"), numBytes);
     }
 };
 

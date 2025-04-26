@@ -40,7 +40,7 @@ Int64 IoEventDispatcher::Dispatch(UInt32 timeoutMs)
     // 입출력 이벤트를 꺼낼 수 있을 때까지 대기
     if (FALSE == ::GetQueuedCompletionStatus(mIocp, OUT &numBytes, OUT &completionKey, OUT reinterpret_cast<LPOVERLAPPED*>(&event), timeoutMs))
     {
-        std::cerr << "GetQueuedCompletionStatus failed: " << ::GetLastError() << std::endl;    
+        gLogger->Error(TEXT_16("System error code: {}"), ::GetLastError()); 
     }
 
     // 입출력 이벤트 전달
