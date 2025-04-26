@@ -20,21 +20,13 @@ void GameSession::OnDisconnected(String16 cause)
     gSessionManager.RemoveSession(std::static_pointer_cast<GameSession>(shared_from_this()));
 }
 
-Int64 GameSession::OnReceived(Byte* buffer, Int64 numBytes)
+Int64 GameSession::OnPacketReceived(Byte* buffer, Int64 numBytes)
 {
-    gLogger->Info(TEXT_16("Received: {} bytes"), numBytes);
-
-    // 수신 데이터를 송신 버퍼에 복사
-    SharedPtr<SendBuffer> sendBuffer = gSendBufferManager->Open(4096);
-    ::memcpy(sendBuffer->GetBuffer(), buffer, numBytes);
-    sendBuffer->Close(numBytes);
-    // 수신 데이터를 모든 세션에 브로드캐스트
-    gSessionManager.Broadcast(sendBuffer);
+    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+    gLogger->Debug(TEXT_16("Packet [id={}, size={}]"), header->id, header->size);
 
     return numBytes;
 }
 
 void GameSession::OnSent(Int64 numBytes)
-{
-    gLogger->Info(TEXT_16("Sent: {} bytes"), numBytes);
-}
+{}

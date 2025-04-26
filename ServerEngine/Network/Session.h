@@ -81,3 +81,23 @@ private:
     ReceiveBuffer                   mReceiveBuffer;
     Queue<SharedPtr<SendBuffer>>    mSendQueue;
 };
+
+struct PacketHeader
+{
+    Int32   size; // 헤더까지 포함한 패킷의 전체 크기
+    Int32   id; // 프로토콜 식별자
+};
+
+class PacketSession
+    : public Session
+{
+public:
+    PacketSession();
+    virtual ~PacketSession();
+
+    SharedPtr<PacketSession> GetSharedPtr() { return std::static_pointer_cast<PacketSession>(shared_from_this()); }
+
+protected:
+    virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) final;
+    virtual Int64   OnPacketReceived(Byte* buffer, Int64 numBytes) = 0;
+};

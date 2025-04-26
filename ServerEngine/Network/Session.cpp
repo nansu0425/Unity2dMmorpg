@@ -41,18 +41,19 @@ void Session::Disconnect(String16 cause)
 
 void Session::Send(SharedPtr<SendBuffer> buffer)
 {
+    Bool isSending = false;
+
     {
         WRITE_GUARD;
         mSendQueue.push(buffer);
+        isSending = mIsSending.load();
     }
 
-    if (mIsSending.exchange(true) == true)
+    // 송신하고 있지 않을 때만 비동기 송신 등록
+    if (false == isSending)
     {
-        // 이미 전송 중인 경우
-        return;
+        RegisterSend();
     }
-
-    RegisterSend();
 }
 
 HANDLE Session::GetIoObject()
@@ -361,4 +362,36 @@ void Session::HandleError(Int64 errorCode)
         gLogger->Error(TEXT_16("Error code: {}"), errorCode);
         break;
     }
+}
+
+PacketSession::PacketSession()
+{}
+
+PacketSession::~PacketSession()
+{}
+
+Int64 PacketSession::OnReceived(Byte* buffer, Int64 numBytes)
+{
+    Int64 processedSize = 0;
+
+    while (true)
+    {
+        Int64 dataSize = numBytes - processedSize;
+        // 패킷 헤더를 포함하는지 확인
+        if (dataSize < sizeof(PacketHeader))
+        {
+            break;
+        }
+        PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer + processedSize);
+        // 패킷의 전체 데이터를 포함하는지 확인
+        if (dataSize < header->size)
+        {
+            break;
+        }
+        // 패킷 처리
+        OnPacketReceived(buffer + processedSize, header->size);
+        processedSize += header->size;
+    }
+
+    return processedSize;
 }

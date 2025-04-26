@@ -118,7 +118,7 @@ void SendBufferManager::Push(SharedPtr<SendBufferChunk> chunk)
 
 void SendBufferManager::PushGlobal(SendBufferChunk* chunk)
 {
-    // 청크를 재사용하기 위해 전역으로 푸시
+    // 청크를 재사용
     gSendBufferManager->Push(SharedPtr<SendBufferChunk>(chunk, PushGlobal));
 }
 
@@ -130,13 +130,8 @@ SendBufferChunk::~SendBufferChunk()
 
 SharedPtr<SendBuffer> SendBufferChunk::Open(Int64 allocSize)
 {
-    ASSERT_CRASH(allocSize <= kChunkSize, "BUFFER_OVERFLOW");
+    ASSERT_CRASH(allocSize <= GetFreeSize(), "BUFFER_OVERFLOW");
     ASSERT_CRASH(mIsOpen == false, "ALREADY_OPEND");
-
-    if (allocSize > GetFreeSize())
-    {
-        return nullptr;
-    }
 
     mIsOpen = true;
 

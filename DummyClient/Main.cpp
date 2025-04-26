@@ -6,22 +6,15 @@
 #include "ServerEngine/Network/Service.h"
 #include "ServerEngine/Network/Session.h"
 
-const Byte gSendData[] = "Hello, Server!";
+Char8 gReceiveBuffer[4096] = {};
 
 class ServerSession
-    : public Session
+    : public PacketSession
 {
 protected:
     virtual void    OnConnected() override
     {
         gLogger->Info(TEXT_16("Connected to server"));
-
-        // 송신 버퍼에 복사
-        SharedPtr<SendBuffer> sendBuffer = gSendBufferManager->Open(4096);
-        ::memcpy(sendBuffer->GetBuffer(), gSendData, SIZE_64(gSendData));
-        sendBuffer->Close(SIZE_64(gSendData));
-        // 송신 버퍼를 서버에 전송
-        Send(sendBuffer);
     }
 
     virtual void    OnDisconnected(String16 cause) override
@@ -29,25 +22,18 @@ protected:
         gLogger->Warn(TEXT_16("Disconnected from server: {}"), cause);
     }
 
-    virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) override
+    virtual Int64   OnPacketReceived(Byte* buffer, Int64 numBytes) override
     {
-        gLogger->Info(TEXT_16("Received: {} bytes"), numBytes);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
-
-        // 송신 버퍼에 복사
-        SharedPtr<SendBuffer> sendBuffer = gSendBufferManager->Open(4096);
-        ::memcpy(sendBuffer->GetBuffer(), gSendData, SIZE_64(gSendData));
-        sendBuffer->Close(SIZE_64(gSendData));
-        // 송신 버퍼를 서버에 전송
-        Send(sendBuffer);
+        PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
+        // 수신 버퍼에 복사
+        ::memcpy(gReceiveBuffer, header + 1, header->size - SIZE_32(PacketHeader));
+        gLogger->Debug(TEXT_8("Received packet: size={}, id={}, data={}"), header->size, header->id, gReceiveBuffer);
 
         return numBytes;
     }
 
     virtual void    OnSent(Int64 numBytes) override
-    {
-        gLogger->Info(TEXT_16("Sent: {} bytes"), numBytes);
-    }
+    {}
 };
 
 Service::Config gConfig =
@@ -55,7 +41,7 @@ Service::Config gConfig =
     NetAddress(TEXT_16("127.0.0.1"), 7777),
     std::make_shared<IoEventDispatcher>(),
     std::make_shared<ServerSession>,
-    4,
+    5,
 };
 
 int main()
@@ -68,7 +54,7 @@ int main()
     ASSERT_CRASH(SUCCESS == service->Run(), "CLIENT_SERVICE_RUN_FAILED");
 
     // 입출력 이벤트 처리 스레드 생성 및 실행
-    for (Int64 i = 0; i < 4; ++i)
+    for (Int64 i = 0; i < 2; ++i)
     {
         gThreadManager->Launch([service]()
                                {
