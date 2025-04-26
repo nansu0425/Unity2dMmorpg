@@ -27,32 +27,32 @@ SharedPtr<Session> Service::CreateSession()
     return nullptr;
 }
 
-void Service::AddSession(SharedPtr<Session> session)
+Int64 Service::AddSession(SharedPtr<Session> session)
 {
     WRITE_GUARD;
-    // 세션 추가 후 성공적으로 추가되면 세션 카운트 증가
-    if (mSessions.insert(session).second)
+    // 세션 추가
+    if (!mSessions.insert(session).second)
     {
-        ++mSessionCount;
+        return FAILURE;
     }
-    else
-    {
-        gLogger->Error(TEXT_16("Failed to add session: already exists"));
-    }
+    // 세션 카운트 증가
+    ++mSessionCount;
+
+    return SUCCESS;
 }
 
-void Service::RemoveSession(SharedPtr<Session> session)
+Int64 Service::RemoveSession(SharedPtr<Session> session)
 {
     WRITE_GUARD;
-    // 세션 제거 후 성공적으로 제거되면 세션 카운트 감소
-    if (mSessions.erase(session) > 0)
+    // 세션 제거
+    if (mSessions.erase(session) == 0)
     {
-        --mSessionCount;
+        return FAILURE;
     }
-    else
-    {
-        gLogger->Error(TEXT_16("Failed to remove session: not found"));
-    }
+    // 세션 카운트 감소
+    --mSessionCount;
+
+    return SUCCESS;
 }
 
 ClientService::ClientService(const Config& config)

@@ -22,6 +22,7 @@ struct IoEvent
 {
     IoEventType                 type;
     SharedPtr<IIoObjectOwner>   owner; // 입출력을 요청한 객체가 입출력 작업이 진행되는 동안 살아있도록 보장한다
+    Int64                       result; // 입출력 작업 결과, SUCCESS가 아니면 에러 코드
     
     void Init() { ::ZeroMemory(this, sizeof(OVERLAPPED)); }
 

@@ -40,12 +40,22 @@ Int64 IoEventDispatcher::Dispatch(UInt32 timeoutMs)
     // 입출력 이벤트를 꺼낼 수 있을 때까지 대기
     if (FALSE == ::GetQueuedCompletionStatus(mIocp, OUT &numBytes, OUT &completionKey, OUT reinterpret_cast<LPOVERLAPPED*>(&event), timeoutMs))
     {
-        gLogger->Error(TEXT_16("System error code: {}"), ::GetLastError()); 
+        result = ::GetLastError();
+        if (event == nullptr)
+        {
+            gLogger->Error(TEXT_16("Failed to get queued completion status: {}"), result);
+        }
     }
 
-    // 입출력 이벤트 전달
-    owner = event->owner;
-    owner->DispatchIoEvent(event, numBytes);
+    // 이벤트를 정상적으로 꺼냈으면
+    if (event != nullptr)
+    {
+        // 입출력 결과 저장
+        event->result = result;
+        // 입출력 이벤트 전달
+        owner = event->owner;
+        owner->DispatchIoEvent(event, numBytes);
+    }
 
-    return result;
+    return SUCCESS;
 }

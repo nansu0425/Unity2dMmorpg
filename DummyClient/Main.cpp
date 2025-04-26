@@ -23,7 +23,7 @@ protected:
 
     virtual void    OnDisconnected(String16 cause) override
     {
-        gLogger->Info(TEXT_16("Disconnected from server: {}"), cause);
+        gLogger->Warn(TEXT_16("Disconnected from server: {}"), cause);
     }
 
     virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) override

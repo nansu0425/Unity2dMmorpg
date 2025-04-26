@@ -29,8 +29,13 @@ void Session::Disconnect(String16 cause)
         return;
     }
     // 서비스에서 세션 제거
-    GetService()->RemoveSession(GetSharedPtr());
-
+    Int64 result = GetService()->RemoveSession(GetSharedPtr());
+    if (SUCCESS != result)
+    {
+        gLogger->Error(TEXT_16("Failed to remove session from service: {}"), result);
+        return;
+    }
+    // 비동기 연결 해제 등록
     RegisterDisconnect(std::move(cause));
 }
 
@@ -107,7 +112,6 @@ Int64 Session::RegisterConnect()
     // 비동기 연결 요청
     Int64 numBytes = 0;
     result = SocketUtils::ConnectAsync(mSocket, mAddress, OUT &numBytes, &mConnectEvent);
-
     if (result != SUCCESS)
     {
         if (result == WSA_IO_PENDING)
@@ -117,6 +121,7 @@ Int64 Session::RegisterConnect()
         }
         else
         {
+            HandleError(result);
             mConnectEvent.owner.reset();
         }
     }
@@ -224,11 +229,25 @@ void Session::RegisterSend()
 void Session::ProcessConnect()
 {
     mConnectEvent.owner.reset();
+    // 에러가 발생한 경우
+    if (mConnectEvent.result != SUCCESS)
+    {
+        HandleError(mConnectEvent.result);
+        return;
+    }
 
     // 연결 상태로 변경
     mIsConnected.store(true);
     // 서비스에 세션 추가
-    GetService()->AddSession(GetSharedPtr());
+    Int64 result = GetService()->AddSession(GetSharedPtr());
+    if (SUCCESS != result)
+    {
+        gLogger->Error(TEXT_16("Failed to add session to service: {}"), result);
+        // 연결 상태 해제
+        mIsConnected.store(false);
+        return;
+    }
+
     // 콘텐츠 코드에서 연결 완료 처리
     OnConnected();
     // 수신 등록
@@ -238,6 +257,12 @@ void Session::ProcessConnect()
 void Session::ProcessDisconnect()
 {
     mDisconnectEvent.owner.reset();
+    // 에러가 발생한 경우
+    if (mDisconnectEvent.result != SUCCESS)
+    {
+        HandleError(mDisconnectEvent.result);
+        return;
+    }
 
     OnDisconnected(std::move(mDisconnectEvent.cause));
 }
@@ -245,6 +270,12 @@ void Session::ProcessDisconnect()
 void Session::ProcessReceive(Int64 numBytes)
 {
     mReceiveEvent.owner.reset();
+    // 에러가 발생한 경우
+    if (mReceiveEvent.result != SUCCESS)
+    {
+        HandleError(mReceiveEvent.result);
+        return;
+    }
 
     if (numBytes == 0)
     {
@@ -280,6 +311,12 @@ void Session::ProcessSend(Int64 numBytes)
 {
     mSendEvent.owner.reset();
     mSendEvent.buffers.clear();
+    // 에러가 발생한 경우
+    if (mSendEvent.result != SUCCESS)
+    {
+        HandleError(mSendEvent.result);
+        return;
+    }
 
     if (numBytes == 0)
     {
@@ -306,10 +343,14 @@ void Session::ProcessSend(Int64 numBytes)
 
 void Session::HandleError(Int64 errorCode)
 {
-    gLogger->Error(TEXT_16("Socket error code: {}"), errorCode);
-
     switch (errorCode)
     {
+    case ERROR_CONNECTION_REFUSED:
+        gLogger->Critical(TEXT_16("ERROR_CONNECTION_REFUSED"));
+        break;
+    case ERROR_NETNAME_DELETED:
+        Disconnect(TEXT_16("ERROR_NETNAME_DELETED"));
+        break;
     case WSAECONNRESET:
         Disconnect(TEXT_16("WSAECONNRESET"));
         break;
@@ -317,6 +358,7 @@ void Session::HandleError(Int64 errorCode)
         Disconnect(TEXT_16("WSAECONNABORTED"));
         break;
     default:
+        gLogger->Error(TEXT_16("Error code: {}"), errorCode);
         break;
     }
 }

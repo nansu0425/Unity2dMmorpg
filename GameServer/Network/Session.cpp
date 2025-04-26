@@ -13,7 +13,7 @@ void GameSession::OnConnected()
 
 void GameSession::OnDisconnected(String16 cause)
 {
-    gLogger->Info(TEXT_16("Disconnected from client: {}"), cause);
+    gLogger->Warn(TEXT_16("Disconnected from client: {}"), cause);
     // std::wcout << TEXT_16("Disconnected: ") << cause << std::endl;
     // 세션 매니저에서 세션 제거
     gSessionManager.RemoveSession(std::static_pointer_cast<GameSession>(shared_from_this()));
