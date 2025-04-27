@@ -46,7 +46,7 @@ void Session::Send(SharedPtr<SendBuffer> buffer)
     {
         WRITE_GUARD;
         mSendQueue.push(buffer);
-        isSending = mIsSending.load();
+        isSending = mIsSending.exchange(true);
     }
 
     // 송신하고 있지 않을 때만 비동기 송신 등록

@@ -41,7 +41,7 @@ Service::Config gConfig =
     NetAddress(TEXT_16("127.0.0.1"), 7777),
     std::make_shared<IoEventDispatcher>(),
     std::make_shared<ServerSession>,
-    5,
+    1000,
 };
 
 int main()
@@ -54,7 +54,7 @@ int main()
     ASSERT_CRASH(SUCCESS == service->Run(), "CLIENT_SERVICE_RUN_FAILED");
 
     // 입출력 이벤트 처리 스레드 생성 및 실행
-    for (Int64 i = 0; i < 2; ++i)
+    for (Int64 i = 0; i < 4; ++i)
     {
         gThreadManager->Launch([service]()
                                {

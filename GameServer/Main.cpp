@@ -12,7 +12,7 @@ Service::Config gConfig =
     NetAddress(TEXT_16("127.0.0.1"), 7777),
     std::make_shared<IoEventDispatcher>(),
     std::make_shared<GameSession>,
-    100,
+    1000,
 };
 
 const Byte gSendData[] = TEXT_8("Hello, World!");
@@ -49,7 +49,7 @@ int main()
         // 송신 데이터를 모든 세션에 브로드캐스트
         gSessionManager.Broadcast(sendBuffer);
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(250));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
 
     gThreadManager->Join();
