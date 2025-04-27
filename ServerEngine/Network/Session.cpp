@@ -32,7 +32,6 @@ void Session::Disconnect(String16 cause)
     Int64 result = GetService()->RemoveSession(GetSharedPtr());
     if (SUCCESS != result)
     {
-        gLogger->Error(TEXT_16("Failed to remove session from service: {}"), result);
         return;
     }
     // 비동기 연결 해제 등록
@@ -236,18 +235,16 @@ void Session::ProcessConnect()
         HandleError(mConnectEvent.result);
         return;
     }
-
-    // 연결 상태로 변경
-    mIsConnected.store(true);
+    
     // 서비스에 세션 추가
     Int64 result = GetService()->AddSession(GetSharedPtr());
     if (SUCCESS != result)
     {
-        gLogger->Error(TEXT_16("Failed to add session to service: {}"), result);
-        // 연결 상태 해제
-        mIsConnected.store(false);
+        RegisterDisconnect(TEXT_16("Failed to add session to service"));
         return;
     }
+    // 연결 상태로 변경
+    mIsConnected.store(true);
 
     // 콘텐츠 코드에서 연결 완료 처리
     OnConnected();
@@ -264,7 +261,7 @@ void Session::ProcessDisconnect()
         HandleError(mDisconnectEvent.result);
         return;
     }
-
+    // 콘텐츠 코드에서 연결 해제 처리
     OnDisconnected(std::move(mDisconnectEvent.cause));
 }
 

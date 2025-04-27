@@ -30,9 +30,18 @@ SharedPtr<Session> Service::CreateSession()
 Int64 Service::AddSession(SharedPtr<Session> session)
 {
     WRITE_GUARD;
+
+    // 최대 세션 수에 도달한 경우
+    if (mSessionCount >= mConfig.maxSessionCount)
+    {
+        gLogger->Error(TEXT_16("Max session count reached"));
+        return FAILURE;
+    }
+
     // 세션 추가
     if (!mSessions.insert(session).second)
     {
+        gLogger->Error(TEXT_16("Session already exists: session"));
         return FAILURE;
     }
     // 세션 카운트 증가
@@ -47,6 +56,7 @@ Int64 Service::RemoveSession(SharedPtr<Session> session)
     // 세션 제거
     if (mSessions.erase(session) == 0)
     {
+        gLogger->Error(TEXT_16("Session not found"));
         return FAILURE;
     }
     // 세션 카운트 감소
