@@ -150,3 +150,61 @@ void SendBufferChunk::Clear()
     mIsOpen = false;
     mWritePos = 0;
 }
+
+BufferReader::BufferReader()
+{}
+
+BufferReader::BufferReader(Byte* buffer, Int64 size, Int64 pos)
+    : mBuffer(buffer)
+    , mSize(size)
+    , mPos(pos)
+{}
+
+BufferReader::~BufferReader()
+{}
+
+Bool BufferReader::Peek(Byte* dest, Int64 size)
+{
+    if (GetRemainSize() < size)
+    {
+        return false;
+    }
+    ::memcpy(dest, mBuffer + mPos, size);
+
+    return true;
+}
+
+Bool BufferReader::Read(Byte* dest, Int64 size)
+{
+    if (Peek(dest, size) == false)
+    {
+        return false;
+    }
+    mPos += size;
+
+    return true;
+}
+
+BufferWriter::BufferWriter()
+{}
+
+BufferWriter::BufferWriter(Byte* buffer, Int64 size, Int64 pos)
+    : mBuffer(buffer)
+    , mSize(size)
+    , mPos(pos)
+{}
+
+BufferWriter::~BufferWriter()
+{}
+
+Bool BufferWriter::Write(const Byte* src, Int64 size)
+{
+    if (GetRemainSize() < size)
+    {
+        return false;
+    }
+    ::memcpy(mBuffer + mPos, src, size);
+    mPos += size;
+
+    return true;
+}

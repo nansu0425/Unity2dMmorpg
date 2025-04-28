@@ -6,7 +6,7 @@
 #include "ServerEngine/Network/Service.h"
 #include "ServerEngine/Network/Session.h"
 
-Char8 gReceiveBuffer[4096] = {};
+Char8 gMessage[4096] = {};
 
 class ServerSession
     : public PacketSession
@@ -24,10 +24,17 @@ protected:
 
     virtual Int64   OnPacketReceived(Byte* buffer, Int64 numBytes) override
     {
-        PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-        // 수신 버퍼에 복사
-        ::memcpy(gReceiveBuffer, header + 1, header->size - SIZE_32(PacketHeader));
-        gLogger->Debug(TEXT_8("Received packet: size={}, id={}, data={}"), header->size, header->id, gReceiveBuffer);
+        BufferReader reader(buffer, numBytes);
+        PacketHeader header = {};
+        reader >> header;
+
+        Int64 id = 0;
+        Int32 hp = 0;
+        Int16 attack = 0;
+        reader >> id >> hp >> attack;
+        reader.Read(reinterpret_cast<Byte*>(gMessage), header.size - SIZE_32(PacketHeader) - SIZE_32(id) - SIZE_32(hp) - SIZE_32(attack));
+
+        gLogger->Debug(TEXT_8("Packet: id={}, hp={}, attck={}, message={}"), id, hp, attack, gMessage);
 
         return numBytes;
     }

@@ -41,7 +41,9 @@ public:
 
     void        Close(Int64 writtenSize);
 
+public:
     Byte*       GetBuffer() { return mBuffer; }
+    Int64       GetAllocSize() const { return mAllocSize; }
     Int64       GetWrittenSize() const { return mWrittenSize; }
 
 private:
@@ -92,4 +94,97 @@ private:
 private:
     RW_LOCK;
     Vector<SharedPtr<SendBufferChunk>>  mSendChunks;
+};
+
+class BufferReader
+{
+public:
+    BufferReader();
+    BufferReader(Byte* buffer, Int64 size, Int64 pos = 0);
+    ~BufferReader();
+
+    Bool    Peek(Byte* dest, Int64 size);
+    template<typename T>
+    Bool    Peek(T* dest) { return Peek(reinterpret_cast<Byte*>(dest), SIZE_64(T)); }
+
+    Bool    Read(Byte* dest, Int64 size);
+    template<typename T>
+    Bool    Read(T* dest) { return Read(reinterpret_cast<Byte*>(dest), SIZE_64(T)); }
+
+    template<typename T>
+    BufferReader& operator>>(T& dest)
+    {
+        ASSERT_CRASH(mPos + SIZE_64(T) <= mSize, "BUFFER_OVERFLOW");
+        dest = *reinterpret_cast<T*>(mBuffer + mPos);
+        mPos += SIZE_64(T);
+
+        return *this;
+    }
+
+public:
+    Byte*   GetBuffer() { return mBuffer; }
+    Int64   GetSize() const { return mSize; }
+    Int64   GetReadSize() const { return mPos; }
+    Int64   GetRemainSize() const { return mSize - mPos; }
+
+private:
+    Byte*   mBuffer = nullptr;
+    Int64   mSize = 0;
+    Int64   mPos = 0;
+};
+
+class BufferWriter
+{
+public:
+    BufferWriter();
+    BufferWriter(Byte* buffer, Int64 size, Int64 pos = 0);
+    ~BufferWriter();
+
+    Bool    Write(const Byte* src, Int64 size);
+    template<typename T>
+    Bool    Write(const T* src) { return Write(reinterpret_cast<const Byte*>(src), SIZE_64(T)); }
+
+    template<typename T>
+    T* Reserve()
+    {
+        if (GetRemainSize() < mSize)
+        {
+            return nullptr;
+        }
+        T* reserved = reinterpret_cast<T*>(mBuffer + mPos);
+        mPos += SIZE_64(T);
+
+        return reserved;
+    }
+
+    template<typename T>
+    BufferWriter& operator<<(const T& src)
+    {
+        ASSERT_CRASH(mPos + SIZE_64(T) <= mSize, "BUFFER_OVERFLOW");
+        *reinterpret_cast<T*>(mBuffer + mPos) = src;
+        mPos += SIZE_64(T);
+
+        return *this;
+    }
+
+    template<typename T>
+    BufferWriter& operator<<(T&& src)
+    {
+        ASSERT_CRASH(mPos + SIZE_64(T) <= mSize, "BUFFER_OVERFLOW");
+        *reinterpret_cast<T*>(mBuffer + mPos) = src;
+        mPos += SIZE_64(T);
+
+        return *this;
+    }
+
+public:
+    Byte*   GetBuffer() { return mBuffer; }
+    Int64   GetSize() const { return mSize; }
+    Int64   GetWrittenSize() const { return mPos; }
+    Int64   GetRemainSize() const { return mSize - mPos; }
+
+private:
+    Byte*   mBuffer = nullptr;
+    Int64   mSize = 0;
+    Int64   mPos = 0;
 };

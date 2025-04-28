@@ -15,7 +15,7 @@ Service::Config gConfig =
     1000,
 };
 
-const Byte gSendData[] = TEXT_8("Hello, World!");
+const Byte gMessage[] = TEXT_8("Hello, World!");
 
 int main()
 {
@@ -39,14 +39,16 @@ int main()
     while (true)
     {
         SharedPtr<SendBuffer> sendBuffer = gSendBufferManager->Open(4096);
-        // 송신 패킷 헤더 설정
-        PacketHeader* header = reinterpret_cast<PacketHeader*>(sendBuffer->GetBuffer());
-        header->size = SIZE_32(PacketHeader) + SIZE_32(gSendData);
+        BufferWriter writer(sendBuffer->GetBuffer(), sendBuffer->GetAllocSize());
+        PacketHeader* header = writer.Reserve<PacketHeader>();
+        // id: Int64, hp: Int32, attack: Int16
+        writer << static_cast<Int64>(1001) << static_cast<Int32>(100) << static_cast<Int16>(10);
+        writer.Write(reinterpret_cast<const Byte*>(gMessage), SIZE_64(gMessage));
+        // 패킷 헤더 설정
+        header->size = static_cast<Int32>(writer.GetWrittenSize());
         header->id = 0x0001;
-        // 송신 데이터 복사
-        ::memcpy(header + 1, gSendData, SIZE_64(gSendData));
-        sendBuffer->Close(header->size);
-        // 송신 데이터를 모든 세션에 브로드캐스트
+        sendBuffer->Close(writer.GetWrittenSize());
+        // 송신 버퍼를 모든 세션에 브로드캐스트
         gSessionManager.Broadcast(sendBuffer);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
