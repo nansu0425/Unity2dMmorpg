@@ -10,6 +10,6 @@ class GameSession
 protected:
     virtual void    OnConnected() override;
     virtual void    OnDisconnected(String16 cause) override;
-    virtual Int64   OnPacketReceived(Byte* buffer, Int64 numBytes) override;
+    virtual void    OnPacketReceived(Byte* packet, Int64 size) override;
     virtual void    OnSent(Int64 numBytes) override;
 };

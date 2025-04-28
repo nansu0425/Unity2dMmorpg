@@ -6,6 +6,7 @@
 #include "ServerEngine/Network/Service.h"
 #include "GameServer/Network/Session.h"
 #include "GameServer/Network/SessionManager.h"
+#include "GameServer/Network/Packet.h"
 
 Service::Config gConfig =
 {
@@ -38,17 +39,8 @@ int main()
 
     while (true)
     {
-        SharedPtr<SendBuffer> sendBuffer = gSendBufferManager->Open(4096);
-        BufferWriter writer(sendBuffer->GetBuffer(), sendBuffer->GetAllocSize());
-        PacketHeader* header = writer.Reserve<PacketHeader>();
-        // id: Int64, hp: Int32, attack: Int16
-        writer << static_cast<Int64>(1001) << static_cast<Int32>(100) << static_cast<Int16>(10);
-        writer.Write(reinterpret_cast<const Byte*>(gMessage), SIZE_64(gMessage));
-        // 패킷 헤더 설정
-        header->size = static_cast<Int32>(writer.GetWrittenSize());
-        header->id = 0x0001;
-        sendBuffer->Close(writer.GetWrittenSize());
-        // 송신 버퍼를 모든 세션에 브로드캐스트
+        // Test 패킷을 모든 세션에 전송
+        SharedPtr<SendBuffer> sendBuffer = ServerPacketGenerator::GenerateTestPacket(1001, 100, 10);
         gSessionManager.Broadcast(sendBuffer);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));

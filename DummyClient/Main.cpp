@@ -5,6 +5,7 @@
 #include "ServerEngine/Io/Dispatcher.h"
 #include "ServerEngine/Network/Service.h"
 #include "ServerEngine/Network/Session.h"
+#include "DummyClient/Network/Packet.h"
 
 Char8 gMessage[4096] = {};
 
@@ -22,21 +23,9 @@ protected:
         gLogger->Warn(TEXT_16("Disconnected from server: {}"), cause);
     }
 
-    virtual Int64   OnPacketReceived(Byte* buffer, Int64 numBytes) override
+    virtual void    OnPacketReceived(Byte* packet, Int64 size) override
     {
-        BufferReader reader(buffer, numBytes);
-        PacketHeader header = {};
-        reader >> header;
-
-        Int64 id = 0;
-        Int32 hp = 0;
-        Int16 attack = 0;
-        reader >> id >> hp >> attack;
-        reader.Read(reinterpret_cast<Byte*>(gMessage), header.size - SIZE_32(PacketHeader) - SIZE_32(id) - SIZE_32(hp) - SIZE_32(attack));
-
-        gLogger->Debug(TEXT_8("Packet: id={}, hp={}, attck={}, message={}"), id, hp, attack, gMessage);
-
-        return numBytes;
+        ServerPacketHandler::HandlePacket(packet, size);
     }
 
     virtual void    OnSent(Int64 numBytes) override
@@ -48,7 +37,7 @@ Service::Config gConfig =
     NetAddress(TEXT_16("127.0.0.1"), 7777),
     std::make_shared<IoEventDispatcher>(),
     std::make_shared<ServerSession>,
-    1000,
+    1,
 };
 
 int main()

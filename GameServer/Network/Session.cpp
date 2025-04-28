@@ -3,6 +3,7 @@
 #include "GameServer/Pch.h"
 #include "GameServer/Network/Session.h"
 #include "GameServer/Network/SessionManager.h"
+#include "GameServer/Network/Packet.h"
 
 void GameSession::OnConnected()
 {
@@ -20,12 +21,10 @@ void GameSession::OnDisconnected(String16 cause)
     gSessionManager.RemoveSession(std::static_pointer_cast<GameSession>(shared_from_this()));
 }
 
-Int64 GameSession::OnPacketReceived(Byte* buffer, Int64 numBytes)
+void GameSession::OnPacketReceived(Byte* packet, Int64 size)
 {
-    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer);
-    gLogger->Debug(TEXT_16("Packet [id={}, size={}]"), header->id, header->size);
-
-    return numBytes;
+    // 패킷 처리
+    ClientPacketHandler::HandlePacket(packet, size);
 }
 
 void GameSession::OnSent(Int64 numBytes)

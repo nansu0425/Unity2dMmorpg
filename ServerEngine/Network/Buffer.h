@@ -158,20 +158,11 @@ public:
     }
 
     template<typename T>
-    BufferWriter& operator<<(const T& src)
-    {
-        ASSERT_CRASH(mPos + SIZE_64(T) <= mSize, "BUFFER_OVERFLOW");
-        *reinterpret_cast<T*>(mBuffer + mPos) = src;
-        mPos += SIZE_64(T);
-
-        return *this;
-    }
-
-    template<typename T>
     BufferWriter& operator<<(T&& src)
     {
         ASSERT_CRASH(mPos + SIZE_64(T) <= mSize, "BUFFER_OVERFLOW");
-        *reinterpret_cast<T*>(mBuffer + mPos) = src;
+        using SrcType = std::remove_reference_t<T>;
+        *reinterpret_cast<SrcType*>(mBuffer + mPos) = std::forward<SrcType>(src);
         mPos += SIZE_64(T);
 
         return *this;

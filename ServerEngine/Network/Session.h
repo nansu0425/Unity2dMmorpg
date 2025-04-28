@@ -99,5 +99,5 @@ public:
 
 protected:
     virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) final;
-    virtual Int64   OnPacketReceived(Byte* buffer, Int64 numBytes) = 0;
+    virtual void    OnPacketReceived(Byte* packet, Int64 size) = 0;
 };
