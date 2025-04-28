@@ -39,8 +39,9 @@ int main()
 
     while (true)
     {
+        Vector<Buff> buffs{ { 1, 10.1f }, { 2, 20.45f }, { 3, 30.234f } };
         // Test 패킷을 모든 세션에 전송
-        SharedPtr<SendBuffer> sendBuffer = ServerPacketGenerator::GenerateTestPacket(1001, 100, 10);
+        SharedPtr<SendBuffer> sendBuffer = ServerPacketGenerator::GenerateTestPacket(1001, 100, 10, std::move(buffs));
         gSessionManager.Broadcast(sendBuffer);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
