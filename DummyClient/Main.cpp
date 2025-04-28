@@ -6,6 +6,8 @@
 #include "ServerEngine/Network/Service.h"
 #include "ServerEngine/Network/Session.h"
 #include "DummyClient/Network/Packet.h"
+#include <io.h>
+#include <fcntl.h>
 
 Char8 gMessage[4096] = {};
 
@@ -42,6 +44,12 @@ Service::Config gConfig =
 
 int main()
 {
+    // 콘솔을 UTF-8 모드로 설정
+    ::SetConsoleOutputCP(CP_UTF8);
+    ::SetConsoleCP(CP_UTF8);
+    // CRT stdout을 UTF-8 narrow-text 모드로 전환
+    ::_setmode(::_fileno(stdout), _O_U8TEXT);
+
     // 서버 서비스 준비까지 잠시 대기
     std::this_thread::sleep_for(std::chrono::seconds(1));
 

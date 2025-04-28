@@ -22,5 +22,5 @@ struct Buff
 class ServerPacketGenerator
 {
 public:
-    static SharedPtr<SendBuffer>    GenerateTestPacket(Int64 id, Int32 hp, Int16 attack, Vector<Buff> buffs);
+    static SharedPtr<SendBuffer>    GenerateTestPacket(Int64 id, Int32 hp, Int16 attack, Vector<Buff> buffs, String16 name);
 };

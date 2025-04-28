@@ -18,18 +18,22 @@ void ClientPacketHandler::HandlePacket(Byte* packet, Int64 size)
     }*/
 }
 
-SharedPtr<SendBuffer> ServerPacketGenerator::GenerateTestPacket(Int64 id, Int32 hp, Int16 attack, Vector<Buff> buffs)
+SharedPtr<SendBuffer> ServerPacketGenerator::GenerateTestPacket(Int64 id, Int32 hp, Int16 attack, Vector<Buff> buffs, String16 name)
 {
     // 패킷 생성
     SharedPtr<SendBuffer> sendBuffer = gSendBufferManager->Open(4096);
     BufferWriter writer(sendBuffer->GetBuffer(), sendBuffer->GetAllocSize());
     PacketHeader* header = writer.Reserve<PacketHeader>();
-    writer << id << hp << attack << static_cast<Int16>((buffs.size()));
+    writer << id << hp << attack;
+    // Buff 쓰기
+    writer << static_cast<Int16>((buffs.size()));
     for (auto [id, remainTime] : buffs)
     {
         writer << id << remainTime;
     }
-
+    // 이름 쓰기
+    writer << static_cast<Int16>(name.size());
+    writer.Write(reinterpret_cast<const Byte*>(name.data()), name.size() * SIZE_64(Char16));
     // 패킷 헤더 설정
     header->size = static_cast<Int32>(writer.GetWrittenSize());
     header->id = ServerPacketId_Test;
