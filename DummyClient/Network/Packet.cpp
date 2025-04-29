@@ -3,6 +3,7 @@
 #include "DummyClient/Pch.h"
 #include "DummyClient/Network/Packet.h"
 #include "ServerEngine/Network/Session.h"
+#include "Packet/Generated/S_Test_generated.h"
 
 void ServerPacketHandler::HandlePacket(Byte* packet, Int64 size)
 {
@@ -10,9 +11,9 @@ void ServerPacketHandler::HandlePacket(Byte* packet, Int64 size)
     PacketHeader header = {};
     reader >> header;
 
-    switch (header.id)
+    switch (static_cast<PacketId>(header.id))
     {
-    case ServerPacketId_Test:
+    case PacketId::S_Test:
         HandleTestPacket(packet, size);
         break;
     default:
@@ -20,51 +21,22 @@ void ServerPacketHandler::HandlePacket(Byte* packet, Int64 size)
     }
 }
 
-struct Buff
-{
-    Int64       id;
-    Float32     remainTime;
-};
-
-// TEMP: Test 패킷
-struct TestPacket
-{
-    Int64           id;
-    Int32           hp;
-    Int16           attack;
-    Vector<Buff>    buffs;
-    String16        name;
-};
-
 void ServerPacketHandler::HandleTestPacket(Byte* packet, Int64 size)
 {
-    BufferReader reader(packet, size);
-    PacketHeader header = {};
-    reader >> header;
+    Byte* data = packet + SIZE_32(PacketHeader);
 
-    Int64 id = 0;
-    Int32 hp = 0;
-    Int16 attack = 0;
-    
-    reader >> id >> hp >> attack;
-    gLogger->Debug(TEXT_16("Packet: id={}, hp={}, attck={}"), id, hp, attack);
+    const Packet::S_Test* test = Packet::GetS_Test(data);
+    gLogger->Debug(TEXT_16("Test Packet: id={}, hp={}, attack={}"), test->id(), test->hp(), test->attack());
 
-    // 버프 읽기
-    Int16 numBuffs = 0;
-    reader >> numBuffs;
-    Vector<Buff> buffs(numBuffs);
-    buffs.resize(numBuffs);
-    for (Int16 i = 0; i < numBuffs; ++i)
+    for (UInt32 i = 0; i < test->buffs()->size(); ++i)
     {
-        reader >> buffs[i].id >> buffs[i].remainTime;
-        gLogger->Debug(TEXT_16("Buffs[{}]: id={}, remainTime={}"), i, buffs[i].id, buffs[i].remainTime);
+        gLogger->Debug(TEXT_16("Buff {}: id={}, remain_time={}")
+                       , i
+                       , test->buffs()->Get(i)->id()
+                       , test->buffs()->Get(i)->remain_time());
+        for (UInt32 j = 0; j < test->buffs()->Get(i)->victims()->size(); ++j)
+        {
+            gLogger->Debug(TEXT_16("Victim {}: {}"), j, test->buffs()->Get(i)->victims()->Get(j));
+        }
     }
-
-    // 이름 읽기
-    Int16 nameSize = 0;
-    reader >> nameSize;
-    String16 name;
-    name.resize(nameSize);
-    reader.Read(reinterpret_cast<Byte*>(name.data()), nameSize * SIZE_64(Char16));
-    gLogger->Debug(TEXT_16("Name: {}"), name);
 }

@@ -1,6 +1,7 @@
 {
   "dependencies": [
     "mimalloc",
-    "spdlog"
+    "spdlog",
+    "flatbuffers"
   ]
 }

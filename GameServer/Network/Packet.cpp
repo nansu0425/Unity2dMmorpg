@@ -3,6 +3,7 @@
 #include "GameServer/Pch.h"
 #include "GameServer/Network/Packet.h"
 #include "ServerEngine/Network/Session.h"
+#include "Packet/Generated/S_Test_generated.h"
 
 void ClientPacketHandler::HandlePacket(Byte* packet, Int64 size)
 {
@@ -18,26 +19,19 @@ void ClientPacketHandler::HandlePacket(Byte* packet, Int64 size)
     }*/
 }
 
-SharedPtr<SendBuffer> ServerPacketGenerator::GenerateTestPacket(Int64 id, Int32 hp, Int16 attack, Vector<Buff> buffs, String16 name)
+SharedPtr<SendBuffer> ServerPacketGenerator::MakeSendBuffer(const flatbuffers::FlatBufferBuilder& fbb, PacketId packetId)
 {
-    // 패킷 생성
-    SharedPtr<SendBuffer> sendBuffer = gSendBufferManager->Open(4096);
-    BufferWriter writer(sendBuffer->GetBuffer(), sendBuffer->GetAllocSize());
-    PacketHeader* header = writer.Reserve<PacketHeader>();
-    writer << id << hp << attack;
-    // Buff 쓰기
-    writer << static_cast<Int16>((buffs.size()));
-    for (auto [id, remainTime] : buffs)
-    {
-        writer << id << remainTime;
-    }
-    // 이름 쓰기
-    writer << static_cast<Int16>(name.size());
-    writer.Write(reinterpret_cast<const Byte*>(name.data()), name.size() * SIZE_64(Char16));
-    // 패킷 헤더 설정
-    header->size = static_cast<Int32>(writer.GetWrittenSize());
-    header->id = ServerPacketId_Test;
-    sendBuffer->Close(writer.GetWrittenSize());
+    const Int32 dataSize = static_cast<Int32>(fbb.GetSize());
+    const Int32 packetSize = dataSize + SIZE_32(PacketHeader);
 
-    return sendBuffer;
+    SharedPtr<SendBuffer> buffer = gSendBufferManager->Open(packetSize);
+    // 헤더 설정
+    PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer->GetBuffer());
+    header->size = packetSize;
+    header->id = static_cast<Int32>(packetId);
+    // 데이터 복사
+    ::memcpy(header + 1, fbb.GetBufferPointer(), dataSize);
+    buffer->Close(packetSize);
+
+    return buffer;
 }

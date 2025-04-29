@@ -1,0 +1,18 @@
+namespace Packet;
+
+table Buff
+{
+    id:int64;
+    remain_time:float32;
+    victims:[int64];
+}
+
+table S_Test
+{
+    id:int64;
+    hp:int32;
+    attack:int16;
+    buffs:[Buff];
+}
+
+root_type S_Test;

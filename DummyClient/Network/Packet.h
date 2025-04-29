@@ -2,9 +2,9 @@
 
 #pragma once
 
-enum ServerPacketId : Int32
+enum class PacketId : Int32
 {
-    ServerPacketId_Test = 0x0001,
+    S_Test = 0x0000'0001,
 };
 
 class ServerPacketHandler
