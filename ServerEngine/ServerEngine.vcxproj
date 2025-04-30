@@ -33,6 +33,7 @@
     <ClInclude Include="Network\Listener.h" />
     <ClInclude Include="Network\Address.h" />
     <ClInclude Include="Network\Buffer.h" />
+    <ClInclude Include="Network\Message.h" />
     <ClInclude Include="Network\Service.h" />
     <ClInclude Include="Network\Session.h" />
     <ClInclude Include="Network\Socket.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="Network\Listener.cpp" />
     <ClCompile Include="Network\Address.cpp" />
     <ClCompile Include="Network\Buffer.cpp" />
+    <ClCompile Include="Network\Message.cpp" />
     <ClCompile Include="Network\Service.cpp" />
     <ClCompile Include="Network\Session.cpp" />
     <ClCompile Include="Network\Socket.cpp" />

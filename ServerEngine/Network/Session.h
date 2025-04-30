@@ -82,12 +82,6 @@ private:
     Queue<SharedPtr<SendBuffer>>    mSendQueue;
 };
 
-struct MessageHeader
-{
-    Int16   size;   // 헤더까지 포함한 메시지의 전체 크기
-    Int16   id;     // 메시지 식별자
-};
-
 class MessageSession
     : public Session
 {

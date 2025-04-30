@@ -2,46 +2,18 @@
 
 #include "DummyClient/Pch.h"
 #include "DummyClient/Network/Message.h"
-#include "ServerEngine/Network/Session.h"
-#include "Common/MessageData/Generated/Server_generated.h"
 
-MessageHandlerManager    gMessageHandlerManager;
+ServerMessageHandlerManager    gMessageHandlerManager;
 
-MessageHandlerManager::MessageHandlerManager()
+ServerMessageHandlerManager::ServerMessageHandlerManager()
 {
-    Init();
+    RegisterHandler(static_cast<MessageId>(ServerMessageId::Test), [this](SharedPtr<MessageSession> session, Byte* message, Int64 size)
+                    {
+                        return HandleTest(session, flatbuffers::GetRoot<MessageData::Server::Test>(message + SIZE_64(MessageHeader)));
+                    });
 }
 
-void MessageHandlerManager::Init()
-{
-    for (Int16 i = 0; i < std::numeric_limits<Int16>::max(); ++i)
-    {
-        mHandlers[i] = [this](SharedPtr<MessageSession> session, Byte* message, Int64 size)
-            {
-                return HandleInvalid(std::move(session), message, size);
-            };
-    }
-
-    mHandlers[static_cast<Int16>(ServerMessageId::Test)] = [this](SharedPtr<MessageSession> session, Byte* message, Int64 size)
-        {
-            return HandleTest(session, flatbuffers::GetRoot<MessageData::Server::Test>(message + SIZE_64(MessageHeader)));
-        };
-}
-
-Bool MessageHandlerManager::HandleMessage(SharedPtr<MessageSession> session, Byte* message, Int64 size)
-{
-    MessageHeader* header = reinterpret_cast<MessageHeader*>(message);
-    // 메시지 id에 해당하는 핸들러 호출
-    return mHandlers[header->id](std::move(session), message, size);
-}
-
-Bool MessageHandlerManager::HandleInvalid(SharedPtr<MessageSession> session, Byte* message, Int64 size)
-{
-    gLogger->Error(TEXT_16("Invalid message: id={}, size={}"), reinterpret_cast<MessageHeader*>(message)->id, size);
-    return true;
-}
-
-Bool MessageHandlerManager::HandleTest(SharedPtr<MessageSession> session, const MessageData::Server::Test* data)
+Bool ServerMessageHandlerManager::HandleTest(SharedPtr<MessageSession> session, const MessageData::Server::Test* data)
 {
     gLogger->Debug(TEXT_16("Test Message: id={}, hp={}, attack={}"), data->id(), data->hp(), data->attack());
     

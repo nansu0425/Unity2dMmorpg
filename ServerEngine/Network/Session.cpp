@@ -4,6 +4,7 @@
 #include "ServerEngine/Network/Session.h"
 #include "ServerEngine/Network/Socket.h"
 #include "ServerEngine/Network/Service.h"
+#include "ServerEngine/Network/Message.h"
 
 Session::Session()
     : mReceiveBuffer(kBufferSize)
