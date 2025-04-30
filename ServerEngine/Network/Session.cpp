@@ -361,32 +361,32 @@ void Session::HandleError(Int64 errorCode)
     }
 }
 
-PacketSession::PacketSession()
+MessageSession::MessageSession()
 {}
 
-PacketSession::~PacketSession()
+MessageSession::~MessageSession()
 {}
 
-Int64 PacketSession::OnReceived(Byte* buffer, Int64 numBytes)
+Int64 MessageSession::OnReceived(Byte* buffer, Int64 numBytes)
 {
     Int64 processedSize = 0;
 
     while (true)
     {
         Int64 remainingSize = numBytes - processedSize;
-        // 패킷 헤더를 포함하는지 확인
-        if (remainingSize < sizeof(PacketHeader))
+        // 메시지 헤더를 포함하는지 확인
+        if (remainingSize < sizeof(MessageHeader))
         {
             break;
         }
-        PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer + processedSize);
-        // 패킷을 포함하는지 확인
+        MessageHeader* header = reinterpret_cast<MessageHeader*>(buffer + processedSize);
+        // 메시지 헤더부터 데이터까지 포함하는지 확인
         if (remainingSize < header->size)
         {
             break;
         }
-        // 패킷 처리
-        OnPacketReceived(buffer + processedSize, header->size);
+        // 콘텐츠 코드에서 메시지 처리
+        OnMessageReceived(buffer + processedSize, header->size);
         processedSize += header->size;
     }
 

@@ -5,14 +5,15 @@
 #include "ServerEngine/Io/Dispatcher.h"
 #include "ServerEngine/Network/Service.h"
 #include "ServerEngine/Network/Session.h"
-#include "DummyClient/Network/Packet.h"
+#include "DummyClient/Network/Message.h"
+
 #include <io.h>
 #include <fcntl.h>
 
 Char8 gMessage[4096] = {};
 
 class ServerSession
-    : public PacketSession
+    : public MessageSession
 {
 protected:
     virtual void    OnConnected() override
@@ -25,7 +26,7 @@ protected:
         gLogger->Warn(TEXT_16("Disconnected from server: {}"), cause);
     }
 
-    virtual void    OnPacketReceived(Byte* message, Int64 size) override
+    virtual void    OnMessageReceived(Byte* message, Int64 size) override
     {
         // 메시지 처리
         gMessageHandlerManager.HandleMessage(GetSharedPtr(), message, size);

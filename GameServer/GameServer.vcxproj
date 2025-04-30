@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Network\Packet.cpp" />
+    <ClCompile Include="Network\Message.cpp" />
     <ClCompile Include="Network\Session.cpp" />
     <ClCompile Include="Network\SessionManager.cpp" />
     <ClCompile Include="Pch.cpp">
@@ -31,7 +31,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Network\Packet.h" />
+    <ClInclude Include="Network\Message.h" />
     <ClInclude Include="Network\Session.h" />
     <ClInclude Include="Network\SessionManager.h" />
     <ClInclude Include="Pch.h" />

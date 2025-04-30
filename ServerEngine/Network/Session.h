@@ -13,7 +13,7 @@ class Service;
 class Session
     : public IIoObjectOwner
 {
-private:
+public:
     friend class Listener;
     friend class IoEventDispatcher;
     friend class Service;
@@ -40,9 +40,15 @@ public:     // 외부에서 호출하는 함수
     Bool                IsConnected() const { return mIsConnected; }
     SharedPtr<Session>  GetSharedPtr() { return std::static_pointer_cast<Session>(shared_from_this()); }
 
+protected:  // 콘텐츠 코드 인터페이스
+    virtual void    OnConnected() = 0;
+    virtual void    OnDisconnected(String16 cause) = 0;
+    virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) = 0;
+    virtual void    OnSent(Int64 numBytes) = 0;
+
 private:    // IIoObjectOwner 인터페이스 구현
-    virtual HANDLE      GetIoObject() override;
-    virtual void        DispatchIoEvent(IoEvent* event, Int64 numBytes = 0) override;
+    virtual HANDLE  GetIoObject() override;
+    virtual void    DispatchIoEvent(IoEvent* event, Int64 numBytes = 0) override;
 
 private:    // 입출력 요청 및 처리
     Int64   RegisterConnect();
@@ -56,12 +62,6 @@ private:    // 입출력 요청 및 처리
     void    ProcessSend(Int64 numBytes);
 
     void    HandleError(Int64 errorCode);
-
-protected:  // 콘텐츠 코드 인터페이스
-    virtual void    OnConnected() = 0;
-    virtual void    OnDisconnected(String16 cause) = 0;
-    virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) = 0;
-    virtual void    OnSent(Int64 numBytes) = 0;
 
 private:
     RW_LOCK;
@@ -82,22 +82,22 @@ private:
     Queue<SharedPtr<SendBuffer>>    mSendQueue;
 };
 
-struct PacketHeader
+struct MessageHeader
 {
-    Int32   size; // 헤더까지 포함한 패킷의 전체 크기
-    Int32   id; // 프로토콜 식별자
+    Int16   size;   // 헤더까지 포함한 메시지의 전체 크기
+    Int16   id;     // 메시지 식별자
 };
 
-class PacketSession
+class MessageSession
     : public Session
 {
 public:
-    PacketSession();
-    virtual ~PacketSession();
+    MessageSession();
+    virtual ~MessageSession();
 
-    SharedPtr<PacketSession> GetSharedPtr() { return std::static_pointer_cast<PacketSession>(shared_from_this()); }
+    SharedPtr<MessageSession>   GetSharedPtr() { return std::static_pointer_cast<MessageSession>(shared_from_this()); }
 
 protected:
     virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) final;
-    virtual void    OnPacketReceived(Byte* packet, Int64 size) = 0;
+    virtual void    OnMessageReceived(Byte* message, Int64 size) = 0;
 };

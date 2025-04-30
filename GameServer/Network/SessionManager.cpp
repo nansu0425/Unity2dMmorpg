@@ -22,11 +22,11 @@ void GameSessionManager::RemoveSession(SharedPtr<GameSession> session)
     }
 }
 
-void GameSessionManager::Broadcast(SharedPtr<SendBuffer> sendBuffer)
+void GameSessionManager::Broadcast(SharedPtr<SendBuffer> buffer)
 {
     WRITE_GUARD;
     for (auto& session : mSessions)
     {
-        session->Send(sendBuffer);
+        session->Send(buffer);
     }
 }

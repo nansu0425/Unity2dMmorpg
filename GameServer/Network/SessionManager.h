@@ -12,7 +12,7 @@ public:
 
     void    AddSession(SharedPtr<GameSession> session);
     void    RemoveSession(SharedPtr<GameSession> session);
-    void    Broadcast(SharedPtr<SendBuffer> sendBuffer);
+    void    Broadcast(SharedPtr<SendBuffer> buffer);
 
 private:
     RW_LOCK;

@@ -6,10 +6,11 @@
 #include "ServerEngine/Network/Service.h"
 #include "GameServer/Network/Session.h"
 #include "GameServer/Network/SessionManager.h"
-#include "GameServer/Network/Packet.h"
+#include "GameServer/Network/Message.h"
+#include "Common/MessageData/Generated/Server_generated.h"
+
 #include <io.h>
 #include <fcntl.h>
-#include "Common/MessageData/Generated/Server_generated.h"
 
 Service::Config gConfig =
 {
@@ -63,9 +64,9 @@ int main()
 
         gLogger->Info(TEXT_16("Data Size: {}"), fbb.GetSize());
 
-        // Test 패킷을 모든 세션에 전송
-        SharedPtr<SendBuffer> sendBuffer = ServerMessageGenerator::MakeSendBuffer(fbb, ServerMessageId::Test);
-        gSessionManager.Broadcast(sendBuffer);
+        // Test 메시지를 모든 세션에 전송
+        SharedPtr<SendBuffer> message = MessageBuilder::Build(fbb, static_cast<Int16>(ServerMessageId::Test));
+        gSessionManager.Broadcast(message);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

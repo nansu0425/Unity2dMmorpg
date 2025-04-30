@@ -3,13 +3,13 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Network\Packet.cpp">
+    <ClCompile Include="Network\Message.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
-    <ClInclude Include="Network\Packet.h">
+    <ClInclude Include="Network\Message.h">
       <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
