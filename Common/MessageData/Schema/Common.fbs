@@ -1,0 +1,16 @@
+namespace MessageData;
+
+enum PlayerType : byte
+{
+	None,
+	Knight,
+	Wizard,
+	Archer,
+}
+
+table Buff
+{
+    id:int64;
+    remain_time:float32;
+    victims:[int64];
+}

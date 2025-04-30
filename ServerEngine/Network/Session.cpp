@@ -373,15 +373,15 @@ Int64 PacketSession::OnReceived(Byte* buffer, Int64 numBytes)
 
     while (true)
     {
-        Int64 dataSize = numBytes - processedSize;
+        Int64 remainingSize = numBytes - processedSize;
         // 패킷 헤더를 포함하는지 확인
-        if (dataSize < sizeof(PacketHeader))
+        if (remainingSize < sizeof(PacketHeader))
         {
             break;
         }
         PacketHeader* header = reinterpret_cast<PacketHeader*>(buffer + processedSize);
-        // 패킷의 전체 데이터를 포함하는지 확인
-        if (dataSize < header->size)
+        // 패킷을 포함하는지 확인
+        if (remainingSize < header->size)
         {
             break;
         }

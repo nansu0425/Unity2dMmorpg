@@ -25,9 +25,10 @@ protected:
         gLogger->Warn(TEXT_16("Disconnected from server: {}"), cause);
     }
 
-    virtual void    OnPacketReceived(Byte* packet, Int64 size) override
+    virtual void    OnPacketReceived(Byte* message, Int64 size) override
     {
-        ServerPacketHandler::HandlePacket(packet, size);
+        // 메시지 처리
+        gMessageHandlerManager.HandleMessage(GetSharedPtr(), message, size);
     }
 
     virtual void    OnSent(Int64 numBytes) override

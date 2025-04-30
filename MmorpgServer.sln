@@ -19,6 +19,27 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServer", "GameServer\Ga
 		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E} = {3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A58A2D29-790D-401E-A315-A47791AA2D5C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessageData", "MessageData", "{BE7791E1-09DC-4303-87C5-ADEA62AC72A3}"
+	ProjectSection(SolutionItems) = preProject
+		Common\MessageData\Generator.bat = Common\MessageData\Generator.bat
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Schema", "Schema", "{AB85DCBF-AC29-43A3-AA17-9CDF5140DB8F}"
+	ProjectSection(SolutionItems) = preProject
+		Common\MessageData\Schema\Client.fbs = Common\MessageData\Schema\Client.fbs
+		Common\MessageData\Schema\Common.fbs = Common\MessageData\Schema\Common.fbs
+		Common\MessageData\Schema\Server.fbs = Common\MessageData\Schema\Server.fbs
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Generated", "Generated", "{0F94CD24-C295-4369-81D8-7EC0F863706C}"
+	ProjectSection(SolutionItems) = preProject
+		Common\MessageData\Generated\Client_generated.h = Common\MessageData\Generated\Client_generated.h
+		Common\MessageData\Generated\Common_generated.h = Common\MessageData\Generated\Common_generated.h
+		Common\MessageData\Generated\Server_generated.h = Common\MessageData\Generated\Server_generated.h
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -54,6 +75,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BE7791E1-09DC-4303-87C5-ADEA62AC72A3} = {A58A2D29-790D-401E-A315-A47791AA2D5C}
+		{AB85DCBF-AC29-43A3-AA17-9CDF5140DB8F} = {BE7791E1-09DC-4303-87C5-ADEA62AC72A3}
+		{0F94CD24-C295-4369-81D8-7EC0F863706C} = {BE7791E1-09DC-4303-87C5-ADEA62AC72A3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A16D7E2-68B6-431B-80E6-2B13B17C2EA1}

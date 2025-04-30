@@ -1,0 +1,12 @@
+include "Common.fbs";
+
+namespace MessageData.Server;
+
+table Test
+{
+    id:int64;
+    hp:int32;
+    attack:int16;
+    buffs:[Buff];
+    player_type:PlayerType;
+}

@@ -3,40 +3,59 @@
 #include "DummyClient/Pch.h"
 #include "DummyClient/Network/Packet.h"
 #include "ServerEngine/Network/Session.h"
-#include "Packet/Generated/S_Test_generated.h"
+#include "Common/MessageData/Generated/Server_generated.h"
 
-void ServerPacketHandler::HandlePacket(Byte* packet, Int64 size)
+MessageHandlerManager    gMessageHandlerManager;
+
+MessageHandlerManager::MessageHandlerManager()
 {
-    BufferReader reader(packet, size);
-    PacketHeader header = {};
-    reader >> header;
-
-    switch (static_cast<PacketId>(header.id))
-    {
-    case PacketId::S_Test:
-        HandleTestPacket(packet, size);
-        break;
-    default:
-        break;
-    }
+    Init();
 }
 
-void ServerPacketHandler::HandleTestPacket(Byte* packet, Int64 size)
+void MessageHandlerManager::Init()
 {
-    Byte* data = packet + SIZE_32(PacketHeader);
+    for (Int16 i = 0; i < std::numeric_limits<Int16>::max(); ++i)
+    {
+        mHandlers[i] = [this](SharedPtr<PacketSession> session, Byte* message, Int64 size)
+            {
+                return HandleInvalid(std::move(session), message, size);
+            };
+    }
 
-    const Packet::S_Test* test = Packet::GetS_Test(data);
-    gLogger->Debug(TEXT_16("Test Packet: id={}, hp={}, attack={}"), test->id(), test->hp(), test->attack());
+    mHandlers[static_cast<Int16>(ServerMessageId::Test)] = [this](SharedPtr<PacketSession> session, Byte* message, Int64 size)
+        {
+            return HandleTest(session, flatbuffers::GetRoot<MessageData::Server::Test>(message + SIZE_64(PacketHeader)));
+        };
+}
 
-    for (UInt32 i = 0; i < test->buffs()->size(); ++i)
+Bool MessageHandlerManager::HandleMessage(SharedPtr<PacketSession> session, Byte* message, Int64 size)
+{
+    PacketHeader* header = reinterpret_cast<PacketHeader*>(message);
+    // 메시지 id에 해당하는 핸들러 호출
+    return mHandlers[header->id](std::move(session), message, size);
+}
+
+Bool MessageHandlerManager::HandleInvalid(SharedPtr<PacketSession> session, Byte* message, Int64 size)
+{
+    gLogger->Error(TEXT_16("Invalid message: id={}, size={}"), reinterpret_cast<PacketHeader*>(message)->id, size);
+    return true;
+}
+
+Bool MessageHandlerManager::HandleTest(SharedPtr<PacketSession> session, const MessageData::Server::Test* data)
+{
+    gLogger->Debug(TEXT_16("Test Message: id={}, hp={}, attack={}"), data->id(), data->hp(), data->attack());
+    
+    for (UInt32 i = 0; i < data->buffs()->size(); ++i)
     {
         gLogger->Debug(TEXT_16("Buff {}: id={}, remain_time={}")
                        , i
-                       , test->buffs()->Get(i)->id()
-                       , test->buffs()->Get(i)->remain_time());
-        for (UInt32 j = 0; j < test->buffs()->Get(i)->victims()->size(); ++j)
+                       , data->buffs()->Get(i)->id()
+                       , data->buffs()->Get(i)->remain_time());
+        for (UInt32 j = 0; j < data->buffs()->Get(i)->victims()->size(); ++j)
         {
-            gLogger->Debug(TEXT_16("Victim {}: {}"), j, test->buffs()->Get(i)->victims()->Get(j));
+            gLogger->Debug(TEXT_16("Victim {}: {}"), j, data->buffs()->Get(i)->victims()->Get(j));
         }
     }
+
+    return true;
 }

@@ -2,16 +2,33 @@
 
 #pragma once
 
-enum class PacketId : Int32
+#include "Common/MessageData/Generated/Server_generated.h"
+
+class PacketSession;
+
+enum class ServerMessageId : Int16
 {
-    S_Test = 0x0000'0001,
+    Invalid = 0x0000,
+    Test,
 };
 
-class ServerPacketHandler
+class MessageHandlerManager
 {
 public:
-    static void HandlePacket(Byte* packet, Int64 size);
+    using MessageHandler    = Function<Bool(SharedPtr<PacketSession>, Byte*, Int64)>;
+
+public:
+    MessageHandlerManager();
+
+    void            Init();
+    Bool            HandleMessage(SharedPtr<PacketSession> session, Byte* message, Int64 size);
 
 private:
-    static void HandleTestPacket(Byte* packet, Int64 size);
+    Bool            HandleInvalid(SharedPtr<PacketSession> session, Byte* message, Int64 size);
+    Bool            HandleTest(SharedPtr<PacketSession> session, const MessageData::Server::Test* data);
+
+private:
+    MessageHandler  mHandlers[std::numeric_limits<Int16>::max()] = {};
 };
+
+extern MessageHandlerManager    gMessageHandlerManager;

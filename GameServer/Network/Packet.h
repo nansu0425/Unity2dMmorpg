@@ -2,21 +2,38 @@
 
 #pragma once
 
-#include "Packet/Generated/S_Test_generated.h"
+#include "Common/MessageData/Generated/Server_generated.h"
 
-enum class PacketId : Int32
+class PacketSession;
+
+enum class ServerMessageId : Int16
 {
-    S_Test = 0x0000'0001,
+    Invalid = 0x0000,
+    Test,
 };
 
-class ClientPacketHandler
+class MessageHandlerManager
 {
 public:
-    static void     HandlePacket(Byte* packet, Int64 size);
+    using MessageHandler     = Function<Bool(SharedPtr<PacketSession>, Byte*, Int64)>;
+
+public:
+    MessageHandlerManager();
+
+    void            Init();
+    Bool            HandleMessage(SharedPtr<PacketSession> session, Byte* message, Int64 size);
+
+private:            
+    Bool            HandleInvalid(SharedPtr<PacketSession> session, Byte* message, Int64 size);
+
+private:
+    MessageHandler  mHandlers[std::numeric_limits<Int16>::max()] = {};
 };
 
-class ServerPacketGenerator
+extern MessageHandlerManager    gMessageHandlerManager;
+
+class ServerMessageGenerator
 {
 public:
-    static SharedPtr<SendBuffer> MakeSendBuffer(const flatbuffers::FlatBufferBuilder& fbb, PacketId packetId);
+    static SharedPtr<SendBuffer> MakeSendBuffer(const flatbuffers::FlatBufferBuilder& fbb, ServerMessageId id);
 };
