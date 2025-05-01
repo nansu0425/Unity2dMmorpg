@@ -119,7 +119,7 @@ void SendBufferManager::Push(SharedPtr<SendBufferChunk> chunk)
 void SendBufferManager::PushGlobal(SendBufferChunk* chunk)
 {
     // 청크를 재사용
-    gSendBufferManager->Push(SharedPtr<SendBufferChunk>(chunk, PushGlobal));
+    // gSendBufferManager->Push(SharedPtr<SendBufferChunk>(chunk, PushGlobal));
 }
 
 SendBufferChunk::SendBufferChunk()

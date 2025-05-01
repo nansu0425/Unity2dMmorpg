@@ -9,7 +9,7 @@
 Logger*                 gLogger = nullptr;
 ThreadManager*          gThreadManager = nullptr;
 DeadlockDetector*       gDeadlockDetector = nullptr;
-SendBufferManager*      gSendBufferManager = nullptr;
+// SendBufferManager*      gSendBufferManager = nullptr;
 
 GlobalContext::GlobalContext()
 {
@@ -17,12 +17,12 @@ GlobalContext::GlobalContext()
     gThreadManager = new ThreadManager();
     gDeadlockDetector = new DeadlockDetector();
     SocketUtils::Init();
-    gSendBufferManager = new SendBufferManager();
+    // gSendBufferManager = new SendBufferManager();
 }
 
 GlobalContext::~GlobalContext()
 {
-    delete gSendBufferManager;
+    // delete gSendBufferManager;
     SocketUtils::Cleanup();
     delete gDeadlockDetector;
     delete gThreadManager;
