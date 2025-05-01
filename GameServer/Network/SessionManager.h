@@ -3,7 +3,7 @@
 #pragma once
 
 class GameSession;
-class NetMessage;
+class SendMessageBuilder;
 
 class GameSessionManager
 {
@@ -13,7 +13,7 @@ public:
 
     void    AddSession(SharedPtr<GameSession> session);
     void    RemoveSession(SharedPtr<GameSession> session);
-    void    Broadcast(SharedPtr<NetMessage> message);
+    void    Broadcast(SharedPtr<SendMessageBuilder> message);
 
 private:
     RW_LOCK;

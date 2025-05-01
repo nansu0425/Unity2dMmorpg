@@ -4,7 +4,7 @@
 
 class Session;
 class IIoObjectOwner;
-class NetMessage;
+class SendMessageBuilder;
 
 enum class IoEventType : Int64
 {
@@ -61,7 +61,7 @@ struct ReceiveEvent
 struct SendEvent
     : public IoEvent
 {
-    Vector<SharedPtr<NetMessage>>   messages; // 전송할 메시지
+    Vector<SharedPtr<SendMessageBuilder>>   messages; // 전송할 메시지
 
     SendEvent() : IoEvent(IoEventType::Send) {}
 };

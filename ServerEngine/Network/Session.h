@@ -10,7 +10,7 @@
 class Listener;
 class IoEventDispatcher;
 class Service;
-class NetMessage;
+class SendMessageBuilder;
 
 class Session
     : public IIoObjectOwner
@@ -32,7 +32,7 @@ public:
 public:     // 외부에서 호출하는 함수
     Int64               Connect();
     void                Disconnect(String16 cause);
-    void                Send(SharedPtr<NetMessage> message);
+    void                Send(SharedPtr<SendMessageBuilder> message);
 
     SharedPtr<Service>  GetService() const { return mService.lock(); }
     void                SetService(SharedPtr<Service> service) { mService = std::move(service); }
@@ -81,6 +81,6 @@ private:
     SendEvent           mSendEvent;
 
 private:
-    ReceiveBuffer                   mReceiveBuffer;
-    Queue<SharedPtr<NetMessage>>    mSendQueue;
+    ReceiveBuffer                           mReceiveBuffer;
+    Queue<SharedPtr<SendMessageBuilder>>    mSendQueue;
 };

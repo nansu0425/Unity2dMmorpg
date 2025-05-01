@@ -50,7 +50,7 @@ private:
     MessageHandler      mHandlers[std::numeric_limits<MessageId>::max()] = {};
 };
 
-class NetMessage
+class SendMessageBuilder
 {
 public:
     enum Constants : Int16
@@ -59,7 +59,7 @@ public:
     };
 
 public:
-    NetMessage(MessageId id);
+    SendMessageBuilder(MessageId id);
 
     template<typename T>
     void FinishBuilding(flatbuffers::Offset<T> rootData)

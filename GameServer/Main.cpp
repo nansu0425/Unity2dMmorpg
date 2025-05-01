@@ -47,7 +47,7 @@ int main()
 
     while (true)
     {
-        SharedPtr<NetMessage> message = std::make_shared<NetMessage>(ServerMessageId_Test);
+        SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(ServerMessageId_Test);
         auto& dataBuilder = message->GetDataBuilder();
 
         // buff 1

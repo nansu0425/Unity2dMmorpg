@@ -32,7 +32,7 @@ Bool MessageHandlerManager::HandleInvalid(SharedPtr<Session> session, ReceiveMes
     return true;
 }
 
-NetMessage::NetMessage(MessageId id)
+SendMessageBuilder::SendMessageBuilder(MessageId id)
     : mDataBuilder(kDataBufferSize)
 {
     mHeader.id = id;

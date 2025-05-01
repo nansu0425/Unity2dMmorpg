@@ -23,7 +23,7 @@ void GameSessionManager::RemoveSession(SharedPtr<GameSession> session)
     }
 }
 
-void GameSessionManager::Broadcast(SharedPtr<NetMessage> message)
+void GameSessionManager::Broadcast(SharedPtr<SendMessageBuilder> message)
 {
     WRITE_GUARD;
     for (auto& session : mSessions)

@@ -39,7 +39,7 @@ void Session::Disconnect(String16 cause)
     RegisterDisconnect(std::move(cause));
 }
 
-void Session::Send(SharedPtr<NetMessage> message)
+void Session::Send(SharedPtr<SendMessageBuilder> message)
 {
     Bool isSending = false;
     ASSERT_CRASH(message->IsBuilt(), "MESSAGE_NOT_BUILT");
@@ -186,17 +186,17 @@ void Session::RegisterSend()
         return;
     }
 
-    { // 메시지 큐의 모든 메시지를 송신 이벤트로 옮긴다
+    { // 송신 큐의 모든 메시지를 송신 이벤트로 옮긴다
         WRITE_GUARD;
 
         Int64 messageSizeSum = 0;
         while (mSendQueue.size() > 0)
         {
-            SharedPtr<NetMessage> message = mSendQueue.front();
+            SharedPtr<SendMessageBuilder> message = mSendQueue.front();
             mSendQueue.pop();
 
             messageSizeSum += message->GetHeader().size;
-            // TODO: 보낼 데이터가 너무 많을 경우 처리
+            // TODO: 보낼 메시지가 너무 많을 경우 처리
 
             mSendEvent.messages.push_back(std::move(message));
         }
@@ -393,35 +393,3 @@ void Session::HandleError(Int64 errorCode)
         break;
     }
 }
-
-//MessageSession::MessageSession()
-//{}
-//
-//MessageSession::~MessageSession()
-//{}
-//
-//Int64 MessageSession::OnReceived(Byte* buffer, Int64 numBytes)
-//{
-//    Int64 processedSize = 0;
-//
-//    while (true)
-//    {
-//        Int64 remainingSize = numBytes - processedSize;
-//        // 메시지 헤더를 포함하는지 확인
-//        if (remainingSize < sizeof(MessageHeader))
-//        {
-//            break;
-//        }
-//        MessageHeader* header = reinterpret_cast<MessageHeader*>(buffer + processedSize);
-//        // 메시지 헤더부터 데이터까지 포함하는지 확인
-//        if (remainingSize < header->size)
-//        {
-//            break;
-//        }
-//        // 콘텐츠 코드에서 메시지 처리
-//        OnMessageReceived(buffer + processedSize, header->size);
-//        processedSize += header->size;
-//    }
-//
-//    return processedSize;
-//}
