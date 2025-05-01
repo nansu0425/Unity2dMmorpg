@@ -5,10 +5,10 @@
 #include "ServerEngine/Network/Message.h"
 #include "Common/MessageData/Generated/Server_generated.h"
 
-enum class ServerMessageId : MessageId
+enum ServerMessageId : MessageId
 {
-    Invalid = 0x0000,
-    Test,
+    ServerMessageId_Invalid = 0x0000,
+    ServerMessageId_Test,
 };
 
 class ClientMessageHandlerManager

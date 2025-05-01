@@ -7,7 +7,7 @@ ServerMessageHandlerManager    gMessageHandlerManager;
 
 ServerMessageHandlerManager::ServerMessageHandlerManager()
 {
-    RegisterHandler(static_cast<MessageId>(ServerMessageId::Test), [this](SharedPtr<MessageSession> session, Byte* message, Int64 size)
+    RegisterHandler(ServerMessageId_Test, [this](SharedPtr<MessageSession> session, Byte* message, Int64 size)
                     {
                         return HandleTest(session, flatbuffers::GetRoot<MessageData::Server::Test>(message + SIZE_64(MessageHeader)));
                     });

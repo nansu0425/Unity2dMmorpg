@@ -65,7 +65,7 @@ int main()
         gLogger->Info(TEXT_16("Data Size: {}"), fbb.GetSize());
 
         // Test 메시지를 모든 세션에 전송
-        SharedPtr<SendBuffer> message = MessageBuilder::Build(fbb, static_cast<Int16>(ServerMessageId::Test));
+        SharedPtr<SendBuffer> message = MessageBuilder::Build(fbb, ServerMessageId_Test);
         gSessionManager.Broadcast(message);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
