@@ -7,9 +7,9 @@ ServerMessageHandlerManager    gMessageHandlerManager;
 
 ServerMessageHandlerManager::ServerMessageHandlerManager()
 {
-    RegisterHandler(ServerMessageId_Test, [this](SharedPtr<Session> session, MessageHeader* header)
+    RegisterHandler(ServerMessageId_Test, [this](SharedPtr<Session> session, ReceiveMessage message)
                     {
-                        return HandleTest(session, flatbuffers::GetRoot<MessageData::Server::Test>(header + 1));
+                        return HandleTest(session, flatbuffers::GetRoot<MessageData::Server::Test>(message.GetData()));
                     });
 }
 

@@ -14,23 +14,37 @@ struct MessageHeader
     MessageId   id;     // 메시지 식별자
 };
 
+class ReceiveMessage
+{
+public:
+    explicit ReceiveMessage(MessageHeader* header);
+
+    MessageHeader*      GetHeader() { return mHeader; }
+    Int16               GetSize() const { return mHeader->size; }
+    MessageId           GetId() const { return mHeader->id; }
+    Byte*               GetData() { return mData; }
+
+private:
+    MessageHeader*      mHeader = nullptr;
+    Byte*               mData = nullptr;
+};
+
 class MessageHandlerManager
 {
 public:
-    // 헤더 뒤에 FlatBufferBuilder로 직렬화된 데이터 존재
-    using MessageHandler    = Function<Bool(SharedPtr<Session>, MessageHeader*)>;
+    using MessageHandler    = Function<Bool(SharedPtr<Session>, ReceiveMessage)>;
 
 public:
     MessageHandlerManager();
 
-    Bool                HandleMessage(SharedPtr<Session> session, MessageHeader* header);
+    Bool                HandleMessage(SharedPtr<Session> session, ReceiveMessage message);
 
 protected:
     MessageHandler&     GetHandler(MessageId id) { return mHandlers[id]; }
     void                RegisterHandler(MessageId id, MessageHandler handler) { mHandlers[id] = std::move(handler); }
 
 private:
-    Bool                HandleInvalid(SharedPtr<Session> session, MessageHeader* header);
+    Bool                HandleInvalid(SharedPtr<Session> session, ReceiveMessage message);
 
 private:
     MessageHandler      mHandlers[std::numeric_limits<MessageId>::max()] = {};

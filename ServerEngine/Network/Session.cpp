@@ -331,7 +331,7 @@ Int64 Session::ProcessReceiveMessages()
             break;
         }
         // 콘텐츠 코드에서 수신 메시지 처리
-        OnReceived(header);
+        OnReceived(ReceiveMessage(header));
         processedSize += header->size;
     }
 

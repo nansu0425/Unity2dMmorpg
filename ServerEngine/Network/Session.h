@@ -5,12 +5,12 @@
 #include "ServerEngine/Io/Dispatcher.h"
 #include "ServerEngine/Network/Address.h"
 #include "ServerEngine/Io/Event.h"
+#include "ServerEngine/Network/Message.h"
 
 class Listener;
 class IoEventDispatcher;
 class Service;
 class NetMessage;
-struct MessageHeader;
 
 class Session
     : public IIoObjectOwner
@@ -45,7 +45,7 @@ public:     // 외부에서 호출하는 함수
 protected:  // 콘텐츠 코드 인터페이스
     virtual void    OnConnected() = 0;
     virtual void    OnDisconnected(String16 cause) = 0;
-    virtual void    OnReceived(MessageHeader* header) = 0;
+    virtual void    OnReceived(ReceiveMessage message) = 0;
     virtual void    OnSent(Int64 numBytes) = 0;
 
 private:    // IIoObjectOwner 인터페이스 구현
@@ -84,17 +84,3 @@ private:
     ReceiveBuffer                   mReceiveBuffer;
     Queue<SharedPtr<NetMessage>>    mSendQueue;
 };
-
-//class MessageSession
-//    : public Session
-//{
-//public:
-//    MessageSession();
-//    virtual ~MessageSession();
-//
-//    SharedPtr<MessageSession>   GetSharedPtr() { return std::static_pointer_cast<MessageSession>(shared_from_this()); }
-//
-//protected:
-//    virtual Int64   OnReceived(Byte* buffer, Int64 numBytes) final;
-//    virtual void    OnMessageReceived(Byte* message, Int64 size) = 0;
-//};

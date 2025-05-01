@@ -24,9 +24,9 @@ protected:
         gLogger->Warn(TEXT_16("Disconnected from server: {}"), cause);
     }
 
-    virtual void    OnReceived(MessageHeader* header) override
+    virtual void    OnReceived(ReceiveMessage message) override
     {
-        gMessageHandlerManager.HandleMessage(GetSharedPtr(), header);
+        gMessageHandlerManager.HandleMessage(GetSharedPtr(), message);
     }
 
     virtual void    OnSent(Int64 numBytes) override
