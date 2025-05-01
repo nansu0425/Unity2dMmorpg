@@ -39,23 +39,6 @@ void Session::Disconnect(String16 cause)
     RegisterDisconnect(std::move(cause));
 }
 
-void Session::Send(SharedPtr<SendBuffer> buffer)
-{
-    Bool isSending = false;
-
-    {
-        WRITE_GUARD;
-        mSendQueue.push(buffer);
-        isSending = mIsSending.exchange(true);
-    }
-
-    // 송신하고 있지 않을 때만 비동기 송신 등록
-    if (false == isSending)
-    {
-        RegisterSend();
-    }
-}
-
 void Session::Send(SharedPtr<NetMessage> message)
 {
     Bool isSending = false;
@@ -63,14 +46,14 @@ void Session::Send(SharedPtr<NetMessage> message)
 
     {
         WRITE_GUARD;
-        mMessageQueue.push(std::move(message));
+        mSendQueue.push(std::move(message));
         isSending = mIsSending.exchange(true);
     }
 
     // 송신하고 있지 않을 때만 비동기 송신 등록
     if (false == isSending)
     {
-        RegisterSendMessages();
+        RegisterSend();
     }
 }
 
@@ -93,7 +76,7 @@ void Session::DispatchIoEvent(IoEvent* event, Int64 numBytes)
         ProcessReceive(numBytes);
         break;
     case IoEventType::Send:
-        ProcessSendMessages(numBytes);
+        ProcessSend(numBytes);
         break;
     default:
         CRASH("INVALID_EVENT_TYPE");
@@ -203,63 +186,14 @@ void Session::RegisterSend()
         return;
     }
 
-    { // 송신 큐의 모든 버퍼를 송신 이벤트로 옮긴다
-        WRITE_GUARD;
-
-        Int64 writtenSize = 0;
-        while (mSendQueue.size() > 0)
-        {
-            SharedPtr<SendBuffer> sendBuffer = mSendQueue.front();
-            mSendQueue.pop();
-
-            writtenSize += sendBuffer->GetWrittenSize();
-            // TODO: 보낼 데이터가 너무 많을 경우 처리
-
-            mSendEvent.buffers.push_back(std::move(sendBuffer));
-        }
-    }
-
-    // Scatter-Gather 방식으로 송신하기 위해 버퍼를 모은다
-    Vector<WSABUF> buffers;
-    buffers.reserve(mSendEvent.buffers.size());
-    for (const auto& sendBuffer : mSendEvent.buffers)
-    {
-        WSABUF buffer;
-        buffer.buf = reinterpret_cast<CHAR*>(sendBuffer->GetBuffer());
-        buffer.len = static_cast<ULONG>(sendBuffer->GetWrittenSize());
-        buffers.push_back(buffer);
-    }
-    Int64 numBytes = 0;
-    mSendEvent.Init();
-    mSendEvent.owner = GetSharedPtr();
-
-    // 비동기 송신 요청
-    Int64 result = SocketUtils::SendAsync(mSocket, buffers.data(), buffers.size(), OUT &numBytes, &mSendEvent);
-    if ((result != SUCCESS) &&
-        (result != WSA_IO_PENDING))
-    {
-        HandleError(result);
-        mSendEvent.owner.reset();
-        mSendEvent.buffers.clear();
-        mIsSending.store(false);
-    }
-}
-
-void Session::RegisterSendMessages()
-{
-    if (!IsConnected())
-    {
-        return;
-    }
-
     { // 메시지 큐의 모든 메시지를 송신 이벤트로 옮긴다
         WRITE_GUARD;
 
         Int64 messageSizeSum = 0;
-        while (mMessageQueue.size() > 0)
+        while (mSendQueue.size() > 0)
         {
-            SharedPtr<NetMessage> message = mMessageQueue.front();
-            mMessageQueue.pop();
+            SharedPtr<NetMessage> message = mSendQueue.front();
+            mSendQueue.pop();
 
             messageSizeSum += message->GetHeader().size;
             // TODO: 보낼 데이터가 너무 많을 경우 처리
@@ -382,40 +316,6 @@ void Session::ProcessReceive(Int64 numBytes)
 void Session::ProcessSend(Int64 numBytes)
 {
     mSendEvent.owner.reset();
-    mSendEvent.buffers.clear();
-    // 에러가 발생한 경우
-    if (mSendEvent.result != SUCCESS)
-    {
-        HandleError(mSendEvent.result);
-        return;
-    }
-
-    if (numBytes == 0)
-    {
-        Disconnect(TEXT_16("Sent: 0 bytes"));
-        return;
-    }
-
-    // 콘텐츠 코드에서 송신 처리
-    OnSent(numBytes);
-
-    { // 송신 큐가 비었으면 송신 상태를 해제
-        WRITE_GUARD;
-
-        if (mSendQueue.empty())
-        {
-            mIsSending.store(false);
-            return;
-        }
-    }
-
-    // 송신 큐에 남아 있는 버퍼가 있으면 다시 송신 등록
-    RegisterSend();
-}
-
-void Session::ProcessSendMessages(Int64 numBytes)
-{
-    mSendEvent.owner.reset();
     mSendEvent.messages.clear();
     // 에러가 발생한 경우
     if (mSendEvent.result != SUCCESS)
@@ -436,7 +336,7 @@ void Session::ProcessSendMessages(Int64 numBytes)
     { // 메시지 큐가 비었으면 송신 상태를 해제
         WRITE_GUARD;
 
-        if (mMessageQueue.empty())
+        if (mSendQueue.empty())
         {
             mIsSending.store(false);
             return;
@@ -444,7 +344,7 @@ void Session::ProcessSendMessages(Int64 numBytes)
     }
 
     // 메시지 큐에 남아 있는 메시지가 있으면 다시 송신 등록
-    RegisterSendMessages();
+    RegisterSend();
 }
 
 void Session::HandleError(Int64 errorCode)

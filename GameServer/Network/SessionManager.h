@@ -13,7 +13,6 @@ public:
 
     void    AddSession(SharedPtr<GameSession> session);
     void    RemoveSession(SharedPtr<GameSession> session);
-    void    Broadcast(SharedPtr<SendBuffer> buffer);
     void    Broadcast(SharedPtr<NetMessage> message);
 
 private:

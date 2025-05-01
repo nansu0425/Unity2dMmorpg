@@ -31,7 +31,6 @@ public:
 public:     // 외부에서 호출하는 함수
     Int64               Connect();
     void                Disconnect(String16 cause);
-    void                Send(SharedPtr<SendBuffer> buffer);
     void                Send(SharedPtr<NetMessage> message);
 
     SharedPtr<Service>  GetService() const { return mService.lock(); }
@@ -57,13 +56,11 @@ private:    // 입출력 요청 및 처리
     Int64   RegisterDisconnect(String16 cause);
     void    RegisterReceive();
     void    RegisterSend();
-    void    RegisterSendMessages();
 
     void    ProcessConnect();
     void    ProcessDisconnect();
     void    ProcessReceive(Int64 numBytes);
     void    ProcessSend(Int64 numBytes);
-    void    ProcessSendMessages(Int64 numBytes);
 
     void    HandleError(Int64 errorCode);
 
@@ -83,8 +80,7 @@ private:
 
 private:
     ReceiveBuffer                   mReceiveBuffer;
-    Queue<SharedPtr<SendBuffer>>    mSendQueue;
-    Queue<SharedPtr<NetMessage>>    mMessageQueue;
+    Queue<SharedPtr<NetMessage>>    mSendQueue;
 };
 
 class MessageSession
