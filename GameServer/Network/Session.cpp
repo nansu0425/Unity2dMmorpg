@@ -28,4 +28,7 @@ void GameSession::OnMessageReceived(Byte* message, Int64 size)
 }
 
 void GameSession::OnSent(Int64 numBytes)
-{}
+{
+    // 송신 처리
+    gLogger->Info(TEXT_16("Sent {} bytes to client"), numBytes);
+}

@@ -47,8 +47,8 @@ int main()
 
     while (true)
     {
-        MessageBuilder msgBuilder;
-        auto& dataBuilder = msgBuilder.GetDataBuilder();
+        SharedPtr<NetMessage> message = std::make_shared<NetMessage>(ServerMessageId_Test);
+        auto& dataBuilder = message->GetDataBuilder();
 
         // buff 1
         Int64 victimsData1[] = {4000};
@@ -64,8 +64,8 @@ int main()
         auto test = MessageData::Server::CreateTest(dataBuilder, 1000, 100, 10, buffs);
 
         // Test 메시지를 모든 세션에 전송
-        SharedPtr<SendBuffer> message = msgBuilder.Finish(ServerMessageId_Test, test);
-        gSessionManager.Broadcast(message);
+        message->FinishBuilding(test);
+        gSessionManager.Broadcast(std::move(message));
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }

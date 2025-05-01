@@ -3,6 +3,7 @@
 #include "GameServer/Pch.h"
 #include "GameServer/Network/SessionManager.h"
 #include "GameServer/Network/Session.h"
+#include "ServerEngine/Network/Message.h"
 
 GameSessionManager gSessionManager;
 
@@ -28,5 +29,14 @@ void GameSessionManager::Broadcast(SharedPtr<SendBuffer> buffer)
     for (auto& session : mSessions)
     {
         session->Send(buffer);
+    }
+}
+
+void GameSessionManager::Broadcast(SharedPtr<NetMessage> message)
+{
+    WRITE_GUARD;
+    for (auto& session : mSessions)
+    {
+        session->Send(message);
     }
 }

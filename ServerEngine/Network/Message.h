@@ -35,7 +35,7 @@ private:
     MessageHandler      mHandlers[std::numeric_limits<MessageId>::max()] = {};
 };
 
-class MessageBuilder
+class NetMessage
 {
 public:
     enum Constants : Int16
@@ -43,39 +43,29 @@ public:
         kDataBufferSize = 0x1000,   // 메시지의 헤더를 제외한 데이터를 담을 수 있는 버퍼 크기
     };
 
-    struct Allocator
-        : public flatbuffers::Allocator
-    {
-        SharedPtr<SendBuffer>   message;    // 메시지를 담을 버퍼
-
-        virtual uint8_t*        allocate(size_t dataSize) override;
-        virtual void            deallocate(uint8_t* data, size_t size) override { gLogger->Warn(TEXT_8("Deallocated")); }
-    };
-
 public:
-    MessageBuilder();
+    NetMessage(MessageId id);
 
     template<typename T>
-    SharedPtr<SendBuffer> Finish(MessageId id, flatbuffers::Offset<T> rootData)
+    void FinishBuilding(flatbuffers::Offset<T> rootData)
     {
+        ASSERT_CRASH(!mIsBuilt, "MESSAGE_ALREADY_BUILT");
         mDataBuilder.Finish(rootData);
-        const Int16 dataSize = static_cast<Int16>(mDataBuilder.GetSize());
-        const Int16 messageSize = SIZE_16(MessageHeader) + dataSize;
-        SharedPtr<SendBuffer> message = gSendBufferManager->Open(messageSize);
-        // 헤더 설정
-        MessageHeader* header = reinterpret_cast<MessageHeader*>(message->GetBuffer());
-        header->size = messageSize;
-        header->id = id;
-        // 메시지 데이터 복사
-        ::memcpy(header + 1, mDataBuilder.GetBufferPointer(), dataSize);
-        message->Close(messageSize);
+        ASSERT_CRASH(GetDataSize() <= kDataBufferSize, "MESSAGE_SIZE_OVERFLOW");
 
-        return message;
+        mHeader.size = SIZE_16(MessageHeader) + static_cast<Int16>(mDataBuilder.GetSize());
+        mIsBuilt = true;
     }
 
 public:
+    MessageHeader&                      GetHeader() { return mHeader; }
     flatbuffers::FlatBufferBuilder&     GetDataBuilder() { return mDataBuilder; }
+    Byte*                               GetDataBuffer() { return mDataBuilder.GetBufferPointer(); }
+    Int64                               GetDataSize() const { return mDataBuilder.GetSize(); }
+    Bool                                IsBuilt() const { return mIsBuilt; }
 
 private:
+    MessageHeader                       mHeader = {};
     flatbuffers::FlatBufferBuilder      mDataBuilder;
+    Bool                                mIsBuilt = false;
 };

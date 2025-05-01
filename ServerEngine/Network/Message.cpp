@@ -28,12 +28,8 @@ Bool MessageHandlerManager::HandleInvalid(SharedPtr<MessageSession> session, Byt
     return true;
 }
 
-uint8_t* MessageBuilder::Allocator::allocate(size_t dataSize)
-{
-    message = gSendBufferManager->Open(SIZE_64(MessageHeader) + dataSize);
-    return message->GetBuffer() + SIZE_64(MessageHeader);
-}
-
-MessageBuilder::MessageBuilder()
+NetMessage::NetMessage(MessageId id)
     : mDataBuilder(kDataBufferSize)
-{}
+{
+    mHeader.id = id;
+}
