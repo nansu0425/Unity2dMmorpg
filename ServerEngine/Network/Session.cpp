@@ -202,22 +202,7 @@ void Session::RegisterSend()
         }
     }
 
-    // Scatter-Gather 방식으로 송신하기 위해 메시지를 모은다
-    Vector<WSABUF> buffers;
-    buffers.reserve(mSendEvent.messages.size() * 2);
-    for (const auto& message : mSendEvent.messages)
-    {
-        // 메시지 헤더
-        WSABUF header;
-        header.buf = reinterpret_cast<CHAR*>(&message->GetHeader());
-        header.len = SIZE_16(MessageHeader);
-        buffers.push_back(header);
-        // 메시지 데이터
-        WSABUF data;
-        data.buf = reinterpret_cast<CHAR*>(message->GetDataBuffer());
-        data.len = static_cast<ULONG>(message->GetDataSize());
-        buffers.push_back(data);
-    }
+    Vector<WSABUF> buffers = CreateSendBuffers();
     Int64 numBytes = 0;
     mSendEvent.Init();
     mSendEvent.owner = GetSharedPtr();
@@ -232,6 +217,28 @@ void Session::RegisterSend()
         mSendEvent.messages.clear();
         mIsSending.store(false);
     }
+}
+
+Vector<WSABUF> Session::CreateSendBuffers()
+{
+    Vector<WSABUF> buffers;
+    buffers.reserve(mSendEvent.messages.size() * 2);
+    // 송신 이벤트의 메시지들을 WSABUF로 변환
+    for (const auto& message : mSendEvent.messages)
+    {
+        // 메시지 헤더
+        WSABUF header;
+        header.buf = reinterpret_cast<CHAR*>(&message->GetHeader());
+        header.len = SIZE_16(MessageHeader);
+        buffers.push_back(header);
+        // 메시지 데이터
+        WSABUF data;
+        data.buf = reinterpret_cast<CHAR*>(message->GetDataBuffer());
+        data.len = static_cast<ULONG>(message->GetDataSize());
+        buffers.push_back(data);
+    }
+
+    return buffers;
 }
 
 void Session::ProcessConnect()

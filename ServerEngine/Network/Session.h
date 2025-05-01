@@ -43,28 +43,29 @@ public:     // 외부에서 호출하는 함수
     SharedPtr<Session>  GetSharedPtr() { return std::static_pointer_cast<Session>(shared_from_this()); }
 
 protected:  // 콘텐츠 코드 인터페이스
-    virtual void    OnConnected() = 0;
-    virtual void    OnDisconnected(String16 cause) = 0;
-    virtual void    OnReceived(ReceiveMessage message) = 0;
-    virtual void    OnSent(Int64 numBytes) = 0;
+    virtual void        OnConnected() = 0;
+    virtual void        OnDisconnected(String16 cause) = 0;
+    virtual void        OnReceived(ReceiveMessage message) = 0;
+    virtual void        OnSent(Int64 numBytes) = 0;
 
 private:    // IIoObjectOwner 인터페이스 구현
-    virtual HANDLE  GetIoObject() override;
-    virtual void    DispatchIoEvent(IoEvent* event, Int64 numBytes = 0) override;
+    virtual HANDLE      GetIoObject() override;
+    virtual void        DispatchIoEvent(IoEvent* event, Int64 numBytes = 0) override;
 
 private:    // 입출력 요청 및 처리
-    Int64   RegisterConnect();
-    Int64   RegisterDisconnect(String16 cause);
-    void    RegisterReceive();
-    void    RegisterSend();
+    Int64               RegisterConnect();
+    Int64               RegisterDisconnect(String16 cause);
+    void                RegisterReceive();
+    void                RegisterSend();
+    Vector<WSABUF>      CreateSendBuffers();
 
-    void    ProcessConnect();
-    void    ProcessDisconnect();
-    void    ProcessReceive(Int64 numBytes);
-    Int64   ProcessReceiveMessages();
-    void    ProcessSend(Int64 numBytes);
+    void                ProcessConnect();
+    void                ProcessDisconnect();
+    void                ProcessReceive(Int64 numBytes);
+    Int64               ProcessReceiveMessages();
+    void                ProcessSend(Int64 numBytes);
 
-    void    HandleError(Int64 errorCode);
+    void                HandleError(Int64 errorCode);
 
 private:
     RW_LOCK;
