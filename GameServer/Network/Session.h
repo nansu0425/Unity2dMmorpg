@@ -5,11 +5,11 @@
 #include "ServerEngine/Network/Session.h"
 
 class GameSession
-    : public MessageSession
+    : public Session
 {
 protected:
     virtual void    OnConnected() override;
     virtual void    OnDisconnected(String16 cause) override;
-    virtual void    OnMessageReceived(Byte* message, Int64 size) override;
+    virtual void    OnReceived(MessageHeader* header) override;
     virtual void    OnSent(Int64 numBytes) override;
 };

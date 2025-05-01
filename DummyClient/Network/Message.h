@@ -18,7 +18,7 @@ public:
     ServerMessageHandlerManager();
 
 private:
-    Bool    HandleTest(SharedPtr<MessageSession> session, const MessageData::Server::Test* data);
+    Bool    HandleTest(SharedPtr<Session> session, const MessageData::Server::Test* data);
 };
 
 extern ServerMessageHandlerManager      gMessageHandlerManager;

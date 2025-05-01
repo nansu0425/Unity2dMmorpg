@@ -7,13 +7,13 @@ ServerMessageHandlerManager    gMessageHandlerManager;
 
 ServerMessageHandlerManager::ServerMessageHandlerManager()
 {
-    RegisterHandler(ServerMessageId_Test, [this](SharedPtr<MessageSession> session, Byte* message, Int64 size)
+    RegisterHandler(ServerMessageId_Test, [this](SharedPtr<Session> session, MessageHeader* header)
                     {
-                        return HandleTest(session, flatbuffers::GetRoot<MessageData::Server::Test>(message + SIZE_64(MessageHeader)));
+                        return HandleTest(session, flatbuffers::GetRoot<MessageData::Server::Test>(header + 1));
                     });
 }
 
-Bool ServerMessageHandlerManager::HandleTest(SharedPtr<MessageSession> session, const MessageData::Server::Test* data)
+Bool ServerMessageHandlerManager::HandleTest(SharedPtr<Session> session, const MessageData::Server::Test* data)
 {
     gLogger->Debug(TEXT_16("Test Message: id={}, hp={}, attack={}"), data->id(), data->hp(), data->attack());
     

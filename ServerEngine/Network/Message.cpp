@@ -8,23 +8,22 @@ MessageHandlerManager::MessageHandlerManager()
     // 모든 핸들러를 HandleInvalid로 초기화
     for (MessageId i = 0; i < std::numeric_limits<MessageId>::max(); ++i)
     {
-        mHandlers[i] = [this](SharedPtr<MessageSession> session, Byte* message, Int64 size)
+        mHandlers[i] = [this](SharedPtr<Session> session, MessageHeader* header)
             {
-                return HandleInvalid(std::move(session), message, size);
+                return HandleInvalid(std::move(session), header);
             };
     }
 }
 
-Bool MessageHandlerManager::HandleMessage(SharedPtr<MessageSession> session, Byte* message, Int64 size)
+Bool MessageHandlerManager::HandleMessage(SharedPtr<Session> session, MessageHeader* header)
 {
-    MessageHeader* header = reinterpret_cast<MessageHeader*>(message);
     // 메시지 id에 해당하는 핸들러 호출
-    return mHandlers[header->id](std::move(session), message, size);
+    return mHandlers[header->id](std::move(session), header);
 }
 
-Bool MessageHandlerManager::HandleInvalid(SharedPtr<MessageSession> session, Byte* message, Int64 size)
+Bool MessageHandlerManager::HandleInvalid(SharedPtr<Session> session, MessageHeader* header)
 {
-    gLogger->Error(TEXT_16("Invalid message: id={}, size={}"), reinterpret_cast<MessageHeader*>(message)->id, size);
+    gLogger->Error(TEXT_16("Invalid message: id={}, size={}"), header->id, header->size);
     return true;
 }
 

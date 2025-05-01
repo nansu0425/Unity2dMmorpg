@@ -296,12 +296,11 @@ void Session::ProcessReceive(Int64 numBytes)
         return;
     }
 
-    // 콘텐츠 코드에서 수신 처리
-    Int64 dataSize = mReceiveBuffer.GetDataSize();
-    Int64 numBytesRead = OnReceived(mReceiveBuffer.AtReadPos(), dataSize);
-    if ((numBytesRead < 0) ||
-        (numBytesRead > dataSize) ||
-        (false == mReceiveBuffer.OnRead(numBytesRead)))
+    // 수신 버퍼에 있는 메시지 처리
+    Int64 processedSize = ProcessReceiveMessages();
+    if ((processedSize < 0) ||
+        (processedSize > mReceiveBuffer.GetDataSize()) ||
+        (false == mReceiveBuffer.OnRead(processedSize)))
     {
         gLogger->Error(TEXT_16("Failed to read receive buffer.: {} bytes"), numBytes);
         Disconnect(TEXT_16("Receive buffer error"));
@@ -311,6 +310,32 @@ void Session::ProcessReceive(Int64 numBytes)
 
     // 수신 완료 후 다시 수신 등록
     RegisterReceive();
+}
+
+Int64 Session::ProcessReceiveMessages()
+{
+    Int64 processedSize = 0;
+
+    while (true)
+    {
+        Int64 remainingSize = mReceiveBuffer.GetDataSize() - processedSize;
+        // 메시지 헤더를 포함하는지 확인
+        if (remainingSize < sizeof(MessageHeader))
+        {
+            break;
+        }
+        MessageHeader* header = reinterpret_cast<MessageHeader*>(mReceiveBuffer.AtReadPos() + processedSize);
+        // 메시지 헤더부터 데이터까지 포함하는지 확인
+        if (remainingSize < header->size)
+        {
+            break;
+        }
+        // 콘텐츠 코드에서 수신 메시지 처리
+        OnReceived(header);
+        processedSize += header->size;
+    }
+
+    return processedSize;
 }
 
 void Session::ProcessSend(Int64 numBytes)
@@ -369,34 +394,34 @@ void Session::HandleError(Int64 errorCode)
     }
 }
 
-MessageSession::MessageSession()
-{}
-
-MessageSession::~MessageSession()
-{}
-
-Int64 MessageSession::OnReceived(Byte* buffer, Int64 numBytes)
-{
-    Int64 processedSize = 0;
-
-    while (true)
-    {
-        Int64 remainingSize = numBytes - processedSize;
-        // 메시지 헤더를 포함하는지 확인
-        if (remainingSize < sizeof(MessageHeader))
-        {
-            break;
-        }
-        MessageHeader* header = reinterpret_cast<MessageHeader*>(buffer + processedSize);
-        // 메시지 헤더부터 데이터까지 포함하는지 확인
-        if (remainingSize < header->size)
-        {
-            break;
-        }
-        // 콘텐츠 코드에서 메시지 처리
-        OnMessageReceived(buffer + processedSize, header->size);
-        processedSize += header->size;
-    }
-
-    return processedSize;
-}
+//MessageSession::MessageSession()
+//{}
+//
+//MessageSession::~MessageSession()
+//{}
+//
+//Int64 MessageSession::OnReceived(Byte* buffer, Int64 numBytes)
+//{
+//    Int64 processedSize = 0;
+//
+//    while (true)
+//    {
+//        Int64 remainingSize = numBytes - processedSize;
+//        // 메시지 헤더를 포함하는지 확인
+//        if (remainingSize < sizeof(MessageHeader))
+//        {
+//            break;
+//        }
+//        MessageHeader* header = reinterpret_cast<MessageHeader*>(buffer + processedSize);
+//        // 메시지 헤더부터 데이터까지 포함하는지 확인
+//        if (remainingSize < header->size)
+//        {
+//            break;
+//        }
+//        // 콘텐츠 코드에서 메시지 처리
+//        OnMessageReceived(buffer + processedSize, header->size);
+//        processedSize += header->size;
+//    }
+//
+//    return processedSize;
+//}

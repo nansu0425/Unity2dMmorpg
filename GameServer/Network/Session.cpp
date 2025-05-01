@@ -21,10 +21,10 @@ void GameSession::OnDisconnected(String16 cause)
     gSessionManager.RemoveSession(std::static_pointer_cast<GameSession>(shared_from_this()));
 }
 
-void GameSession::OnMessageReceived(Byte* message, Int64 size)
+void GameSession::OnReceived(MessageHeader* header)
 {
     // 메시지 처리
-    gMessageHandlerManager.HandleMessage(GetSharedPtr(), message, size);
+    gMessageHandlerManager.HandleMessage(GetSharedPtr(), header);
 }
 
 void GameSession::OnSent(Int64 numBytes)

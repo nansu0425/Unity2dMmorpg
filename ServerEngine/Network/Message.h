@@ -4,7 +4,7 @@
 
 #include <flatbuffers/flatbuffers.h>
 
-class MessageSession;
+class Session;
 
 using MessageId = Int16;
 
@@ -17,19 +17,20 @@ struct MessageHeader
 class MessageHandlerManager
 {
 public:
-    using MessageHandler    = Function<Bool(SharedPtr<MessageSession>, Byte*, Int64)>;
+    // 헤더 뒤에 FlatBufferBuilder로 직렬화된 데이터 존재
+    using MessageHandler    = Function<Bool(SharedPtr<Session>, MessageHeader*)>;
 
 public:
     MessageHandlerManager();
 
-    Bool                HandleMessage(SharedPtr<MessageSession> session, Byte* message, Int64 size);
+    Bool                HandleMessage(SharedPtr<Session> session, MessageHeader* header);
 
 protected:
     MessageHandler&     GetHandler(MessageId id) { return mHandlers[id]; }
     void                RegisterHandler(MessageId id, MessageHandler handler) { mHandlers[id] = std::move(handler); }
 
 private:
-    Bool                HandleInvalid(SharedPtr<MessageSession> session, Byte* message, Int64 size);
+    Bool                HandleInvalid(SharedPtr<Session> session, MessageHeader* header);
 
 private:
     MessageHandler      mHandlers[std::numeric_limits<MessageId>::max()] = {};
