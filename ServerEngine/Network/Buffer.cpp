@@ -165,7 +165,7 @@ BufferReader::~BufferReader()
 
 Bool BufferReader::Peek(Byte* dest, Int64 size)
 {
-    if (GetRemainSize() < size)
+    if (GetFreeSize() < size)
     {
         return false;
     }
@@ -199,7 +199,7 @@ BufferWriter::~BufferWriter()
 
 Bool BufferWriter::Write(const Byte* src, Int64 size)
 {
-    if (GetRemainSize() < size)
+    if (GetFreeSize() < size)
     {
         return false;
     }

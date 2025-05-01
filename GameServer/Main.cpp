@@ -47,25 +47,27 @@ int main()
 
     while (true)
     {
-        flatbuffers::FlatBufferBuilder fbb(1024);
+        MessageBuilder msgBuilder;
+        auto& dataBuilder = msgBuilder.GetDataBuilder();
+
         // buff 1
         Int64 victimsData1[] = {4000};
-        flatbuffers::Offset<flatbuffers::Vector<Int64>> victims1 = fbb.CreateVector(victimsData1, 1);
-        flatbuffers::Offset<MessageData::Buff> buff1 = MessageData::CreateBuff(fbb, 100, 1.2f, victims1);
+        flatbuffers::Offset<flatbuffers::Vector<Int64>> victims1 = dataBuilder.CreateVector(victimsData1, 1);
+        flatbuffers::Offset<MessageData::Buff> buff1 = MessageData::CreateBuff(dataBuilder, 100, 1.2f, victims1);
         // buff 2
         Int64 victimsData2[] = {1000, 2000};
-        flatbuffers::Offset<flatbuffers::Vector<Int64>> victims2 = fbb.CreateVector(victimsData2, 2);
-        flatbuffers::Offset<MessageData::Buff> buff2 = MessageData::CreateBuff(fbb, 200, 2.5f, victims2);
-        // 최종 패킷 생성
+        flatbuffers::Offset<flatbuffers::Vector<Int64>> victims2 = dataBuilder.CreateVector(victimsData2, 2);
+        flatbuffers::Offset<MessageData::Buff> buff2 = MessageData::CreateBuff(dataBuilder, 200, 2.5f, victims2);
+        // test
         Vector<flatbuffers::Offset<MessageData::Buff>> buffData = {buff1, buff2};
-        auto buffs = fbb.CreateVector(buffData);
-        auto data = MessageData::Server::CreateTest(fbb, 1000, 100, 10, buffs);
-        fbb.Finish(data);
+        auto buffs = dataBuilder.CreateVector(buffData);
+        auto test = MessageData::Server::CreateTest(dataBuilder, 1000, 100, 10, buffs);
+        dataBuilder.Finish(test);
 
-        gLogger->Info(TEXT_16("Data Size: {}"), fbb.GetSize());
+        gLogger->Info(TEXT_8("Data Size: {}"), dataBuilder.GetSize());
 
         // Test 메시지를 모든 세션에 전송
-        SharedPtr<SendBuffer> message = MessageBuilder::Build(fbb, ServerMessageId_Test);
+        SharedPtr<SendBuffer> message = msgBuilder.Finish(ServerMessageId_Test);
         gSessionManager.Broadcast(message);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));

@@ -125,7 +125,7 @@ public:
     Byte*   GetBuffer() { return mBuffer; }
     Int64   GetSize() const { return mSize; }
     Int64   GetReadSize() const { return mPos; }
-    Int64   GetRemainSize() const { return mSize - mPos; }
+    Int64   GetFreeSize() const { return mSize - mPos; }
 
 private:
     Byte*   mBuffer = nullptr;
@@ -147,7 +147,7 @@ public:
     template<typename T>
     T* Reserve()
     {
-        if (GetRemainSize() < mSize)
+        if (GetFreeSize() < mSize)
         {
             return nullptr;
         }
@@ -172,7 +172,7 @@ public:
     Byte*   GetBuffer() { return mBuffer; }
     Int64   GetSize() const { return mSize; }
     Int64   GetWrittenSize() const { return mPos; }
-    Int64   GetRemainSize() const { return mSize - mPos; }
+    Int64   GetFreeSize() const { return mSize - mPos; }
 
 private:
     Byte*   mBuffer = nullptr;
