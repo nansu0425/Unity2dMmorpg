@@ -62,12 +62,9 @@ int main()
         Vector<flatbuffers::Offset<MessageData::Buff>> buffData = {buff1, buff2};
         auto buffs = dataBuilder.CreateVector(buffData);
         auto test = MessageData::Server::CreateTest(dataBuilder, 1000, 100, 10, buffs);
-        dataBuilder.Finish(test);
-
-        gLogger->Info(TEXT_8("Data Size: {}"), dataBuilder.GetSize());
 
         // Test 메시지를 모든 세션에 전송
-        SharedPtr<SendBuffer> message = msgBuilder.Finish(ServerMessageId_Test);
+        SharedPtr<SendBuffer> message = msgBuilder.Finish(ServerMessageId_Test, test);
         gSessionManager.Broadcast(message);
 
         std::this_thread::sleep_for(std::chrono::milliseconds(100));

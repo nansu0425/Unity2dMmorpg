@@ -37,19 +37,3 @@ uint8_t* MessageBuilder::Allocator::allocate(size_t dataSize)
 MessageBuilder::MessageBuilder()
     : mDataBuilder(kDataBufferSize)
 {}
-
-SharedPtr<SendBuffer> MessageBuilder::Finish(MessageId id)
-{
-    const Int16 dataSize = static_cast<Int16>(mDataBuilder.GetSize());
-    const Int16 messageSize = SIZE_16(MessageHeader) + dataSize;
-    SharedPtr<SendBuffer> message = gSendBufferManager->Open(messageSize);
-    // 헤더 설정
-    MessageHeader* header = reinterpret_cast<MessageHeader*>(message->GetBuffer());
-    header->size = messageSize;
-    header->id = id;
-    // 메시지 데이터 복사
-    ::memcpy(header + 1, mDataBuilder.GetBufferPointer(), dataSize);
-    message->Close(messageSize);
-
-    return message;
-}
