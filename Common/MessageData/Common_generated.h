@@ -54,6 +54,36 @@ inline const char *EnumNamePlayerType(PlayerType e) {
   return EnumNamesPlayerType()[index];
 }
 
+enum LoginStatus : int8_t {
+  LoginStatus_Failure = 0,
+  LoginStatus_Success = 1,
+  LoginStatus_MIN = LoginStatus_Failure,
+  LoginStatus_MAX = LoginStatus_Success
+};
+
+inline const LoginStatus (&EnumValuesLoginStatus())[2] {
+  static const LoginStatus values[] = {
+    LoginStatus_Failure,
+    LoginStatus_Success
+  };
+  return values;
+}
+
+inline const char * const *EnumNamesLoginStatus() {
+  static const char * const names[3] = {
+    "Failure",
+    "Success",
+    nullptr
+  };
+  return names;
+}
+
+inline const char *EnumNameLoginStatus(LoginStatus e) {
+  if (::flatbuffers::IsOutRange(e, LoginStatus_Failure, LoginStatus_Success)) return "";
+  const size_t index = static_cast<size_t>(e);
+  return EnumNamesLoginStatus()[index];
+}
+
 struct Buff FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef BuffBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {

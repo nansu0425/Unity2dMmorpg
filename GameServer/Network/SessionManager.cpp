@@ -28,6 +28,9 @@ void GameSessionManager::Broadcast(SharedPtr<SendMessageBuilder> message)
     WRITE_GUARD;
     for (auto& session : mSessions)
     {
-        session->Send(message);
+        if (session->IsLogined())
+        {
+            session->Send(message);
+        }
     }
 }

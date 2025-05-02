@@ -3,13 +3,7 @@
 #pragma once
 
 #include "ServerEngine/Network/Message.h"
-#include "Common/MessageData/Generated/Server_generated.h"
-
-enum ServerMessageId : MessageId
-{
-    ServerMessageId_Invalid = 0x0000,
-    ServerMessageId_Test,
-};
+#include "Common/Message.h"
 
 class ServerMessageHandlerManager
     : public MessageHandlerManager
@@ -19,6 +13,7 @@ public:
 
 private:
     Bool    HandleTest(SharedPtr<Session> session, const MessageData::Server::Test* data);
+    Bool    HandleLogin(SharedPtr<Session> session, const MessageData::Server::Login* data);
 };
 
 extern ServerMessageHandlerManager      gMessageHandlerManager;

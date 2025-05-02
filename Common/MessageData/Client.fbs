@@ -1,3 +1,9 @@
 include "Common.fbs";
 
 namespace MessageData.Client;
+
+table Login
+{
+	id:string;
+	password:string;
+}

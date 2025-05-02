@@ -7,7 +7,7 @@
 
 void GameSession::OnConnected()
 {
-    gLogger->Info(TEXT_16("Connected to client"));
+    gLogger->Info(TEXT_8("Connected to client"));
 
     // 세션 매니저에 세션 추가
     gSessionManager.AddSession(std::static_pointer_cast<GameSession>(shared_from_this()));
@@ -30,5 +30,5 @@ void GameSession::OnReceived(ReceiveMessage message)
 void GameSession::OnSent(Int64 numBytes)
 {
     // 송신 처리
-    gLogger->Info(TEXT_16("Sent {} bytes to client"), numBytes);
+    gLogger->Debug(TEXT_8("Sent {} bytes to client"), numBytes);
 }

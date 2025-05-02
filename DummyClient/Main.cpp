@@ -16,7 +16,18 @@ class ServerSession
 protected:
     virtual void    OnConnected() override
     {
-        gLogger->Info(TEXT_16("Connected to server"));
+        gLogger->Info(TEXT_8("Connected to server"));
+        
+        auto message = std::make_shared<SendMessageBuilder>(static_cast<MessageId>(ClientMessageId::Login));
+        flatbuffers::FlatBufferBuilder& dataBuilder = message->GetDataBuilder();
+
+        auto id = dataBuilder.CreateString(TEXT_8("hello1234"));
+        auto password = dataBuilder.CreateString(TEXT_8("987abcd"));
+        auto login = MessageData::Client::CreateLogin(dataBuilder, id, password);
+
+        // 로그인 메시지 전송
+        message->FinishBuilding(login);
+        Send(std::move(message));
     }
 
     virtual void    OnDisconnected(String16 cause) override

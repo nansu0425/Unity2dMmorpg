@@ -10,3 +10,9 @@ table Test
     buffs:[Buff];
     player_type:PlayerType;
 }
+
+table Login
+{
+    status:LoginStatus;
+    id:string;
+}

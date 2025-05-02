@@ -21,6 +21,9 @@ namespace Server {
 struct Test;
 struct TestBuilder;
 
+struct Login;
+struct LoginBuilder;
+
 struct Test FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef TestBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -119,6 +122,69 @@ inline ::flatbuffers::Offset<Test> CreateTestDirect(
       attack,
       buffs__,
       player_type);
+}
+
+struct Login FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef LoginBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_STATUS = 4,
+    VT_ID = 6
+  };
+  MessageData::LoginStatus status() const {
+    return static_cast<MessageData::LoginStatus>(GetField<int8_t>(VT_STATUS, 0));
+  }
+  const ::flatbuffers::String *id() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_ID);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int8_t>(verifier, VT_STATUS, 1) &&
+           VerifyOffset(verifier, VT_ID) &&
+           verifier.VerifyString(id()) &&
+           verifier.EndTable();
+  }
+};
+
+struct LoginBuilder {
+  typedef Login Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_status(MessageData::LoginStatus status) {
+    fbb_.AddElement<int8_t>(Login::VT_STATUS, static_cast<int8_t>(status), 0);
+  }
+  void add_id(::flatbuffers::Offset<::flatbuffers::String> id) {
+    fbb_.AddOffset(Login::VT_ID, id);
+  }
+  explicit LoginBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<Login> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<Login>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<Login> CreateLogin(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    MessageData::LoginStatus status = MessageData::LoginStatus_Failure,
+    ::flatbuffers::Offset<::flatbuffers::String> id = 0) {
+  LoginBuilder builder_(_fbb);
+  builder_.add_id(id);
+  builder_.add_status(status);
+  return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<Login> CreateLoginDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    MessageData::LoginStatus status = MessageData::LoginStatus_Failure,
+    const char *id = nullptr) {
+  auto id__ = id ? _fbb.CreateString(id) : 0;
+  return MessageData::Server::CreateLogin(
+      _fbb,
+      status,
+      id__);
 }
 
 }  // namespace Server

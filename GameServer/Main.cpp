@@ -7,7 +7,7 @@
 #include "GameServer/Network/Session.h"
 #include "GameServer/Network/SessionManager.h"
 #include "GameServer/Network/Message.h"
-#include "Common/MessageData/Generated/Server_generated.h"
+#include "Common/Message.h"
 
 #include <io.h>
 #include <fcntl.h>
@@ -47,8 +47,8 @@ int main()
 
     while (true)
     {
-        SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(ServerMessageId_Test);
-        auto& dataBuilder = message->GetDataBuilder();
+        SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(static_cast<MessageId>(ServerMessageId::Test));
+        flatbuffers::FlatBufferBuilder& dataBuilder = message->GetDataBuilder();
 
         // buff 1
         Int64 victimsData1[] = {4000};

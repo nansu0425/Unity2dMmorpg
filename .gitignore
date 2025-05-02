@@ -368,3 +368,9 @@ vcpkg_installed
 # ServerEngine/Log
 !ServerEngine/Log/
 !ServerEngine/Log/**
+
+# vscode
+.vscode
+
+# python venv
+venv

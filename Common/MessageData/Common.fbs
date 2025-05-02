@@ -14,3 +14,9 @@ table Buff
     remain_time:float32;
     victims:[int64];
 }
+
+enum LoginStatus : byte
+{
+	Failure,
+	Success,
+}
