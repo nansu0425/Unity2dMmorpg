@@ -9,10 +9,10 @@ class ClientMessageHandlerManager
     : public MessageHandlerManager
 {
 public:
-    ClientMessageHandlerManager();
+    virtual void    RegisterAllHandlers() override;
 
 private:
-    Bool    HandleLogin(SharedPtr<Session> session, const MessageData::Client::Login* data);
+    Bool            HandleLogin(SharedPtr<Session> session, const MessageData::Client::Login* data);
 };
 
 extern ClientMessageHandlerManager      gMessageHandlerManager;

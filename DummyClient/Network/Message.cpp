@@ -5,14 +5,14 @@
 
 ServerMessageHandlerManager    gMessageHandlerManager;
 
-ServerMessageHandlerManager::ServerMessageHandlerManager()
+void ServerMessageHandlerManager::RegisterAllHandlers()
 {
-    RegisterHandler(static_cast<MessageId>(ServerMessageId::Test), [this](SharedPtr<Session> session, ReceiveMessage message)
+    RegisterHandler(ServerMessageId_Test, [this](SharedPtr<Session> session, ReceiveMessage message)
                     {
                         return HandleTest(session, flatbuffers::GetRoot<MessageData::Server::Test>(message.GetData()));
                     });
 
-    RegisterHandler(static_cast<MessageId>(ServerMessageId::Login), [this](SharedPtr<Session> session, ReceiveMessage message)
+    RegisterHandler(ServerMessageId_Login, [this](SharedPtr<Session> session, ReceiveMessage message)
                     {
                         return HandleLogin(session, flatbuffers::GetRoot<MessageData::Server::Login>(message.GetData()));
                     });

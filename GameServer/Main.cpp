@@ -28,6 +28,9 @@ int main()
     // CRT stdout을 UTF-8 narrow-text 모드로 전환
     ::_setmode(::_fileno(stdout), _O_U8TEXT);
 
+    // 모든 메시지 핸들러 등록
+    gMessageHandlerManager.RegisterAllHandlers();
+
     // 서버 서비스 생성 및 실행
     auto service = std::make_shared<ServerService>(gConfig);
     ASSERT_CRASH(SUCCESS == service->Run(), "SERVER_SERVICE_RUN_FAILED");
@@ -47,7 +50,7 @@ int main()
 
     while (true)
     {
-        SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(static_cast<MessageId>(ServerMessageId::Test));
+        SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(ServerMessageId_Test);
         flatbuffers::FlatBufferBuilder& dataBuilder = message->GetDataBuilder();
 
         // buff 1

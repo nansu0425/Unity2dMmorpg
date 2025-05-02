@@ -38,6 +38,8 @@ public:
     MessageHandlerManager();
 
     Bool                HandleMessage(SharedPtr<Session> session, ReceiveMessage message);
+    // 여기서 모든 메시지 핸들러를 등록해야 한다
+    virtual void        RegisterAllHandlers() = 0;
 
 protected:
     MessageHandler&     GetHandler(MessageId id) { return mHandlers[id]; }

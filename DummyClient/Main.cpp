@@ -18,7 +18,7 @@ protected:
     {
         gLogger->Info(TEXT_8("Connected to server"));
         
-        auto message = std::make_shared<SendMessageBuilder>(static_cast<MessageId>(ClientMessageId::Login));
+        auto message = std::make_shared<SendMessageBuilder>(ClientMessageId_Login);
         flatbuffers::FlatBufferBuilder& dataBuilder = message->GetDataBuilder();
 
         auto id = dataBuilder.CreateString(TEXT_8("hello1234"));
@@ -61,7 +61,10 @@ int main()
     ::_setmode(::_fileno(stdout), _O_U8TEXT);
 
     // 서버 서비스 준비까지 잠시 대기
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::milliseconds(250));
+
+    // 모든 메시지 핸들러 등록
+    gMessageHandlerManager.RegisterAllHandlers();
 
     // 클라이언트 서비스 생성 및 실행
     auto service = std::make_shared<ClientService>(gConfig);
