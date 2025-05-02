@@ -57,7 +57,6 @@ private:    // 입출력 요청 및 처리
     Int64               RegisterDisconnect(String16 cause);
     void                RegisterReceive();
     void                RegisterSend();
-    Vector<WSABUF>      CreateSendBuffers();
 
     void                ProcessConnect();
     void                ProcessDisconnect();
@@ -82,6 +81,7 @@ private:
     SendEvent           mSendEvent;
 
 private:
-    ReceiveBuffer                           mReceiveBuffer;
-    Queue<SharedPtr<SendMessageBuilder>>    mSendQueue;
+    ReceiveBuffer       mReceiveBuffer;
+    SendBuffers         mSendBuffers;
+    // Queue<SharedPtr<SendMessageBuilder>>    mSendQueue;
 };

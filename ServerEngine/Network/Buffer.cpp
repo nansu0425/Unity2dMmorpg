@@ -2,6 +2,7 @@
 
 #include "ServerEngine/Pch.h"
 #include "ServerEngine/Network/Buffer.h"
+#include "ServerEngine/Network/Message.h"
 
 ReceiveBuffer::ReceiveBuffer(Int64 size)
     : mSize(size)
@@ -58,98 +59,120 @@ Bool ReceiveBuffer::OnWritten(Int64 numBytes)
     return true;
 }
 
-SendBuffer::SendBuffer(SharedPtr<SendBufferChunk> owner, Byte* buffer, Int64 allocSize)
-    : mBuffer(buffer)
-    , mAllocSize(allocSize)
-    , mOwner(std::move(owner))
-{}
-
-SendBuffer::~SendBuffer()
-{}
-
-void SendBuffer::Close(Int64 writtenSize)
+void SendBuffers::PushMessage(SharedPtr<SendMessageBuilder> message)
 {
-    ASSERT_CRASH(writtenSize <= mAllocSize, "BUFFER_OVERFLOW");
-    mWrittenSize = writtenSize;
-    mOwner->Close(mWrittenSize);
+    ASSERT_CRASH(message->IsBuilt(), "MESSAGE_NOT_BUILT");
+    mMessages.push_back(std::move(message));
+    // 메시지 헤더
+    WSABUF header;
+    header.buf = reinterpret_cast<CHAR*>(&mMessages.back()->GetHeader());
+    header.len = SIZE_16(MessageHeader);
+    mBuffers.push_back(header);
+    // 메시지 데이터
+    WSABUF data;
+    data.buf = reinterpret_cast<CHAR*>(mMessages.back()->GetDataBuffer());
+    data.len = static_cast<ULONG>(mMessages.back()->GetDataSize());
+    mBuffers.push_back(data);
 }
 
-SharedPtr<SendBuffer> SendBufferManager::Open(Int64 allocSize)
+void SendBuffers::Clear()
 {
-    if (tSendBufferChunk == nullptr)
-    {
-        tSendBufferChunk = Pop();
-        tSendBufferChunk->Clear();
-    }
-
-    ASSERT_CRASH(tSendBufferChunk->IsOpen() == false, "ALREADY_OPEND");
-
-    // 더 이상 쓰기를 할 수 있는 여유 공간이 없으면 새로운 청크로 교체
-    if (tSendBufferChunk->GetFreeSize() < allocSize)
-    {
-        tSendBufferChunk = Pop();
-        tSendBufferChunk->Clear();
-    }
-
-    return tSendBufferChunk->Open(allocSize);
+    mBuffers.clear();
+    mMessages.clear();
 }
 
-SharedPtr<SendBufferChunk> SendBufferManager::Pop()
-{
-    {
-        WRITE_GUARD;
-        // 사용 가능한 청크가 있는 경우
-        if (false == mSendChunks.empty())
-        {
-            SharedPtr<SendBufferChunk> chunk = mSendChunks.back();
-            mSendChunks.pop_back();
-            return chunk;
-        }
-    }
-    // 새로운 청크 할당
-    return SharedPtr<SendBufferChunk>(new SendBufferChunk(), PushGlobal);
-}
-
-void SendBufferManager::Push(SharedPtr<SendBufferChunk> chunk)
-{
-    WRITE_GUARD;
-    mSendChunks.push_back(chunk);
-}
-
-void SendBufferManager::PushGlobal(SendBufferChunk* chunk)
-{
-    // 청크를 재사용
-    // gSendBufferManager->Push(SharedPtr<SendBufferChunk>(chunk, PushGlobal));
-}
-
-SendBufferChunk::SendBufferChunk()
-{}
-
-SendBufferChunk::~SendBufferChunk()
-{}
-
-SharedPtr<SendBuffer> SendBufferChunk::Open(Int64 allocSize)
-{
-    ASSERT_CRASH(allocSize <= GetFreeSize(), "BUFFER_OVERFLOW");
-    ASSERT_CRASH(mIsOpen == false, "ALREADY_OPEND");
-
-    mIsOpen = true;
-
-    return std::make_shared<SendBuffer>(shared_from_this(), AtWritePos(), allocSize);
-}
-
-void SendBufferChunk::Close(Int64 writtenSize)
-{
-    ASSERT_CRASH(mIsOpen == true, "NOT_OPEND");
-    mIsOpen = false;
-    mWritePos += writtenSize;
-}
-
-void SendBufferChunk::Clear()
-{
-    mIsOpen = false;
-    mWritePos = 0;
-}
+//SendBuffer::SendBuffer(SharedPtr<SendBufferChunk> owner, Byte* buffer, Int64 allocSize)
+//    : mBuffer(buffer)
+//    , mAllocSize(allocSize)
+//    , mOwner(std::move(owner))
+//{}
+//
+//SendBuffer::~SendBuffer()
+//{}
+//
+//void SendBuffer::Close(Int64 writtenSize)
+//{
+//    ASSERT_CRASH(writtenSize <= mAllocSize, "BUFFER_OVERFLOW");
+//    mWrittenSize = writtenSize;
+//    mOwner->Close(mWrittenSize);
+//}
+//
+//SharedPtr<SendBuffer> SendBufferManager::Open(Int64 allocSize)
+//{
+//    if (tSendBufferChunk == nullptr)
+//    {
+//        tSendBufferChunk = Pop();
+//        tSendBufferChunk->Clear();
+//    }
+//
+//    ASSERT_CRASH(tSendBufferChunk->IsOpen() == false, "ALREADY_OPEND");
+//
+//    // 더 이상 쓰기를 할 수 있는 여유 공간이 없으면 새로운 청크로 교체
+//    if (tSendBufferChunk->GetFreeSize() < allocSize)
+//    {
+//        tSendBufferChunk = Pop();
+//        tSendBufferChunk->Clear();
+//    }
+//
+//    return tSendBufferChunk->Open(allocSize);
+//}
+//
+//SharedPtr<SendBufferChunk> SendBufferManager::Pop()
+//{
+//    {
+//        WRITE_GUARD;
+//        // 사용 가능한 청크가 있는 경우
+//        if (false == mSendChunks.empty())
+//        {
+//            SharedPtr<SendBufferChunk> chunk = mSendChunks.back();
+//            mSendChunks.pop_back();
+//            return chunk;
+//        }
+//    }
+//    // 새로운 청크 할당
+//    return SharedPtr<SendBufferChunk>(new SendBufferChunk(), PushGlobal);
+//}
+//
+//void SendBufferManager::Push(SharedPtr<SendBufferChunk> chunk)
+//{
+//    WRITE_GUARD;
+//    mSendChunks.push_back(chunk);
+//}
+//
+//void SendBufferManager::PushGlobal(SendBufferChunk* chunk)
+//{
+//    // 청크를 재사용
+//    // gSendBufferManager->Push(SharedPtr<SendBufferChunk>(chunk, PushGlobal));
+//}
+//
+//SendBufferChunk::SendBufferChunk()
+//{}
+//
+//SendBufferChunk::~SendBufferChunk()
+//{}
+//
+//SharedPtr<SendBuffer> SendBufferChunk::Open(Int64 allocSize)
+//{
+//    ASSERT_CRASH(allocSize <= GetFreeSize(), "BUFFER_OVERFLOW");
+//    ASSERT_CRASH(mIsOpen == false, "ALREADY_OPEND");
+//
+//    mIsOpen = true;
+//
+//    return std::make_shared<SendBuffer>(shared_from_this(), AtWritePos(), allocSize);
+//}
+//
+//void SendBufferChunk::Close(Int64 writtenSize)
+//{
+//    ASSERT_CRASH(mIsOpen == true, "NOT_OPEND");
+//    mIsOpen = false;
+//    mWritePos += writtenSize;
+//}
+//
+//void SendBufferChunk::Clear()
+//{
+//    mIsOpen = false;
+//    mWritePos = 0;
+//}
 
 BufferReader::BufferReader()
 {}

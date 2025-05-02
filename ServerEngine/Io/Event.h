@@ -2,9 +2,10 @@
 
 #pragma once
 
+#include "ServerEngine/Network/Buffer.h"
+
 class Session;
 class IIoObjectOwner;
-class SendMessageBuilder;
 
 enum class IoEventType : Int64
 {
@@ -61,7 +62,7 @@ struct ReceiveEvent
 struct SendEvent
     : public IoEvent
 {
-    Vector<SharedPtr<SendMessageBuilder>>   messages; // 전송할 메시지
+    SendBuffers     buffers;
 
     SendEvent() : IoEvent(IoEventType::Send) {}
 };

@@ -2,6 +2,8 @@
 
 #pragma once
 
+class SendMessageBuilder;
+
 class ReceiveBuffer
 {
 public:
@@ -32,69 +34,85 @@ private:
     Vector<Byte>    mBuffer;
 };
 
-class SendBuffer
-    : public std::enable_shared_from_this<SendBuffer>
+class SendBuffers
 {
 public:
-    SendBuffer(SharedPtr<SendBufferChunk> owner, Byte* buffer, Int64 allocSize);
-    ~SendBuffer();
-
-    void        Close(Int64 writtenSize);
+    void        PushMessage(SharedPtr<SendMessageBuilder> message);
+    void        Clear();
 
 public:
-    Byte*       GetBuffer() { return mBuffer; }
-    Int64       GetAllocSize() const { return mAllocSize; }
-    Int64       GetWrittenSize() const { return mWrittenSize; }
+    WSABUF*     GetWsaBuffers() { return mBuffers.data(); }
+    Int64       GetWsaBufferCount() const { return mBuffers.size(); }
+    Bool        IsEmpty() const { return mBuffers.empty(); }
 
 private:
-    Byte*                       mBuffer; // owner 청크의 일부 영역을 할당받아 버퍼로 사용
-    Int64                       mAllocSize = 0;
-    Int64                       mWrittenSize = 0;
-    SharedPtr<SendBufferChunk>  mOwner;
+    Vector<WSABUF>                          mBuffers;
+    Vector<SharedPtr<SendMessageBuilder>>   mMessages;
 };
 
-class SendBufferChunk
-    : public std::enable_shared_from_this<SendBufferChunk>
-{
-public:
-    SendBufferChunk();
-    ~SendBufferChunk();
-
-    SharedPtr<SendBuffer>   Open(Int64 allocSize);
-    void                    Close(Int64 writtenSize);
-    void                    Clear();
-
-    bool                    IsOpen() const { return mIsOpen; }
-    Int64                   GetFreeSize() const { return kChunkSize - mWritePos; }
-    Byte*                   AtWritePos() { return mBuffer + mWritePos; }
-
-private:
-    enum Constants : Int64
-    {
-        kChunkSize  = 0x0001'0000,
-    };;
-
-private:
-    Byte    mBuffer[kChunkSize] = {};
-    Bool    mIsOpen = false;
-    Int64   mWritePos = 0;
-};
-
-class SendBufferManager
-{
-public:
-    SharedPtr<SendBuffer>       Open(Int64 allocSize);
-
-private:
-    SharedPtr<SendBufferChunk>  Pop();
-    void                        Push(SharedPtr<SendBufferChunk> chunk);
-
-    static void                 PushGlobal(SendBufferChunk* chunk);
-
-private:
-    RW_LOCK;
-    Vector<SharedPtr<SendBufferChunk>>  mSendChunks;
-};
+//class SendBuffer
+//    : public std::enable_shared_from_this<SendBuffer>
+//{
+//public:
+//    SendBuffer(SharedPtr<SendBufferChunk> owner, Byte* buffer, Int64 allocSize);
+//    ~SendBuffer();
+//
+//    void        Close(Int64 writtenSize);
+//
+//public:
+//    Byte*       GetBuffer() { return mBuffer; }
+//    Int64       GetAllocSize() const { return mAllocSize; }
+//    Int64       GetWrittenSize() const { return mWrittenSize; }
+//
+//private:
+//    Byte*                       mBuffer; // owner 청크의 일부 영역을 할당받아 버퍼로 사용
+//    Int64                       mAllocSize = 0;
+//    Int64                       mWrittenSize = 0;
+//    SharedPtr<SendBufferChunk>  mOwner;
+//};
+//
+//class SendBufferChunk
+//    : public std::enable_shared_from_this<SendBufferChunk>
+//{
+//public:
+//    SendBufferChunk();
+//    ~SendBufferChunk();
+//
+//    SharedPtr<SendBuffer>   Open(Int64 allocSize);
+//    void                    Close(Int64 writtenSize);
+//    void                    Clear();
+//
+//    bool                    IsOpen() const { return mIsOpen; }
+//    Int64                   GetFreeSize() const { return kChunkSize - mWritePos; }
+//    Byte*                   AtWritePos() { return mBuffer + mWritePos; }
+//
+//private:
+//    enum Constants : Int64
+//    {
+//        kChunkSize  = 0x0001'0000,
+//    };;
+//
+//private:
+//    Byte    mBuffer[kChunkSize] = {};
+//    Bool    mIsOpen = false;
+//    Int64   mWritePos = 0;
+//};
+//
+//class SendBufferManager
+//{
+//public:
+//    SharedPtr<SendBuffer>       Open(Int64 allocSize);
+//
+//private:
+//    SharedPtr<SendBufferChunk>  Pop();
+//    void                        Push(SharedPtr<SendBufferChunk> chunk);
+//
+//    static void                 PushGlobal(SendBufferChunk* chunk);
+//
+//private:
+//    RW_LOCK;
+//    Vector<SharedPtr<SendBufferChunk>>  mSendChunks;
+//};
 
 class BufferReader
 {
