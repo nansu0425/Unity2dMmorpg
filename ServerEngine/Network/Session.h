@@ -22,7 +22,7 @@ public:
 
     enum Constants : Int64
     {
-        kBufferSize = 0x0001'0000,
+        kReceiveBufferSize = 0x0001'0000,
     };
 
 public:
@@ -83,5 +83,4 @@ private:
 private:
     ReceiveBuffer       mReceiveBuffer;
     SendBuffers         mSendBuffers;
-    // Queue<SharedPtr<SendMessageBuilder>>    mSendQueue;
 };

@@ -7,7 +7,7 @@
 #include "ServerEngine/Network/Message.h"
 
 Session::Session()
-    : mReceiveBuffer(kBufferSize)
+    : mReceiveBuffer(kReceiveBufferSize)
 {
     ASSERT_CRASH(SUCCESS == SocketUtils::CreateSocket(mSocket), "CREATE_SOCKET_FAILED");
 }
