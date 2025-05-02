@@ -3,10 +3,9 @@
 #pragma once
 
 #include "ServerEngine/Io/Dispatcher.h"
+#include "ServerEngine/Io/Event.h"
 #include "ServerEngine/Network/Address.h"
 
-struct AcceptEvent;
-struct IoEvent;
 class ServerService;
 
 class Listener
@@ -18,7 +17,6 @@ public:
 
 public:     // 외부에서 호출하는 함수
     Int64   StartAccept(SharedPtr<ServerService> service);
-    void    CloseSocket();
 
 public:     // IIoObjectOwner 인터페이스 구현
     virtual HANDLE  GetIoObject() override;
@@ -28,8 +26,10 @@ private:    // 내부 처리 함수
     void    RegisterAccept(AcceptEvent* event);
     void    ProcessAccept(AcceptEvent* event, Int64 numBytes);
 
+    void    HandleError(Int64 errorCode);
+
 protected:
     SOCKET                      mSocket = INVALID_SOCKET;
-    AcceptEvent*                mAcceptEvents = nullptr;
+    Vector<AcceptEvent>         mAcceptEvents;
     SharedPtr<ServerService>    mService;
 };

@@ -12,10 +12,7 @@ Listener::Listener()
 
 Listener::~Listener()
 {
-    CloseSocket();
-
-    delete[] mAcceptEvents;
-    mAcceptEvents = nullptr;
+    ASSERT_CRASH(SUCCESS == SocketUtils::CloseSocket(mSocket), "CLOSE_SOCKET_FAILED");
 }
 
 Int64 Listener::StartAccept(SharedPtr<ServerService> service)
@@ -61,18 +58,13 @@ Int64 Listener::StartAccept(SharedPtr<ServerService> service)
 
     // accept 이벤트 생성 및 등록
     const Int64 acceptCount = mService->GetMaxSessionCount();
-    mAcceptEvents = new AcceptEvent[acceptCount];
-    for (Int64 i = 0; i < acceptCount; ++i)
+    mAcceptEvents.resize(acceptCount);
+    for (AcceptEvent& event : mAcceptEvents)
     {
-        RegisterAccept(&mAcceptEvents[i]);
+        RegisterAccept(&event);
     }
 
     return result;
-}
-
-void Listener::CloseSocket()
-{
-    ASSERT_CRASH(SUCCESS == SocketUtils::CloseSocket(mSocket), "CLOSE_SOCKET_FAILED");
 }
 
 HANDLE Listener::GetIoObject()
@@ -90,46 +82,65 @@ void Listener::DispatchIoEvent(IoEvent* event, Int64 numBytes)
 
 void Listener::RegisterAccept(AcceptEvent* event)
 {
-    event->owner = shared_from_this();
     SharedPtr<Session> session = mService->CreateSession();
+    Int64 numBytes = 0;
     event->Init();
     event->session = session;
+    event->owner = shared_from_this();
 
-    Int64 numBytes = 0;
-    Int64 result = SUCCESS;
-    // 성공적으로 비동기 작업이 시작되지 않은 경우
-    if (WSA_IO_PENDING != (result = SocketUtils::AcceptAsync(mSocket, session->GetSocket(), OUT session->mReceiveBuffer.AtWritePos(), OUT &numBytes, event)))
+    Int64 result = SocketUtils::AcceptAsync(mSocket, session->GetSocket(), OUT session->mReceiveBuffer.AtWritePos(), OUT &numBytes, event);
+    // accept 요청이 실패한 경우
+    if ((SUCCESS != result) &&
+        (WSA_IO_PENDING != result))
     {
-        gLogger->Error(TEXT_16("Socket error code: {}"), result);
+        HandleError(result);
+        event->owner.reset();
+        event->session.reset();
         RegisterAccept(event);
     }
 }
 
 void Listener::ProcessAccept(AcceptEvent* event, Int64 numBytes)
 {
-    SharedPtr<Session> session = std::move(event->session);
     event->owner.reset();
+    SharedPtr<Session> session = std::move(event->session);
+    // accpet 처리 중 에러가 발생한 경우
+    if (event->result != SUCCESS)
+    {
+        HandleError(event->result);
+        RegisterAccept(event);
+        return;
+    }
+
     Int64 result = SUCCESS;
 
-    if (result = SocketUtils::SetUpdateAcceptSocket(session->GetSocket(), mSocket))
+    result = SocketUtils::SetUpdateAcceptSocket(session->GetSocket(), mSocket);
+    if (result != SUCCESS)
     {
-        gLogger->Error(TEXT_16("Socket error code: {}"), result);
+        HandleError(result);
         RegisterAccept(event);
         return;
     }
 
     SOCKADDR_IN sockAddress = {};
     Int32 sockAddressLength = SIZE_32(SOCKADDR_IN);
-
-    if (result = ::getpeername(session->GetSocket(), OUT reinterpret_cast<SOCKADDR*>(&sockAddress), &sockAddressLength))
+    // peer 소켓 주소를 가져온다
+    result = ::getpeername(session->GetSocket(), OUT reinterpret_cast<SOCKADDR*>(&sockAddress), &sockAddressLength);
+    if (result != SUCCESS)
     {
-        gLogger->Error(TEXT_16("Socket error code: {}"), result);
+        HandleError(result);
         RegisterAccept(event);
         return;
     }
 
+    // 세션 연결 처리
     session->SetNetAddress(NetAddress(sockAddress));
     session->ProcessConnect();
 
     RegisterAccept(event);
+}
+
+void Listener::HandleError(Int64 errorCode)
+{
+    gLogger->Error(TEXT_8("Error code: {}"), errorCode);
 }

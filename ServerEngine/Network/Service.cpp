@@ -126,10 +126,7 @@ Int64 ServerService::Run()
 
     // 리스너 accept 시작
     SharedPtr<ServerService> self = std::static_pointer_cast<ServerService>(shared_from_this());
-    if (result = mListener->StartAccept(std::move(self)))
-    {
-        return result;
-    }
+    result = mListener->StartAccept(std::move(self));
 
     return result;
 }
