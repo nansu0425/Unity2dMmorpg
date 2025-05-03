@@ -81,6 +81,12 @@ void SendBuffers::Clear()
     mMessages.clear();
 }
 
+void SendBuffers::Swap(SendBuffers& buffers) noexcept
+{
+    mBuffers.swap(buffers.mBuffers);
+    mMessages.swap(buffers.mMessages);
+}
+
 //SendBuffer::SendBuffer(SharedPtr<SendBufferChunk> owner, Byte* buffer, Int64 allocSize)
 //    : mBuffer(buffer)
 //    , mAllocSize(allocSize)

@@ -39,6 +39,7 @@ class SendBuffers
 public:
     void        PushMessage(SharedPtr<SendMessageBuilder> message);
     void        Clear();
+    void        Swap(SendBuffers& buffers) noexcept;
 
 public:
     WSABUF*     GetWsaBuffers() { return mBuffers.data(); }

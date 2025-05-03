@@ -185,9 +185,9 @@ void Session::RegisterSend()
         return;
     }
 
-    { // 송신 버퍼를 이벤트로 옮긴다
+    { // 세션의 버퍼와 이벤트의 버퍼를 스왑
         WRITE_GUARD;
-        mSendEvent.buffers = std::move(mSendBuffers);
+        mSendBuffers.Swap(mSendEvent.buffers);
     }
 
     Int64 numBytes = 0;
