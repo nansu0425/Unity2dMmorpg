@@ -30,9 +30,9 @@ protected:
         Send(std::move(message));
     }
 
-    virtual void    OnDisconnected(String16 cause) override
+    virtual void    OnDisconnected(String8 cause) override
     {
-        gLogger->Warn(TEXT_16("Disconnected from server: {}"), cause);
+        gLogger->Warn(TEXT_8("Disconnected from server: {}"), cause);
     }
 
     virtual void    OnReceived(ReceiveMessage message) override

@@ -13,9 +13,9 @@ void GameSession::OnConnected()
     gSessionManager.AddSession(std::static_pointer_cast<GameSession>(shared_from_this()));
 }
 
-void GameSession::OnDisconnected(String16 cause)
+void GameSession::OnDisconnected(String8 cause)
 {
-    gLogger->Warn(TEXT_16("Disconnected from client: {}"), cause);
+    gLogger->Warn(TEXT_8("Disconnected from client: {}"), cause);
 
     // 세션 매니저에서 세션 제거
     gSessionManager.RemoveSession(std::static_pointer_cast<GameSession>(shared_from_this()));

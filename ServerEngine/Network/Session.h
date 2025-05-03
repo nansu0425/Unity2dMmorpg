@@ -31,7 +31,7 @@ public:
 
 public:     // 외부에서 호출하는 함수
     Int64               Connect();
-    void                Disconnect(String16 cause);
+    void                Disconnect(String8 cause);
     void                Send(SharedPtr<SendMessageBuilder> message);
 
     SharedPtr<Service>  GetService() const { return mService.lock(); }
@@ -44,7 +44,7 @@ public:     // 외부에서 호출하는 함수
 
 protected:  // 콘텐츠 코드 인터페이스
     virtual void        OnConnected() = 0;
-    virtual void        OnDisconnected(String16 cause) = 0;
+    virtual void        OnDisconnected(String8 cause) = 0;
     virtual void        OnReceived(ReceiveMessage message) = 0;
     virtual void        OnSent(Int64 numBytes) = 0;
 
@@ -54,7 +54,7 @@ private:    // IIoObjectOwner 인터페이스 구현
 
 private:    // 입출력 요청 및 처리
     Int64               RegisterConnect();
-    Int64               RegisterDisconnect(String16 cause);
+    Int64               RegisterDisconnect(String8 cause);
     void                RegisterReceive();
     void                RegisterSend();
 

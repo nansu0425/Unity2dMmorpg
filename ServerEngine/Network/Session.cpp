@@ -22,7 +22,7 @@ Int64 Session::Connect()
     return RegisterConnect();
 }
 
-void Session::Disconnect(String16 cause)
+void Session::Disconnect(String8 cause)
 {
     // 연결 해제 상태로 변경
     if (mIsConnected.exchange(false) == false)
@@ -107,48 +107,40 @@ Int64 Session::RegisterConnect()
         return result;
     }
 
+    Int64 numBytes = 0;
     mConnectEvent.Init();
     mConnectEvent.owner = shared_from_this();
 
-    // 비동기 연결 요청
-    Int64 numBytes = 0;
     result = SocketUtils::ConnectAsync(mSocket, mAddress, OUT &numBytes, &mConnectEvent);
-    if (result != SUCCESS)
+    if ((result != SUCCESS) &&
+        (result != WSA_IO_PENDING))
     {
-        if (result == WSA_IO_PENDING)
-        {
-            // 비동기 작업이 시작되었으므로 성공으로 간주
-            result = SUCCESS;
-        }
-        else
-        {
-            HandleError(result);
-            mConnectEvent.owner.reset();
-        }
+        mConnectEvent.owner.reset();
+    }
+    else
+    {
+        result = SUCCESS;
     }
 
     return result;
 }
 
-Int64 Session::RegisterDisconnect(String16 cause)
+Int64 Session::RegisterDisconnect(String8 cause)
 {
     mDisconnectEvent.Init();
     mDisconnectEvent.owner = GetSharedPtr();
     mDisconnectEvent.cause = std::move(cause);
 
     Int64 result = SocketUtils::DisconnectAsync(mSocket, TF_REUSE_SOCKET, &mDisconnectEvent);
-    if (result != SUCCESS)
+    if ((result != SUCCESS) &&
+        (result != WSA_IO_PENDING))
     {
-        if (result == WSA_IO_PENDING)
-        {
-            // 비동기 작업이 시작되었으므로 성공으로 간주
-            result = SUCCESS;
-        }
-        else
-        {
-            HandleError(result);
-            mDisconnectEvent.owner.reset();
-        }
+        HandleError(result);
+        mDisconnectEvent.owner.reset();
+    }
+    else
+    {
+        result = SUCCESS;
     }
 
     return result;
@@ -185,7 +177,7 @@ void Session::RegisterSend()
         return;
     }
 
-    { // 세션의 버퍼와 이벤트의 버퍼를 스왑
+    {
         WRITE_GUARD;
         mSendBuffers.Swap(mSendEvent.buffers);
     }
@@ -194,7 +186,6 @@ void Session::RegisterSend()
     mSendEvent.Init();
     mSendEvent.owner = GetSharedPtr();
 
-    // 비동기 송신 요청
     Int64 result = SocketUtils::SendAsync(mSocket, mSendEvent.buffers.GetWsaBuffers(), mSendEvent.buffers.GetWsaBufferCount(), OUT &numBytes, &mSendEvent);
     if ((result != SUCCESS) &&
         (result != WSA_IO_PENDING))
@@ -215,20 +206,18 @@ void Session::ProcessConnect()
         HandleError(mConnectEvent.result);
         return;
     }
-    
     // 서비스에 세션 추가
     Int64 result = GetService()->AddSession(GetSharedPtr());
     if (SUCCESS != result)
     {
-        RegisterDisconnect(TEXT_16("Failed to add session to service"));
+        RegisterDisconnect(TEXT_8("Failed to add session to service"));
         return;
     }
     // 연결 상태로 변경
     mIsConnected.store(true);
-
-    // 콘텐츠 코드에서 연결 완료 처리
+    // 콘텐츠 코드에서 연결 처리
     OnConnected();
-    // 수신 등록
+    // 수신 시작
     RegisterReceive();
 }
 
@@ -254,33 +243,31 @@ void Session::ProcessReceive(Int64 numBytes)
         HandleError(mReceiveEvent.result);
         return;
     }
-
+    // 상대가 정상적으로 연결 종료한 경우
     if (numBytes == 0)
     {
-        Disconnect(TEXT_16("Received: 0 bytes"));
+        Disconnect(TEXT_8("Received: 0 bytes"));
         return;
     }
-
+    // 수신 버퍼 쓰기 처리
     if (!mReceiveBuffer.OnWritten(numBytes))
     {
-        gLogger->Error(TEXT_16("Failed to write to receive buffer: {} bytes"), numBytes);
-        Disconnect(TEXT_16("Receive buffer error"));
+        gLogger->Error(TEXT_8("Failed to write to receive buffer: {} bytes"), numBytes);
+        Disconnect(TEXT_8("Receive buffer error"));
         return;
     }
-
     // 수신 버퍼에 있는 메시지 처리
     Int64 processedSize = ProcessReceiveMessages();
     if ((processedSize < 0) ||
         (processedSize > mReceiveBuffer.GetDataSize()) ||
         (false == mReceiveBuffer.OnRead(processedSize)))
     {
-        gLogger->Error(TEXT_16("Failed to read receive buffer.: {} bytes"), numBytes);
-        Disconnect(TEXT_16("Receive buffer error"));
+        gLogger->Error(TEXT_8("Failed to read receive buffer.: {} bytes"), numBytes);
+        Disconnect(TEXT_8("Receive buffer error"));
         return;
     }
     mReceiveBuffer.Clear();
-
-    // 수신 완료 후 다시 수신 등록
+    // 처리 가능한 메시지 처리 후 다시 수신 등록
     RegisterReceive();
 }
 
@@ -314,7 +301,6 @@ void Session::ProcessSend(Int64 numBytes)
 {
     mSendEvent.owner.reset();
     mSendEvent.buffers.Clear();
-
     // 에러가 발생한 경우
     if (mSendEvent.result != SUCCESS)
     {
@@ -322,16 +308,10 @@ void Session::ProcessSend(Int64 numBytes)
         return;
     }
 
-    if (numBytes == 0)
-    {
-        Disconnect(TEXT_16("Sent: 0 bytes"));
-        return;
-    }
-
     // 콘텐츠 코드에서 송신 처리
     OnSent(numBytes);
 
-    { // 송신 버퍼가 비었으면 송신 상태를 해제
+    { // 송신 버퍼가 없으면 송신 상태를 해제
         WRITE_GUARD;
 
         if (mSendBuffers.IsEmpty())
@@ -341,7 +321,7 @@ void Session::ProcessSend(Int64 numBytes)
         }
     }
 
-    // 송신 버퍼에 남아 있는 메시지가 있으면 다시 송신 등록
+    // 송신 버퍼가 있으면 다시 송신 등록
     RegisterSend();
 }
 
@@ -350,19 +330,22 @@ void Session::HandleError(Int64 errorCode)
     switch (errorCode)
     {
     case ERROR_CONNECTION_REFUSED:
-        gLogger->Critical(TEXT_16("ERROR_CONNECTION_REFUSED"));
+        gLogger->Critical(TEXT_8("ERROR_CONNECTION_REFUSED"));
         break;
     case ERROR_NETNAME_DELETED:
-        Disconnect(TEXT_16("ERROR_NETNAME_DELETED"));
+        Disconnect(TEXT_8("ERROR_NETNAME_DELETED"));
         break;
     case WSAECONNRESET:
-        Disconnect(TEXT_16("WSAECONNRESET"));
+        Disconnect(TEXT_8("WSAECONNRESET"));
         break;
     case WSAECONNABORTED:
-        Disconnect(TEXT_16("WSAECONNABORTED"));
+        Disconnect(TEXT_8("WSAECONNABORTED"));
+        break;
+    case WSAENETRESET:
+        Disconnect(TEXT_8("WSAENETRESET"));
         break;
     default:
-        gLogger->Error(TEXT_16("Error code: {}"), errorCode);
+        gLogger->Error(TEXT_8("Error code: {}"), errorCode);
         break;
     }
 }

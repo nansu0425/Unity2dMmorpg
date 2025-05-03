@@ -148,7 +148,7 @@ Int64 SocketUtils::DisconnectAsync(SOCKET socket, Int64 flags, DisconnectEvent* 
         return ::WSAGetLastError();
     }
 
-    return Int64();
+    return SUCCESS;
 }
 
 Int64 SocketUtils::AcceptAsync(SOCKET listenSocket, SOCKET acceptSocket, Byte* buffer, Int64* numBytes, AcceptEvent* event)
