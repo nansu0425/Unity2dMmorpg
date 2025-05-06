@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Content\Player.cpp" />
+    <ClCompile Include="Content\Room.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Network\Message.cpp" />
     <ClCompile Include="Network\Session.cpp" />
@@ -31,6 +33,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Content\Player.h" />
+    <ClInclude Include="Content\Room.h" />
     <ClInclude Include="Network\Message.h" />
     <ClInclude Include="Network\Session.h" />
     <ClInclude Include="Network\SessionManager.h" />
@@ -103,13 +107,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
-    <IntDir>Object\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)Object\$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Libraries;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)Binary\$(Configuration)\</OutDir>
-    <IntDir>Object\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)Object\$(Configuration)\$(ProjectName)\</IntDir>
     <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Libraries;$(LibraryPath)</LibraryPath>
   </PropertyGroup>

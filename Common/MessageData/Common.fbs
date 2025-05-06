@@ -4,19 +4,13 @@ enum PlayerType : byte
 {
 	None,
 	Knight,
-	Wizard,
+	Mage,
 	Archer,
 }
 
-table Buff
+table Player
 {
     id:int64;
-    remain_time:float32;
-    victims:[int64];
-}
-
-enum LoginStatus : byte
-{
-	Failure,
-	Success,
+	name:string;
+	type:PlayerType;
 }

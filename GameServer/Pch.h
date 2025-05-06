@@ -9,3 +9,4 @@
 #endif // _DEBUG
 
 #include "ServerEngine/Core/Pch.h"
+#include "Common/MessageData/Common_generated.h"

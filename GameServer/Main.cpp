@@ -48,31 +48,6 @@ int main()
                                });
     }
 
-    while (true)
-    {
-        SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ServerMessageId::Test));
-        flatbuffers::FlatBufferBuilder& dataBuilder = message->GetDataBuilder();
-
-        // buff 1
-        Int64 victimsData1[] = {4000};
-        flatbuffers::Offset<flatbuffers::Vector<Int64>> victims1 = dataBuilder.CreateVector(victimsData1, 1);
-        flatbuffers::Offset<MessageData::Buff> buff1 = MessageData::CreateBuff(dataBuilder, 100, 1.2f, victims1);
-        // buff 2
-        Int64 victimsData2[] = {1000, 2000};
-        flatbuffers::Offset<flatbuffers::Vector<Int64>> victims2 = dataBuilder.CreateVector(victimsData2, 2);
-        flatbuffers::Offset<MessageData::Buff> buff2 = MessageData::CreateBuff(dataBuilder, 200, 2.5f, victims2);
-        // test
-        Vector<flatbuffers::Offset<MessageData::Buff>> buffData = {buff1, buff2};
-        auto buffs = dataBuilder.CreateVector(buffData);
-        auto test = MessageData::Server::CreateTest(dataBuilder, 1000, 100, 10, buffs);
-
-        // Test 메시지를 모든 세션에 전송
-        message->FinishBuilding(test);
-        gSessionManager.Broadcast(std::move(message));
-
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-    }
-
     gThreadManager->Join();
 
     // 서버 서비스 서비스 중지

@@ -7,3 +7,13 @@ table Login
 	id:string;
 	password:string;
 }
+
+table EnterGame
+{
+    player_idx:int64;
+}
+
+table Chat
+{
+	message:string;
+}

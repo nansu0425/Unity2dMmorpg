@@ -15,13 +15,13 @@ static_assert(FLATBUFFERS_VERSION_MAJOR == 24 &&
 
 namespace MessageData {
 
-struct Buff;
-struct BuffBuilder;
+struct Player;
+struct PlayerBuilder;
 
 enum PlayerType : int8_t {
   PlayerType_None = 0,
   PlayerType_Knight = 1,
-  PlayerType_Wizard = 2,
+  PlayerType_Mage = 2,
   PlayerType_Archer = 3,
   PlayerType_MIN = PlayerType_None,
   PlayerType_MAX = PlayerType_Archer
@@ -31,7 +31,7 @@ inline const PlayerType (&EnumValuesPlayerType())[4] {
   static const PlayerType values[] = {
     PlayerType_None,
     PlayerType_Knight,
-    PlayerType_Wizard,
+    PlayerType_Mage,
     PlayerType_Archer
   };
   return values;
@@ -41,7 +41,7 @@ inline const char * const *EnumNamesPlayerType() {
   static const char * const names[5] = {
     "None",
     "Knight",
-    "Wizard",
+    "Mage",
     "Archer",
     nullptr
   };
@@ -54,109 +54,79 @@ inline const char *EnumNamePlayerType(PlayerType e) {
   return EnumNamesPlayerType()[index];
 }
 
-enum LoginStatus : int8_t {
-  LoginStatus_Failure = 0,
-  LoginStatus_Success = 1,
-  LoginStatus_MIN = LoginStatus_Failure,
-  LoginStatus_MAX = LoginStatus_Success
-};
-
-inline const LoginStatus (&EnumValuesLoginStatus())[2] {
-  static const LoginStatus values[] = {
-    LoginStatus_Failure,
-    LoginStatus_Success
-  };
-  return values;
-}
-
-inline const char * const *EnumNamesLoginStatus() {
-  static const char * const names[3] = {
-    "Failure",
-    "Success",
-    nullptr
-  };
-  return names;
-}
-
-inline const char *EnumNameLoginStatus(LoginStatus e) {
-  if (::flatbuffers::IsOutRange(e, LoginStatus_Failure, LoginStatus_Success)) return "";
-  const size_t index = static_cast<size_t>(e);
-  return EnumNamesLoginStatus()[index];
-}
-
-struct Buff FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
-  typedef BuffBuilder Builder;
+struct Player FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef PlayerBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
     VT_ID = 4,
-    VT_REMAIN_TIME = 6,
-    VT_VICTIMS = 8
+    VT_NAME = 6,
+    VT_TYPE = 8
   };
   int64_t id() const {
     return GetField<int64_t>(VT_ID, 0);
   }
-  float remain_time() const {
-    return GetField<float>(VT_REMAIN_TIME, 0.0f);
+  const ::flatbuffers::String *name() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_NAME);
   }
-  const ::flatbuffers::Vector<int64_t> *victims() const {
-    return GetPointer<const ::flatbuffers::Vector<int64_t> *>(VT_VICTIMS);
+  MessageData::PlayerType type() const {
+    return static_cast<MessageData::PlayerType>(GetField<int8_t>(VT_TYPE, 0));
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
            VerifyField<int64_t>(verifier, VT_ID, 8) &&
-           VerifyField<float>(verifier, VT_REMAIN_TIME, 4) &&
-           VerifyOffset(verifier, VT_VICTIMS) &&
-           verifier.VerifyVector(victims()) &&
+           VerifyOffset(verifier, VT_NAME) &&
+           verifier.VerifyString(name()) &&
+           VerifyField<int8_t>(verifier, VT_TYPE, 1) &&
            verifier.EndTable();
   }
 };
 
-struct BuffBuilder {
-  typedef Buff Table;
+struct PlayerBuilder {
+  typedef Player Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
   void add_id(int64_t id) {
-    fbb_.AddElement<int64_t>(Buff::VT_ID, id, 0);
+    fbb_.AddElement<int64_t>(Player::VT_ID, id, 0);
   }
-  void add_remain_time(float remain_time) {
-    fbb_.AddElement<float>(Buff::VT_REMAIN_TIME, remain_time, 0.0f);
+  void add_name(::flatbuffers::Offset<::flatbuffers::String> name) {
+    fbb_.AddOffset(Player::VT_NAME, name);
   }
-  void add_victims(::flatbuffers::Offset<::flatbuffers::Vector<int64_t>> victims) {
-    fbb_.AddOffset(Buff::VT_VICTIMS, victims);
+  void add_type(MessageData::PlayerType type) {
+    fbb_.AddElement<int8_t>(Player::VT_TYPE, static_cast<int8_t>(type), 0);
   }
-  explicit BuffBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+  explicit PlayerBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
     start_ = fbb_.StartTable();
   }
-  ::flatbuffers::Offset<Buff> Finish() {
+  ::flatbuffers::Offset<Player> Finish() {
     const auto end = fbb_.EndTable(start_);
-    auto o = ::flatbuffers::Offset<Buff>(end);
+    auto o = ::flatbuffers::Offset<Player>(end);
     return o;
   }
 };
 
-inline ::flatbuffers::Offset<Buff> CreateBuff(
+inline ::flatbuffers::Offset<Player> CreatePlayer(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     int64_t id = 0,
-    float remain_time = 0.0f,
-    ::flatbuffers::Offset<::flatbuffers::Vector<int64_t>> victims = 0) {
-  BuffBuilder builder_(_fbb);
+    ::flatbuffers::Offset<::flatbuffers::String> name = 0,
+    MessageData::PlayerType type = MessageData::PlayerType_None) {
+  PlayerBuilder builder_(_fbb);
   builder_.add_id(id);
-  builder_.add_victims(victims);
-  builder_.add_remain_time(remain_time);
+  builder_.add_name(name);
+  builder_.add_type(type);
   return builder_.Finish();
 }
 
-inline ::flatbuffers::Offset<Buff> CreateBuffDirect(
+inline ::flatbuffers::Offset<Player> CreatePlayerDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
     int64_t id = 0,
-    float remain_time = 0.0f,
-    const std::vector<int64_t> *victims = nullptr) {
-  auto victims__ = victims ? _fbb.CreateVector<int64_t>(*victims) : 0;
-  return MessageData::CreateBuff(
+    const char *name = nullptr,
+    MessageData::PlayerType type = MessageData::PlayerType_None) {
+  auto name__ = name ? _fbb.CreateString(name) : 0;
+  return MessageData::CreatePlayer(
       _fbb,
       id,
-      remain_time,
-      victims__);
+      name__,
+      type);
 }
 
 }  // namespace MessageData

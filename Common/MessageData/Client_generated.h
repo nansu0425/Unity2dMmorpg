@@ -21,6 +21,12 @@ namespace Client {
 struct Login;
 struct LoginBuilder;
 
+struct EnterGame;
+struct EnterGameBuilder;
+
+struct Chat;
+struct ChatBuilder;
+
 struct Login FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef LoginBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
@@ -84,6 +90,98 @@ inline ::flatbuffers::Offset<Login> CreateLoginDirect(
       _fbb,
       id__,
       password__);
+}
+
+struct EnterGame FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef EnterGameBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_PLAYER_IDX = 4
+  };
+  int64_t player_idx() const {
+    return GetField<int64_t>(VT_PLAYER_IDX, 0);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int64_t>(verifier, VT_PLAYER_IDX, 8) &&
+           verifier.EndTable();
+  }
+};
+
+struct EnterGameBuilder {
+  typedef EnterGame Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_player_idx(int64_t player_idx) {
+    fbb_.AddElement<int64_t>(EnterGame::VT_PLAYER_IDX, player_idx, 0);
+  }
+  explicit EnterGameBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<EnterGame> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<EnterGame>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<EnterGame> CreateEnterGame(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    int64_t player_idx = 0) {
+  EnterGameBuilder builder_(_fbb);
+  builder_.add_player_idx(player_idx);
+  return builder_.Finish();
+}
+
+struct Chat FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef ChatBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_MESSAGE = 4
+  };
+  const ::flatbuffers::String *message() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_MESSAGE);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyOffset(verifier, VT_MESSAGE) &&
+           verifier.VerifyString(message()) &&
+           verifier.EndTable();
+  }
+};
+
+struct ChatBuilder {
+  typedef Chat Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_message(::flatbuffers::Offset<::flatbuffers::String> message) {
+    fbb_.AddOffset(Chat::VT_MESSAGE, message);
+  }
+  explicit ChatBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<Chat> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<Chat>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<Chat> CreateChat(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    ::flatbuffers::Offset<::flatbuffers::String> message = 0) {
+  ChatBuilder builder_(_fbb);
+  builder_.add_message(message);
+  return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<Chat> CreateChatDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    const char *message = nullptr) {
+  auto message__ = message ? _fbb.CreateString(message) : 0;
+  return MessageData::Client::CreateChat(
+      _fbb,
+      message__);
 }
 
 }  // namespace Client

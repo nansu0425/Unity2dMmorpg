@@ -65,6 +65,15 @@ Int64 Service::RemoveSession(SharedPtr<Session> session)
     return SUCCESS;
 }
 
+void Service::Broadcast(SharedPtr<SendMessageBuilder> message)
+{
+    WRITE_GUARD;
+    for (const auto& session : mSessions)
+    {
+        session->Send(message);
+    }
+}
+
 ClientService::ClientService(const Config& config)
     : Service(ServiceType::Client, config)
 {}

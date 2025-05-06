@@ -41,7 +41,7 @@
 
 #define USE_STOMP_ALLOCATOR     false
 
-#define TEXT_8(quote)           quote
+#define TEXT_8(quote)           u8##quote
 #define TEXT_16(quote)          L##quote
 
 #define SIZE_16(arg)            static_cast<Int16>(sizeof(arg))

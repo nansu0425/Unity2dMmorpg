@@ -2,55 +2,61 @@
 
 #include "DummyClient/Pch.h"
 #include "DummyClient/Network/Message.h"
+#include "ServerEngine/Network/Session.h"
 
 ServerMessageHandlerManager    gMessageHandlerManager;
 
 void ServerMessageHandlerManager::RegisterAllHandlers()
 {
-    RegisterHandler(MESSAGE_ID(ServerMessageId::Test), [this](SharedPtr<Session> session, ReceiveMessage message)
-                    {
-                        return HandleTest(session, flatbuffers::GetRoot<MessageData::Server::Test>(message.GetData()));
-                    });
-
     RegisterHandler(MESSAGE_ID(ServerMessageId::Login), [this](SharedPtr<Session> session, ReceiveMessage message)
                     {
                         return HandleLogin(session, flatbuffers::GetRoot<MessageData::Server::Login>(message.GetData()));
                     });
-}
 
-Bool ServerMessageHandlerManager::HandleTest(SharedPtr<Session> session, const MessageData::Server::Test* data)
-{
-    gLogger->Debug(TEXT_8("Test Message: id={}, hp={}, attack={}"), data->id(), data->hp(), data->attack());
-    
-    for (UInt32 i = 0; i < data->buffs()->size(); ++i)
-    {
-        gLogger->Debug(TEXT_8("Buff {}: id={}, remain_time={}")
-                       , i
-                       , data->buffs()->Get(i)->id()
-                       , data->buffs()->Get(i)->remain_time());
-        for (UInt32 j = 0; j < data->buffs()->Get(i)->victims()->size(); ++j)
-        {
-            gLogger->Debug(TEXT_8("Victim {}: {}"), j, data->buffs()->Get(i)->victims()->Get(j));
-        }
-    }
+    RegisterHandler(MESSAGE_ID(ServerMessageId::EnterGame), [this](SharedPtr<Session> session, ReceiveMessage message)
+                    {
+                        return HandleEnterGame(session, flatbuffers::GetRoot<MessageData::Server::EnterGame>(message.GetData()));
+                    });
 
-    return true;
+    RegisterHandler(MESSAGE_ID(ServerMessageId::Chat), [this](SharedPtr<Session> session, ReceiveMessage message)
+                    {
+                        return HandleChat(session, flatbuffers::GetRoot<MessageData::Server::Chat>(message.GetData()));
+                    });
 }
 
 Bool ServerMessageHandlerManager::HandleLogin(SharedPtr<Session> session, const MessageData::Server::Login* data)
 {
-    Bool result = false;
+    gLogger->Info(TEXT_8("Login result: {}"), data->success() ? TEXT_8("Success") : TEXT_8("Fail"));
 
-    if (data->status() == MessageData::LoginStatus_Success)
+    // 플레이어 정보 출력
+    for (UInt32 i = 0; i < data->players()->size(); ++i)
     {
-        gLogger->Info(TEXT_8("Login Success: id={}"), data->id()->c_str());
-        result = true;
-    }
-    else
-    {
-        gLogger->Error(TEXT_8("Login Failed: id={}"), data->id()->c_str());
-        result = false;
+        auto player = data->players()->Get(i);
+        gLogger->Info(TEXT_8("Player: id={}, name={}, type={}"), player->id(), player->name()->c_str(), static_cast<Int32>(player->type()));
     }
 
-    return result;
+    // 첫 번째 캐릭터로 게임 입장
+    SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ClientMessageId::EnterGame));
+    auto& dataBuilder = message->GetDataBuilder();
+    auto enterGame = MessageData::Client::CreateEnterGame(dataBuilder, 0);
+    message->FinishBuilding(enterGame);
+    session->Send(std::move(message));
+
+    return true;
+}
+
+Bool ServerMessageHandlerManager::HandleEnterGame(SharedPtr<Session> session, const MessageData::Server::EnterGame* data)
+{
+    // 방 입장 성공 여부 출력
+    gLogger->Info(TEXT_8("Enter game result: {}"), data->success() ? TEXT_8("Success") : TEXT_8("Fail"));
+
+    return true;
+}
+
+Bool ServerMessageHandlerManager::HandleChat(SharedPtr<Session> session, const MessageData::Server::Chat* data)
+{
+    // 채팅 메시지와 플레이어 id 출력
+    gLogger->Info(TEXT_8("Chat: id={}, message={}"), data->player_id(), data->message()->c_str());
+
+    return true;
 }

@@ -24,9 +24,8 @@ protected:
         auto id = dataBuilder.CreateString(TEXT_8("hello1234"));
         auto password = dataBuilder.CreateString(TEXT_8("987abcd"));
         auto login = MessageData::Client::CreateLogin(dataBuilder, id, password);
-
-        // 로그인 메시지 전송
         message->FinishBuilding(login);
+
         Send(std::move(message));
     }
 
@@ -49,7 +48,7 @@ Service::Config gConfig =
     NetAddress(TEXT_16("127.0.0.1"), 7777),
     std::make_shared<IoEventDispatcher>(),
     std::make_shared<ServerSession>,
-    1,
+    100,
 };
 
 int main()
@@ -82,6 +81,23 @@ int main()
                                    }
                                });
     }
+
+    // 채팅 메시지 빌드
+    auto sendMessage = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ClientMessageId::Chat));
+    auto& dataBuilder = sendMessage->GetDataBuilder();
+    auto chatMessage = dataBuilder.CreateString(TEXT_8("Hello, world!"));
+    auto dataChat = MessageData::Client::CreateChat(dataBuilder, chatMessage);
+    sendMessage->FinishBuilding(dataChat);
+
+    // 서비스의 세션들에 브로드캐스트
+    while (true)
+    {
+        // 메시지 전송
+        service->Broadcast(sendMessage);
+        // 1초 대기
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+    }
+
     gThreadManager->Join();
 
     // 클라이언트 서비스 중지

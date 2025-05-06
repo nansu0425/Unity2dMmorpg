@@ -12,8 +12,9 @@ public:
     virtual void    RegisterAllHandlers() override;
 
 private:
-    Bool            HandleTest(SharedPtr<Session> session, const MessageData::Server::Test* data);
     Bool            HandleLogin(SharedPtr<Session> session, const MessageData::Server::Login* data);
+    Bool            HandleEnterGame(SharedPtr<Session> session, const MessageData::Server::EnterGame* data);
+    Bool            HandleChat(SharedPtr<Session> session, const MessageData::Server::Chat* data);
 };
 
 extern ServerMessageHandlerManager      gMessageHandlerManager;

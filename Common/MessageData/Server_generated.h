@@ -18,129 +18,33 @@ static_assert(FLATBUFFERS_VERSION_MAJOR == 24 &&
 namespace MessageData {
 namespace Server {
 
-struct Test;
-struct TestBuilder;
-
 struct Login;
 struct LoginBuilder;
 
-struct Test FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
-  typedef TestBuilder Builder;
-  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_ID = 4,
-    VT_HP = 6,
-    VT_ATTACK = 8,
-    VT_BUFFS = 10,
-    VT_PLAYER_TYPE = 12
-  };
-  int64_t id() const {
-    return GetField<int64_t>(VT_ID, 0);
-  }
-  int32_t hp() const {
-    return GetField<int32_t>(VT_HP, 0);
-  }
-  int16_t attack() const {
-    return GetField<int16_t>(VT_ATTACK, 0);
-  }
-  const ::flatbuffers::Vector<::flatbuffers::Offset<MessageData::Buff>> *buffs() const {
-    return GetPointer<const ::flatbuffers::Vector<::flatbuffers::Offset<MessageData::Buff>> *>(VT_BUFFS);
-  }
-  MessageData::PlayerType player_type() const {
-    return static_cast<MessageData::PlayerType>(GetField<int8_t>(VT_PLAYER_TYPE, 0));
-  }
-  bool Verify(::flatbuffers::Verifier &verifier) const {
-    return VerifyTableStart(verifier) &&
-           VerifyField<int64_t>(verifier, VT_ID, 8) &&
-           VerifyField<int32_t>(verifier, VT_HP, 4) &&
-           VerifyField<int16_t>(verifier, VT_ATTACK, 2) &&
-           VerifyOffset(verifier, VT_BUFFS) &&
-           verifier.VerifyVector(buffs()) &&
-           verifier.VerifyVectorOfTables(buffs()) &&
-           VerifyField<int8_t>(verifier, VT_PLAYER_TYPE, 1) &&
-           verifier.EndTable();
-  }
-};
+struct EnterGame;
+struct EnterGameBuilder;
 
-struct TestBuilder {
-  typedef Test Table;
-  ::flatbuffers::FlatBufferBuilder &fbb_;
-  ::flatbuffers::uoffset_t start_;
-  void add_id(int64_t id) {
-    fbb_.AddElement<int64_t>(Test::VT_ID, id, 0);
-  }
-  void add_hp(int32_t hp) {
-    fbb_.AddElement<int32_t>(Test::VT_HP, hp, 0);
-  }
-  void add_attack(int16_t attack) {
-    fbb_.AddElement<int16_t>(Test::VT_ATTACK, attack, 0);
-  }
-  void add_buffs(::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<MessageData::Buff>>> buffs) {
-    fbb_.AddOffset(Test::VT_BUFFS, buffs);
-  }
-  void add_player_type(MessageData::PlayerType player_type) {
-    fbb_.AddElement<int8_t>(Test::VT_PLAYER_TYPE, static_cast<int8_t>(player_type), 0);
-  }
-  explicit TestBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
-        : fbb_(_fbb) {
-    start_ = fbb_.StartTable();
-  }
-  ::flatbuffers::Offset<Test> Finish() {
-    const auto end = fbb_.EndTable(start_);
-    auto o = ::flatbuffers::Offset<Test>(end);
-    return o;
-  }
-};
-
-inline ::flatbuffers::Offset<Test> CreateTest(
-    ::flatbuffers::FlatBufferBuilder &_fbb,
-    int64_t id = 0,
-    int32_t hp = 0,
-    int16_t attack = 0,
-    ::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<MessageData::Buff>>> buffs = 0,
-    MessageData::PlayerType player_type = MessageData::PlayerType_None) {
-  TestBuilder builder_(_fbb);
-  builder_.add_id(id);
-  builder_.add_buffs(buffs);
-  builder_.add_hp(hp);
-  builder_.add_attack(attack);
-  builder_.add_player_type(player_type);
-  return builder_.Finish();
-}
-
-inline ::flatbuffers::Offset<Test> CreateTestDirect(
-    ::flatbuffers::FlatBufferBuilder &_fbb,
-    int64_t id = 0,
-    int32_t hp = 0,
-    int16_t attack = 0,
-    const std::vector<::flatbuffers::Offset<MessageData::Buff>> *buffs = nullptr,
-    MessageData::PlayerType player_type = MessageData::PlayerType_None) {
-  auto buffs__ = buffs ? _fbb.CreateVector<::flatbuffers::Offset<MessageData::Buff>>(*buffs) : 0;
-  return MessageData::Server::CreateTest(
-      _fbb,
-      id,
-      hp,
-      attack,
-      buffs__,
-      player_type);
-}
+struct Chat;
+struct ChatBuilder;
 
 struct Login FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
   typedef LoginBuilder Builder;
   enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
-    VT_STATUS = 4,
-    VT_ID = 6
+    VT_SUCCESS = 4,
+    VT_PLAYERS = 6
   };
-  MessageData::LoginStatus status() const {
-    return static_cast<MessageData::LoginStatus>(GetField<int8_t>(VT_STATUS, 0));
+  bool success() const {
+    return GetField<uint8_t>(VT_SUCCESS, 0) != 0;
   }
-  const ::flatbuffers::String *id() const {
-    return GetPointer<const ::flatbuffers::String *>(VT_ID);
+  const ::flatbuffers::Vector<::flatbuffers::Offset<MessageData::Player>> *players() const {
+    return GetPointer<const ::flatbuffers::Vector<::flatbuffers::Offset<MessageData::Player>> *>(VT_PLAYERS);
   }
   bool Verify(::flatbuffers::Verifier &verifier) const {
     return VerifyTableStart(verifier) &&
-           VerifyField<int8_t>(verifier, VT_STATUS, 1) &&
-           VerifyOffset(verifier, VT_ID) &&
-           verifier.VerifyString(id()) &&
+           VerifyField<uint8_t>(verifier, VT_SUCCESS, 1) &&
+           VerifyOffset(verifier, VT_PLAYERS) &&
+           verifier.VerifyVector(players()) &&
+           verifier.VerifyVectorOfTables(players()) &&
            verifier.EndTable();
   }
 };
@@ -149,11 +53,11 @@ struct LoginBuilder {
   typedef Login Table;
   ::flatbuffers::FlatBufferBuilder &fbb_;
   ::flatbuffers::uoffset_t start_;
-  void add_status(MessageData::LoginStatus status) {
-    fbb_.AddElement<int8_t>(Login::VT_STATUS, static_cast<int8_t>(status), 0);
+  void add_success(bool success) {
+    fbb_.AddElement<uint8_t>(Login::VT_SUCCESS, static_cast<uint8_t>(success), 0);
   }
-  void add_id(::flatbuffers::Offset<::flatbuffers::String> id) {
-    fbb_.AddOffset(Login::VT_ID, id);
+  void add_players(::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<MessageData::Player>>> players) {
+    fbb_.AddOffset(Login::VT_PLAYERS, players);
   }
   explicit LoginBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
         : fbb_(_fbb) {
@@ -168,23 +72,127 @@ struct LoginBuilder {
 
 inline ::flatbuffers::Offset<Login> CreateLogin(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    MessageData::LoginStatus status = MessageData::LoginStatus_Failure,
-    ::flatbuffers::Offset<::flatbuffers::String> id = 0) {
+    bool success = false,
+    ::flatbuffers::Offset<::flatbuffers::Vector<::flatbuffers::Offset<MessageData::Player>>> players = 0) {
   LoginBuilder builder_(_fbb);
-  builder_.add_id(id);
-  builder_.add_status(status);
+  builder_.add_players(players);
+  builder_.add_success(success);
   return builder_.Finish();
 }
 
 inline ::flatbuffers::Offset<Login> CreateLoginDirect(
     ::flatbuffers::FlatBufferBuilder &_fbb,
-    MessageData::LoginStatus status = MessageData::LoginStatus_Failure,
-    const char *id = nullptr) {
-  auto id__ = id ? _fbb.CreateString(id) : 0;
+    bool success = false,
+    const std::vector<::flatbuffers::Offset<MessageData::Player>> *players = nullptr) {
+  auto players__ = players ? _fbb.CreateVector<::flatbuffers::Offset<MessageData::Player>>(*players) : 0;
   return MessageData::Server::CreateLogin(
       _fbb,
-      status,
-      id__);
+      success,
+      players__);
+}
+
+struct EnterGame FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef EnterGameBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_SUCCESS = 4
+  };
+  bool success() const {
+    return GetField<uint8_t>(VT_SUCCESS, 0) != 0;
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<uint8_t>(verifier, VT_SUCCESS, 1) &&
+           verifier.EndTable();
+  }
+};
+
+struct EnterGameBuilder {
+  typedef EnterGame Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_success(bool success) {
+    fbb_.AddElement<uint8_t>(EnterGame::VT_SUCCESS, static_cast<uint8_t>(success), 0);
+  }
+  explicit EnterGameBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<EnterGame> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<EnterGame>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<EnterGame> CreateEnterGame(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    bool success = false) {
+  EnterGameBuilder builder_(_fbb);
+  builder_.add_success(success);
+  return builder_.Finish();
+}
+
+struct Chat FLATBUFFERS_FINAL_CLASS : private ::flatbuffers::Table {
+  typedef ChatBuilder Builder;
+  enum FlatBuffersVTableOffset FLATBUFFERS_VTABLE_UNDERLYING_TYPE {
+    VT_PLAYER_ID = 4,
+    VT_MESSAGE = 6
+  };
+  int64_t player_id() const {
+    return GetField<int64_t>(VT_PLAYER_ID, 0);
+  }
+  const ::flatbuffers::String *message() const {
+    return GetPointer<const ::flatbuffers::String *>(VT_MESSAGE);
+  }
+  bool Verify(::flatbuffers::Verifier &verifier) const {
+    return VerifyTableStart(verifier) &&
+           VerifyField<int64_t>(verifier, VT_PLAYER_ID, 8) &&
+           VerifyOffset(verifier, VT_MESSAGE) &&
+           verifier.VerifyString(message()) &&
+           verifier.EndTable();
+  }
+};
+
+struct ChatBuilder {
+  typedef Chat Table;
+  ::flatbuffers::FlatBufferBuilder &fbb_;
+  ::flatbuffers::uoffset_t start_;
+  void add_player_id(int64_t player_id) {
+    fbb_.AddElement<int64_t>(Chat::VT_PLAYER_ID, player_id, 0);
+  }
+  void add_message(::flatbuffers::Offset<::flatbuffers::String> message) {
+    fbb_.AddOffset(Chat::VT_MESSAGE, message);
+  }
+  explicit ChatBuilder(::flatbuffers::FlatBufferBuilder &_fbb)
+        : fbb_(_fbb) {
+    start_ = fbb_.StartTable();
+  }
+  ::flatbuffers::Offset<Chat> Finish() {
+    const auto end = fbb_.EndTable(start_);
+    auto o = ::flatbuffers::Offset<Chat>(end);
+    return o;
+  }
+};
+
+inline ::flatbuffers::Offset<Chat> CreateChat(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    int64_t player_id = 0,
+    ::flatbuffers::Offset<::flatbuffers::String> message = 0) {
+  ChatBuilder builder_(_fbb);
+  builder_.add_player_id(player_id);
+  builder_.add_message(message);
+  return builder_.Finish();
+}
+
+inline ::flatbuffers::Offset<Chat> CreateChatDirect(
+    ::flatbuffers::FlatBufferBuilder &_fbb,
+    int64_t player_id = 0,
+    const char *message = nullptr) {
+  auto message__ = message ? _fbb.CreateString(message) : 0;
+  return MessageData::Server::CreateChat(
+      _fbb,
+      player_id,
+      message__);
 }
 
 }  // namespace Server
