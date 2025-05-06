@@ -18,6 +18,9 @@
     <ClCompile Include="Content\Room.cpp">
       <Filter>Content</Filter>
     </ClCompile>
+    <ClCompile Include="Content\Job.cpp">
+      <Filter>Content</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
@@ -34,6 +37,9 @@
       <Filter>Content</Filter>
     </ClInclude>
     <ClInclude Include="Content\Room.h">
+      <Filter>Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Content\Job.h">
       <Filter>Content</Filter>
     </ClInclude>
   </ItemGroup>

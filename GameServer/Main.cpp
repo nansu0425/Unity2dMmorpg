@@ -8,6 +8,8 @@
 #include "GameServer/Network/SessionManager.h"
 #include "GameServer/Network/Message.h"
 #include "Common/Message.h"
+#include "GameServer/Content/Job.h"
+#include "GameServer/Content/Room.h"
 
 #include <io.h>
 #include <fcntl.h>
@@ -28,6 +30,14 @@ int main()
     // CRT stdout을 UTF-8 narrow-text 모드로 전환
     ::_setmode(::_fileno(stdout), _O_U8TEXT);
 
+    { // TEST JOB
+        HealJob job;
+        job.SetTarget(1);
+        job.SetHealValue(100);
+
+        job.Execute();
+    }
+
     // 모든 메시지 핸들러 등록
     gMessageHandlerManager.RegisterAllHandlers();
 
@@ -46,6 +56,13 @@ int main()
                                        result = service->GetIoDispatcher()->Dispatch();
                                    }
                                });
+    }
+
+    // Job 처리
+    while (true)
+    {
+        gRoom.FlushJobs();
+        std::this_thread::sleep_for(std::chrono::milliseconds(1));
     }
 
     gThreadManager->Join();

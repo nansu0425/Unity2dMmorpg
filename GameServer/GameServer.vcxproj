@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Content\Job.cpp" />
     <ClCompile Include="Content\Player.cpp" />
     <ClCompile Include="Content\Room.cpp" />
     <ClCompile Include="Main.cpp" />
@@ -33,6 +34,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Content\Job.h" />
     <ClInclude Include="Content\Player.h" />
     <ClInclude Include="Content\Room.h" />
     <ClInclude Include="Network\Message.h" />

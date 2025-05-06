@@ -30,10 +30,6 @@ Bool ClientMessageHandlerManager::HandleLogin(SharedPtr<Session> session, const 
 {
     SharedPtr<GameSession> gameSession = std::static_pointer_cast<GameSession>(session);
 
-    // 로그인 처리
-    gameSession->SetLogined();
-    gLogger->Info(TEXT_8("Logined: id={}, password={}"), data->id()->c_str(), data->password()->c_str());
-
     // TODO: DB에서 플레이어 정보를 가져온다
 
     // 인게임 id
@@ -59,6 +55,10 @@ Bool ClientMessageHandlerManager::HandleLogin(SharedPtr<Session> session, const 
     dataPlayers.push_back(dataPlayer2);
     auto vectorPlayers = dataBuilder.CreateVector(dataPlayers);
 
+    // 로그인 처리
+    gameSession->SetLogined();
+    gLogger->Info(TEXT_8("Logined: id={}, password={}"), data->id()->c_str(), data->password()->c_str());
+
     // 로그인 데이터 빌드 후 전송
     auto dataLogin = MessageData::Server::CreateLogin(dataBuilder, true, vectorPlayers);
     msgBuilder->FinishBuilding(dataLogin);
@@ -78,7 +78,7 @@ Bool ClientMessageHandlerManager::HandleEnterGame(SharedPtr<Session> session, co
 
     // 플레이어 룸 입장
     SharedPtr<Player> player = gameSession->GetPlayer(data->player_idx());
-    gRoom.Enter(player);
+    gRoom.PushJob(std::make_shared<EnterJob>(gRoom, player));
 
     // 룸 입장 메시지 전송
     SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ServerMessageId::EnterGame));
@@ -94,16 +94,23 @@ Bool ClientMessageHandlerManager::HandleChat(SharedPtr<Session> session, const M
 {
     SharedPtr<GameSession> gameSession = std::static_pointer_cast<GameSession>(session);
 
+    // 로그인 검사
+    if (false == gameSession->IsLogined())
+    {
+        gLogger->Warn(TEXT_8("Not logined"));
+        return false;
+    }
+
     // 채팅 메시지 로그
     gLogger->Info(TEXT_8("Chat: message={}"), data->message()->c_str());
 
     // 룸에 있는 모든 플레이어에게 채팅 메시지 전송
     SharedPtr<SendMessageBuilder> sendMessage = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ServerMessageId::Chat));
     auto& dataBuilder = sendMessage->GetDataBuilder();
-    auto dataMessage = dataBuilder.CreateString(data->message()->c_str());
-    auto dataChat = MessageData::Server::CreateChat(dataBuilder, gameSession->GetPlayer(0)->id, dataMessage);
-    sendMessage->FinishBuilding(dataChat);
-    gRoom.Broadcast(std::move(sendMessage));
+    auto messageData = dataBuilder.CreateString(data->message()->c_str());
+    auto chatData = MessageData::Server::CreateChat(dataBuilder, gameSession->GetPlayer(0)->id, messageData);
+    sendMessage->FinishBuilding(chatData);
+    gRoom.PushJob(std::make_shared<BroadcastJob>(gRoom, sendMessage));
 
     return true;
 }
