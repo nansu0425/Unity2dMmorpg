@@ -78,7 +78,7 @@ Bool ClientMessageHandlerManager::HandleEnterGame(SharedPtr<Session> session, co
 
     // 플레이어 룸 입장
     SharedPtr<Player> player = gameSession->GetPlayer(data->player_idx());
-    gRoom.PushJob(std::make_shared<EnterJob>(gRoom, player));
+    gRoom->PushJob(&Room::Enter, player);
 
     // 룸 입장 메시지 전송
     SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ServerMessageId::EnterGame));
@@ -110,7 +110,7 @@ Bool ClientMessageHandlerManager::HandleChat(SharedPtr<Session> session, const M
     auto messageData = dataBuilder.CreateString(data->message()->c_str());
     auto chatData = MessageData::Server::CreateChat(dataBuilder, gameSession->GetPlayer(0)->id, messageData);
     sendMessage->FinishBuilding(chatData);
-    gRoom.PushJob(std::make_shared<BroadcastJob>(gRoom, sendMessage));
+    gRoom->PushJob(&Room::Broadcast, sendMessage);
 
     return true;
 }

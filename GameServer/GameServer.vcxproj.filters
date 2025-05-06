@@ -18,9 +18,6 @@
     <ClCompile Include="Content\Room.cpp">
       <Filter>Content</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Job.cpp">
-      <Filter>Content</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
@@ -39,9 +36,6 @@
     <ClInclude Include="Content\Room.h">
       <Filter>Content</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Job.h">
-      <Filter>Content</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Network">
@@ -50,5 +44,8 @@
     <Filter Include="Content">
       <UniqueIdentifier>{1e81a57d-5a97-4093-a165-8e76f5d1109c}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>

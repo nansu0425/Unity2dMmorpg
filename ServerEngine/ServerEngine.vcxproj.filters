@@ -16,6 +16,9 @@
     <Filter Include="Log">
       <UniqueIdentifier>{52e8fbba-a7e2-4133-a9b9-3a6193849c7e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Job">
+      <UniqueIdentifier>{752b92d9-f13b-49b9-9e7b-56ae5dd5c346}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core\Types.h">
@@ -73,6 +76,15 @@
     <ClInclude Include="Network\Message.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="Job\Job.h">
+      <Filter>Job</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\Queue.h">
+      <Filter>Job</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\Serializer.h">
+      <Filter>Job</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -120,6 +132,15 @@
     </ClCompile>
     <ClCompile Include="Network\Message.cpp">
       <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\Job.cpp">
+      <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\Queue.cpp">
+      <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\Serializer.cpp">
+      <Filter>Job</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

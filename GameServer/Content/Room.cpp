@@ -5,13 +5,13 @@
 #include "GameServer/Content/Player.h"
 #include "GameServer/Network/Session.h"
 
-Room gRoom;
+SharedPtr<Room> gRoom = std::make_shared<Room>();
 
 void Room::FlushJobs()
 {
     while (true)
     {
-        SharedPtr<IJob> job = mJobs.Pop();
+        SharedPtr<Job> job = mJobs.Pop();
         if (job == nullptr)
         {
             break;
