@@ -8,7 +8,7 @@ ClientMessageHandlerManager    gMessageHandlerManager;
 
 void ClientMessageHandlerManager::RegisterAllHandlers()
 {
-    RegisterHandler(ClientMessageId_Login, [this](SharedPtr<Session> session, ReceiveMessage message)
+    RegisterHandler(MESSAGE_ID(ClientMessageId::Login), [this](SharedPtr<Session> session, ReceiveMessage message)
                     {
                         return HandleLogin(session, flatbuffers::GetRoot<MessageData::Client::Login>(message.GetData()));
                     });
@@ -16,7 +16,7 @@ void ClientMessageHandlerManager::RegisterAllHandlers()
 
 Bool ClientMessageHandlerManager::HandleLogin(SharedPtr<Session> session, const MessageData::Client::Login* data)
 {
-    SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(ServerMessageId_Login);
+    SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ServerMessageId::Login));
     flatbuffers::FlatBufferBuilder& dataBuilder = message->GetDataBuilder();
 
     // 로그인 처리

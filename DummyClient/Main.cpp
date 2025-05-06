@@ -18,7 +18,7 @@ protected:
     {
         gLogger->Info(TEXT_8("Connected to server"));
         
-        auto message = std::make_shared<SendMessageBuilder>(ClientMessageId_Login);
+        auto message = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ClientMessageId::Login));
         flatbuffers::FlatBufferBuilder& dataBuilder = message->GetDataBuilder();
 
         auto id = dataBuilder.CreateString(TEXT_8("hello1234"));

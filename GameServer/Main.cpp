@@ -50,7 +50,7 @@ int main()
 
     while (true)
     {
-        SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(ServerMessageId_Test);
+        SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ServerMessageId::Test));
         flatbuffers::FlatBufferBuilder& dataBuilder = message->GetDataBuilder();
 
         // buff 1

@@ -51,3 +51,4 @@
 #define NUM_ELEM_32(array)      static_cast<Int32>(sizeof(array) / sizeof(array[0]))
 #define NUM_ELEM_64(array)      static_cast<Int64>(sizeof(array) / sizeof(array[0]))
 
+#define MESSAGE_ID(id)          static_cast<MessageId>(id)
