@@ -139,8 +139,5 @@
     <ClCompile Include="Job\Serializer.cpp">
       <Filter>Job</Filter>
     </ClCompile>
-    <ClCompile Include="Concurrency\Queue.cpp">
-      <Filter>Concurrency</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

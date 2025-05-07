@@ -45,7 +45,6 @@
   <ItemGroup>
     <ClCompile Include="Concurrency\Deadlock.cpp" />
     <ClCompile Include="Concurrency\Lock.cpp" />
-    <ClCompile Include="Concurrency\Queue.cpp" />
     <ClCompile Include="Concurrency\Thread.cpp" />
     <ClCompile Include="Core\Global.cpp" />
     <ClCompile Include="Core\Tls.cpp" />

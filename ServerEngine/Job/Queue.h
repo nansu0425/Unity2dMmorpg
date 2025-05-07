@@ -4,10 +4,13 @@
 
 #include "ServerEngine/Concurrency/Queue.h"
 
+/*
+ * 비동기 작업을 Job 형태로 만들 수 있다.
+ */
 class Job
 {
 public:
-    using CallbackType = Function<void()>;
+    using CallbackType  = Function<void()>;
 
 public:
     // 함수를 호출하는 Job을 생성
@@ -41,46 +44,36 @@ private:
     CallbackType    mCallback;
 };
 
+
+/*
+ * JobSerializer가 Job을 직렬화하기 위해 사용하는 큐
+ * 여러 스레드가 Job을 Push할 때, 최초 Job을 Push한 스레드가 모든 Job을 처리한다.
+ */
 class JobQueue
+    : public std::enable_shared_from_this<JobQueue>
 {
 public:
-    void Push(SharedPtr<Job> job)
-    {
-        const Int64 prevCount = mJobCount.fetch_add(1);
-        mJobs.Push(std::move(job));
+    void        Push(SharedPtr<Job> job);
 
-        // 처음 job을 넣은 스레드가 flush를 담당
-        if (prevCount == 0)
-        {
-            FlushJobs();
-        }
-    }
-
-private:
+public:
     // 큐에 남은 job이 없을 때까지 처리
-    void FlushJobs()
-    {
-        Vector<SharedPtr<Job>> jobs;
-        while (true)
-        {
-            mJobs.PopAll(jobs);
-            Int64 jobCount = 0;
-            // 모든 job을 실행
-            for (auto& job : jobs)
-            {
-                job->Execute();
-                ++jobCount;
-            }
-            // job이 없으면 종료
-            if (mJobCount.fetch_sub(jobCount) == jobCount)
-            {
-                break;
-            }
-            jobs.clear();
-        }
-    }
+    void        FlushJobs();
 
 private:
-    LockQueue<SharedPtr<Job>>   mJobs;
-    Atomic<Int64>               mJobCount = 0;
+    LockQueue<SharedPtr<Job>>       mJobs;
+    Atomic<Int64>                   mJobCount = 0;
+};
+
+/*
+ * Job을 처리하기 벅찬 스레드는 JobQueue를 ReservedJobsManager에 예약한다.
+ * ProcessJobs()를 호출하는 스레드가 예약된 JobQueue를 처리한다.
+ */
+class ReservedJobsManager
+{
+public:
+    void        ReserveJobs(SharedPtr<JobQueue> jobs);
+    void        ProcessJobs();
+
+private:
+    LockQueue<SharedPtr<JobQueue>>  mJobs;
 };

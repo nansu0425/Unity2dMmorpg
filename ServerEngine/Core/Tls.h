@@ -2,8 +2,9 @@
 
 #pragma once
 
-class SendBufferChunk;
+class JobQueue;
 
 extern thread_local Int32                       tThreadId;
 extern thread_local Stack<Int32>                tLockStack;
-extern thread_local SharedPtr<SendBufferChunk>  tSendBufferChunk;
+extern thread_local WeakPtr<JobQueue>           tReservedJobs;
+extern thread_local Int64                       tWorkerLoopTick;

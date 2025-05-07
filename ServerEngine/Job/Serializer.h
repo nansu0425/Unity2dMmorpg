@@ -15,16 +15,16 @@ class JobSerializer
 public:
     void MakeJob(Job::CallbackType&& callback)
     {
-        mJobs.Push(std::make_shared<Job>(std::move(callback)));
+        mJobs->Push(std::make_shared<Job>(std::move(callback)));
     }
 
     template<typename T, typename Ret, typename... Args>
     void MakeJob(Ret(T::* method)(Args...), Args... args)
     {
         SharedPtr<T> obj = std::static_pointer_cast<T>(shared_from_this());
-        mJobs.Push(std::make_shared<Job>(std::move(obj), method, std::forward<Args>(args)...));
+        mJobs->Push(std::make_shared<Job>(std::move(obj), method, std::forward<Args>(args)...));
     }
 
 protected:
-    JobQueue        mJobs;
+    SharedPtr<JobQueue>     mJobs = std::make_shared<JobQueue>();
 };

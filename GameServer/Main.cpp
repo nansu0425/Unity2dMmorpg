@@ -21,6 +21,20 @@ Service::Config gConfig =
     100,
 };
 
+void WorkerThread(SharedPtr<ServerService> service)
+{
+    static constexpr Int64 kLoopTick = 64;
+
+    while (true)
+    {
+        tWorkerLoopTick = ::GetTickCount64() + kLoopTick;
+        // 네트워크 입출력부터 콘텐츠 로직까지 처리
+        Int64 result = service->GetIoDispatcher()->Dispatch(10);
+        // 예약된 작업 처리
+        gReservedJobsManager->ProcessJobs();
+    }
+}
+
 int main()
 {
     // 콘솔을 UTF-8 모드로 설정
@@ -36,18 +50,15 @@ int main()
     auto service = std::make_shared<ServerService>(gConfig);
     ASSERT_CRASH(SUCCESS == service->Run(), "SERVER_SERVICE_RUN_FAILED");
 
-    // 입출력 이벤트 처리 스레드 생성 및 실행
+    // 워커 스레드 실행
     for (Int64 i = 0; i < std::thread::hardware_concurrency() / 2; ++i)
     {
         gThreadManager->Launch([service]()
                                {
-                                   Int64 result = SUCCESS;
-                                   while (result == SUCCESS)
-                                   {
-                                       result = service->GetIoDispatcher()->Dispatch();
-                                   }
+                                   WorkerThread(service);
                                });
     }
+    WorkerThread(service);
 
     gThreadManager->Join();
 

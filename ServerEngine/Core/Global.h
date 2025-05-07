@@ -5,7 +5,7 @@
 extern class Logger*                gLogger;
 extern class ThreadManager*         gThreadManager;
 extern class DeadlockDetector*      gDeadlockDetector;
-// extern class SendBufferManager*     gSendBufferManager;
+extern class ReservedJobsManager*   gReservedJobsManager;
 
 class GlobalContext
 {

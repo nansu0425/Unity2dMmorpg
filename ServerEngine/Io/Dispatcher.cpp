@@ -41,6 +41,15 @@ Int64 IoEventDispatcher::Dispatch(UInt32 timeoutMs)
     if (FALSE == ::GetQueuedCompletionStatus(mIocp, OUT &numBytes, OUT &completionKey, OUT reinterpret_cast<LPOVERLAPPED*>(&event), timeoutMs))
     {
         result = ::GetLastError();
+
+        switch (result)
+        {
+        case WAIT_TIMEOUT: // 대기 시간 초과
+            return result;
+        default:
+            break;
+        }
+
         if (event == nullptr)
         {
             gLogger->Error(TEXT_16("Failed to get queued completion status: {}"), result);
