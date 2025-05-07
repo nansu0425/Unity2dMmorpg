@@ -5,31 +5,26 @@
 #include "ServerEngine/Job/Queue.h"
 
 /*
- * JobSerializer를 상속받은 클래스는 메서드 호출을 Job 큐에 넣을 수 있다.
- * Job 큐에 있는 Job 처리는 FlushJobs()에서 구현한다.
- * PushJob()은 thread-safe하지만, FlushJobs()는 싱글 스레드에서만 호출되어야 한다.
+ * JobSerializer를 상속받은 클래스는 비동기 작업을 Job 형태로 만들 수 있다.
+ * 만들어진 Job들은 JobQueue를 이용해 직렬화된다.
+ * 여러 스레드가 Job을 Push할 때, 최초 Job을 Push한 스레드가 모든 Job을 처리한다.
  */
 class JobSerializer
     : public std::enable_shared_from_this<JobSerializer>
 {
 public:
-    void PushJob(Job::CallbackType&& callback)
+    void MakeJob(Job::CallbackType&& callback)
     {
-        SharedPtr<Job> job = std::make_shared<Job>(std::move(callback));
-        mJobs.Push(std::move(job));
+        mJobs.Push(std::make_shared<Job>(std::move(callback)));
     }
 
     template<typename T, typename Ret, typename... Args>
-    void PushJob(Ret(T::* method)(Args...), Args... args)
+    void MakeJob(Ret(T::* method)(Args...), Args... args)
     {
         SharedPtr<T> obj = std::static_pointer_cast<T>(shared_from_this());
-        SharedPtr<Job> job = std::make_shared<Job>(std::move(obj), method, std::forward<Args>(args)...);
-        mJobs.Push(std::move(job));
+        mJobs.Push(std::make_shared<Job>(std::move(obj), method, std::forward<Args>(args)...));
     }
 
-public:
-    virtual void FlushJobs() = 0;
-
 protected:
-    JobQueue    mJobs;
+    JobQueue        mJobs;
 };

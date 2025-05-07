@@ -7,19 +7,6 @@
 
 SharedPtr<Room> gRoom = std::make_shared<Room>();
 
-void Room::FlushJobs()
-{
-    while (true)
-    {
-        SharedPtr<Job> job = mJobs.Pop();
-        if (job == nullptr)
-        {
-            break;
-        }
-        job->Execute();
-    }
-}
-
 void Room::Enter(SharedPtr<Player> player)
 {
     mPlayers.emplace(player->id, player);

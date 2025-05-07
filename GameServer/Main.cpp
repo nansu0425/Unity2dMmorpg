@@ -49,13 +49,6 @@ int main()
                                });
     }
 
-    // Job 처리
-    while (true)
-    {
-        gRoom->FlushJobs();
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-
     gThreadManager->Join();
 
     // 서버 서비스 서비스 중지

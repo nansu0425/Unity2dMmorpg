@@ -41,25 +41,46 @@ private:
     CallbackType    mCallback;
 };
 
-/*
- * LockQueue를 사용하여 Job을 저장하는 큐
- */
 class JobQueue
 {
 public:
     void Push(SharedPtr<Job> job)
     {
+        const Int64 prevCount = mJobCount.fetch_add(1);
         mJobs.Push(std::move(job));
-    }
 
-    SharedPtr<Job> Pop()
-    {
-        SharedPtr<Job> job = nullptr;
-        mJobs.Pop(job);
-
-        return job;
+        // 처음 job을 넣은 스레드가 flush를 담당
+        if (prevCount == 0)
+        {
+            FlushJobs();
+        }
     }
 
 private:
-    LockQueue<SharedPtr<Job>>  mJobs;
+    // 큐에 남은 job이 없을 때까지 처리
+    void FlushJobs()
+    {
+        Vector<SharedPtr<Job>> jobs;
+        while (true)
+        {
+            mJobs.PopAll(jobs);
+            Int64 jobCount = 0;
+            // 모든 job을 실행
+            for (auto& job : jobs)
+            {
+                job->Execute();
+                ++jobCount;
+            }
+            // job이 없으면 종료
+            if (mJobCount.fetch_sub(jobCount) == jobCount)
+            {
+                break;
+            }
+            jobs.clear();
+        }
+    }
+
+private:
+    LockQueue<SharedPtr<Job>>   mJobs;
+    Atomic<Int64>               mJobCount = 0;
 };
