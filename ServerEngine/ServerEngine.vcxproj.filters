@@ -76,9 +76,6 @@
     <ClInclude Include="Network\Message.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Job\Job.h">
-      <Filter>Job</Filter>
-    </ClInclude>
     <ClInclude Include="Job\Queue.h">
       <Filter>Job</Filter>
     </ClInclude>
@@ -132,9 +129,6 @@
     </ClCompile>
     <ClCompile Include="Network\Message.cpp">
       <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="Job\Job.cpp">
-      <Filter>Job</Filter>
     </ClCompile>
     <ClCompile Include="Job\Queue.cpp">
       <Filter>Job</Filter>

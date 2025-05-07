@@ -8,7 +8,6 @@
 #include "GameServer/Network/SessionManager.h"
 #include "GameServer/Network/Message.h"
 #include "Common/Message.h"
-#include "ServerEngine/Job/Job.h"
 #include "GameServer/Content/Room.h"
 
 #include <io.h>

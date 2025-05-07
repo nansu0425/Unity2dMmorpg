@@ -37,4 +37,4 @@
 #include "ServerEngine/Log/Logger.h"
 #include "ServerEngine/Concurrency/Lock.h"
 #include "ServerEngine/Network/Buffer.h"
-#include "ServerEngine/Job/Queue.h"
+#include "ServerEngine/Job/Serializer.h"

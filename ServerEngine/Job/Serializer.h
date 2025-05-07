@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ServerEngine/Job/Job.h"
+#include "ServerEngine/Job/Queue.h"
 
 class JobSerializer
     : public std::enable_shared_from_this<JobSerializer>
