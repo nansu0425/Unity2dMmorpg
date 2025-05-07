@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Concurrency\Deadlock.h" />
     <ClInclude Include="Concurrency\Lock.h" />
+    <ClInclude Include="Concurrency\Queue.h" />
     <ClInclude Include="Concurrency\Thread.h" />
     <ClInclude Include="Core\Global.h" />
     <ClInclude Include="Core\Macro.h" />
@@ -44,6 +45,7 @@
   <ItemGroup>
     <ClCompile Include="Concurrency\Deadlock.cpp" />
     <ClCompile Include="Concurrency\Lock.cpp" />
+    <ClCompile Include="Concurrency\Queue.cpp" />
     <ClCompile Include="Concurrency\Thread.cpp" />
     <ClCompile Include="Core\Global.cpp" />
     <ClCompile Include="Core\Tls.cpp" />

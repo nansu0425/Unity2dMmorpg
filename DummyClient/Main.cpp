@@ -93,7 +93,7 @@ int main()
     while (true)
     {
         // 메시지 전송
-        service->Broadcast(sendMessage); // Broadcast 중 연결이 끊기면 세션 제거 과정에서 데드락 발생 가능
+        service->Broadcast(sendMessage); 
         // 1초 대기
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }

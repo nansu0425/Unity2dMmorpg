@@ -82,6 +82,9 @@
     <ClInclude Include="Job\Serializer.h">
       <Filter>Job</Filter>
     </ClInclude>
+    <ClInclude Include="Concurrency\Queue.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -135,6 +138,9 @@
     </ClCompile>
     <ClCompile Include="Job\Serializer.cpp">
       <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Concurrency\Queue.cpp">
+      <Filter>Concurrency</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

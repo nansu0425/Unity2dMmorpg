@@ -2,16 +2,20 @@
 
 #pragma once
 
+#include "ServerEngine/Concurrency/Queue.h"
+
 class Job
 {
 public:
     using CallbackType = Function<void()>;
 
 public:
+    // 함수를 호출하는 Job을 생성
     Job(CallbackType&& callback)
         : mCallback(std::move(callback))
     {}
 
+    // 특정 객체의 메서드를 호출하는 Job을 생성
     template<typename T, typename Ret, typename... Args>
     Job(SharedPtr<T> obj, Ret(T::* method)(Args...), Args&&... args)
     {
@@ -37,30 +41,25 @@ private:
     CallbackType    mCallback;
 };
 
+/*
+ * LockQueue를 사용하여 Job을 저장하는 큐
+ */
 class JobQueue
 {
 public:
     void Push(SharedPtr<Job> job)
     {
-        WRITE_GUARD;
-        mJobs.push(std::move(job));
+        mJobs.Push(std::move(job));
     }
 
     SharedPtr<Job> Pop()
     {
         SharedPtr<Job> job = nullptr;
-
-        WRITE_GUARD;
-        if (false == mJobs.empty())
-        {
-            job = mJobs.front();
-            mJobs.pop();
-        }
+        mJobs.Pop(job);
 
         return job;
     }
 
 private:
-    RW_LOCK;
-    Queue<SharedPtr<Job>>  mJobs;
+    LockQueue<SharedPtr<Job>>  mJobs;
 };
