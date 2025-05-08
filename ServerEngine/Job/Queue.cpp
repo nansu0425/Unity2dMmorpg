@@ -3,7 +3,7 @@
 #include "ServerEngine/Pch.h"
 #include "ServerEngine/Job/Queue.h"
 
-void JobQueue::Push(SharedPtr<Job> job)
+void JobQueue::Push(SharedPtr<Job> job, Bool canFlush)
 {
     const Int64 prevCount = mJobCount.fetch_add(1);
     mJobs.Push(std::move(job));
@@ -11,7 +11,8 @@ void JobQueue::Push(SharedPtr<Job> job)
     // 최초 job을 넣은 스레드가 진입
     if (prevCount == 0)
     {
-        if (tReservedJobs.expired())
+        if (tReservedJobs.expired() &&
+            canFlush == true)
         {
             // 스레드에 예약된 job이 없으면 현재 큐의 job을 처리한다
             Flush();
@@ -19,7 +20,7 @@ void JobQueue::Push(SharedPtr<Job> job)
         else
         {
             // 예약된 jobs가 없는 스레드가 처리할 수 있도록 예약한다
-            gReservedJobsManager->ReserveJobs(shared_from_this());
+            gReservedJobManager->ReserveJobs(shared_from_this());
         }
     }
 }
@@ -49,7 +50,7 @@ void JobQueue::Flush()
         const Int64 now = ::GetTickCount64();
         if (now > tWorkerLoopTick)
         {
-            gReservedJobsManager->ReserveJobs(shared_from_this());
+            gReservedJobManager->ReserveJobs(shared_from_this());
             break;
         }
         jobs.clear();
@@ -59,12 +60,12 @@ void JobQueue::Flush()
     tReservedJobs.reset();
 }
 
-void ReservedJobsManager::ReserveJobs(SharedPtr<JobQueue> jobs)
+void ReservedJobManager::ReserveJobs(SharedPtr<JobQueue> jobs)
 {
     mJobs.Push(std::move(jobs));
 }
 
-void ReservedJobsManager::ProcessJobs()
+void ReservedJobManager::ProcessJobs()
 {
     while (true)
     {
@@ -76,7 +77,7 @@ void ReservedJobsManager::ProcessJobs()
         }
         // 예약된 jobs가 없으면 종료
         SharedPtr<JobQueue> jobs = nullptr;
-        if (false == mJobs.Pop(jobs))
+        if (mJobs.Pop(jobs) == false)
         {
             break;
         }

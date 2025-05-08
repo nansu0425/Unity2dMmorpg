@@ -5,11 +5,13 @@
 #include "ServerEngine/Concurrency/Thread.h"
 #include "ServerEngine/Concurrency/Deadlock.h"
 #include "ServerEngine/Network/Socket.h"
+#include "ServerEngine/Job/Timer.h"
 
 Logger*                 gLogger = nullptr;
 ThreadManager*          gThreadManager = nullptr;
 DeadlockDetector*       gDeadlockDetector = nullptr;
-ReservedJobsManager*    gReservedJobsManager = nullptr;
+ReservedJobManager*     gReservedJobManager = nullptr;
+JobTimer*               gJobTimer = nullptr;
 
 GlobalContext::GlobalContext()
 {
@@ -17,12 +19,14 @@ GlobalContext::GlobalContext()
     gThreadManager = new ThreadManager();
     gDeadlockDetector = new DeadlockDetector();
     SocketUtils::Init();
-    gReservedJobsManager = new ReservedJobsManager();
+    gReservedJobManager = new ReservedJobManager();
+    gJobTimer = new JobTimer();
 }
 
 GlobalContext::~GlobalContext()
 {
-    delete gReservedJobsManager;
+    delete gJobTimer;
+    delete gReservedJobManager;
     SocketUtils::Cleanup();
     delete gDeadlockDetector;
     delete gThreadManager;

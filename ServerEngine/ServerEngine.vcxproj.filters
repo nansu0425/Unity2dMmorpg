@@ -85,6 +85,9 @@
     <ClInclude Include="Common\Types.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="Job\Timer.h">
+      <Filter>Job</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -138,6 +141,9 @@
     </ClCompile>
     <ClCompile Include="Common\Tls.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\Timer.cpp">
+      <Filter>Job</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

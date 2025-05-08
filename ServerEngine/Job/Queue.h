@@ -53,7 +53,7 @@ class JobQueue
     : public std::enable_shared_from_this<JobQueue>
 {
 public:
-    void        Push(SharedPtr<Job> job);
+    void        Push(SharedPtr<Job> job, Bool canFlush = true);
 
 public:
     // 큐에 남은 job이 없을 때까지 처리
@@ -65,10 +65,10 @@ private:
 };
 
 /*
- * Job을 처리하기 벅찬 스레드는 JobQueue를 ReservedJobsManager에 예약한다.
+ * Job을 처리하기 벅찬 스레드는 JobQueue를 ReservedJobManager에 예약한다.
  * ProcessJobs()를 호출하는 스레드가 예약된 JobQueue를 처리한다.
  */
-class ReservedJobsManager
+class ReservedJobManager
 {
 public:
     void        ReserveJobs(SharedPtr<JobQueue> jobs);

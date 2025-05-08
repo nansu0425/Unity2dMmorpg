@@ -32,6 +32,7 @@
     <ClInclude Include="Io\Dispatcher.h" />
     <ClInclude Include="Job\Queue.h" />
     <ClInclude Include="Job\Serializer.h" />
+    <ClInclude Include="Job\Timer.h" />
     <ClInclude Include="Log\Logger.h" />
     <ClInclude Include="Network\Listener.h" />
     <ClInclude Include="Network\Address.h" />
@@ -52,6 +53,7 @@
     <ClCompile Include="Io\Dispatcher.cpp" />
     <ClCompile Include="Job\Queue.cpp" />
     <ClCompile Include="Job\Serializer.cpp" />
+    <ClCompile Include="Job\Timer.cpp" />
     <ClCompile Include="Log\Logger.cpp" />
     <ClCompile Include="Network\Listener.cpp" />
     <ClCompile Include="Network\Address.cpp" />
