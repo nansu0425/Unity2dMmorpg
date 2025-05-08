@@ -57,7 +57,7 @@ public:
 
 public:
     // 큐에 남은 job이 없을 때까지 처리
-    void        FlushJobs();
+    void        Flush();
 
 private:
     LockQueue<SharedPtr<Job>>       mJobs;

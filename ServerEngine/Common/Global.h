@@ -1,4 +1,4 @@
-﻿/*    ServerEngine/Core/Global.h    */
+﻿/*    ServerEngine/Common/Global.h    */
 
 #pragma once
 

@@ -8,4 +8,4 @@
 #pragma comment(lib, "Release//ServerEngine.lib")
 #endif // _DEBUG
 
-#include "ServerEngine/Core/Pch.h"
+#include "ServerEngine/Common/Pch.h"

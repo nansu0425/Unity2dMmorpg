@@ -14,7 +14,7 @@ void JobQueue::Push(SharedPtr<Job> job)
         if (tReservedJobs.expired())
         {
             // 스레드에 예약된 job이 없으면 현재 큐의 job을 처리한다
-            FlushJobs();
+            Flush();
         }
         else
         {
@@ -24,7 +24,7 @@ void JobQueue::Push(SharedPtr<Job> job)
     }
 }
 
-void JobQueue::FlushJobs()
+void JobQueue::Flush()
 {
     // 큐의 jobs을 현재 스레드에 예약한다
     tReservedJobs = shared_from_this();
@@ -81,6 +81,6 @@ void ReservedJobsManager::ProcessJobs()
             break;
         }
         // 예약된 jobs를 처리
-        jobs->FlushJobs();
+        jobs->Flush();
     }
 }

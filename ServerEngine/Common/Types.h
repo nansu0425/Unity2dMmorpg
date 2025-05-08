@@ -1,4 +1,4 @@
-﻿/*    ServerEngine/Core/Types.h    */
+﻿/*    ServerEngine/Common/Types.h    */
 
 #pragma once
 

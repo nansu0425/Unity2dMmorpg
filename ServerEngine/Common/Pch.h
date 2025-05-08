@@ -1,4 +1,4 @@
-﻿/*    ServerEngine/Core/Pch.h    */
+﻿/*    ServerEngine/Common/Pch.h    */
 
 #pragma once
 
@@ -30,10 +30,10 @@
 #include <string_view>
 
 // ServerEngine
-#include "ServerEngine/Core/Macro.h"
-#include "ServerEngine/Core/Types.h"
-#include "ServerEngine/Core/Global.h"
-#include "ServerEngine/Core/Tls.h"
+#include "ServerEngine/Common/Macro.h"
+#include "ServerEngine/Common/Types.h"
+#include "ServerEngine/Common/Global.h"
+#include "ServerEngine/Common/Tls.h"
 #include "ServerEngine/Log/Logger.h"
 #include "ServerEngine/Concurrency/Lock.h"
 #include "ServerEngine/Network/Buffer.h"

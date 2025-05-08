@@ -1,4 +1,4 @@
-﻿/*    ServerEngine/Core/Macro.h    */
+﻿/*    ServerEngine/Common/Macro.h    */
 
 #pragma once
 

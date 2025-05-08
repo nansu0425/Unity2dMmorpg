@@ -19,15 +19,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\Global.h" />
+    <ClInclude Include="Common\Macro.h" />
+    <ClInclude Include="Common\Pch.h" />
+    <ClInclude Include="Common\Tls.h" />
+    <ClInclude Include="Common\Types.h" />
     <ClInclude Include="Concurrency\Deadlock.h" />
     <ClInclude Include="Concurrency\Lock.h" />
     <ClInclude Include="Concurrency\Queue.h" />
     <ClInclude Include="Concurrency\Thread.h" />
-    <ClInclude Include="Core\Global.h" />
-    <ClInclude Include="Core\Macro.h" />
-    <ClInclude Include="Core\Pch.h" />
-    <ClInclude Include="Core\Tls.h" />
-    <ClInclude Include="Core\Types.h" />
     <ClInclude Include="Io\Event.h" />
     <ClInclude Include="Io\Dispatcher.h" />
     <ClInclude Include="Job\Queue.h" />
@@ -43,11 +43,11 @@
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Common\Global.cpp" />
+    <ClCompile Include="Common\Tls.cpp" />
     <ClCompile Include="Concurrency\Deadlock.cpp" />
     <ClCompile Include="Concurrency\Lock.cpp" />
     <ClCompile Include="Concurrency\Thread.cpp" />
-    <ClCompile Include="Core\Global.cpp" />
-    <ClCompile Include="Core\Tls.cpp" />
     <ClCompile Include="Io\Event.cpp" />
     <ClCompile Include="Io\Dispatcher.cpp" />
     <ClCompile Include="Job\Queue.cpp" />

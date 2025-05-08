@@ -1,4 +1,4 @@
-﻿/*    ServerEngine/Core/Global.cpp    */
+﻿/*    ServerEngine/Common/Global.cpp    */
 
 #include "ServerEngine/Pch.h"
 #include "ServerEngine/Log/Logger.h"

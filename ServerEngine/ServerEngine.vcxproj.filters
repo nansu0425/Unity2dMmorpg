@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Core">
-      <UniqueIdentifier>{67ee8be2-fcf5-4df2-9b83-abf31462876e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Concurrency">
       <UniqueIdentifier>{bf2a8b0b-e5f3-495d-953a-b34f9435ca9f}</UniqueIdentifier>
     </Filter>
@@ -19,24 +16,12 @@
     <Filter Include="Job">
       <UniqueIdentifier>{752b92d9-f13b-49b9-9e7b-56ae5dd5c346}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{67ee8be2-fcf5-4df2-9b83-abf31462876e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Core\Types.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Pch.h" />
-    <ClInclude Include="Core\Pch.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Global.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Macro.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Tls.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Concurrency\Thread.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
@@ -85,15 +70,24 @@
     <ClInclude Include="Concurrency\Queue.h">
       <Filter>Concurrency</Filter>
     </ClInclude>
+    <ClInclude Include="Common\Global.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Macro.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Pch.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Tls.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Types.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Core\Global.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\Tls.cpp">
-      <Filter>Core</Filter>
-    </ClCompile>
     <ClCompile Include="Concurrency\Thread.cpp">
       <Filter>Concurrency</Filter>
     </ClCompile>
@@ -138,6 +132,12 @@
     </ClCompile>
     <ClCompile Include="Job\Serializer.cpp">
       <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Global.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Tls.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

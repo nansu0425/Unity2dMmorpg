@@ -2,6 +2,8 @@
 
 #pragma once
 
+#include "Common/MessageData/Common_generated.h"
+
 class ClientSession;
 
 struct Player
