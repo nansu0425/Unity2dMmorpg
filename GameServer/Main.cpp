@@ -5,7 +5,6 @@
 #include "ServerEngine/Io/Dispatcher.h"
 #include "ServerEngine/Network/Service.h"
 #include "GameServer/Network/Session.h"
-#include "GameServer/Network/SessionManager.h"
 #include "GameServer/Network/Message.h"
 #include "Common/Message.h"
 #include "GameServer/Content/Room.h"
@@ -17,7 +16,7 @@ Service::Config gConfig =
 {
     NetAddress(TEXT_16("127.0.0.1"), 7777),
     std::make_shared<IoEventDispatcher>(),
-    std::make_shared<GameSession>,
+    std::make_shared<ClientSession>,
     100,
 };
 

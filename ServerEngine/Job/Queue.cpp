@@ -18,7 +18,7 @@ void JobQueue::Push(SharedPtr<Job> job)
         }
         else
         {
-            // 여유있는 다른 스레드가 job을 처리할 수 있도록 예약한다
+            // 예약된 jobs가 없는 스레드가 처리할 수 있도록 예약한다
             gReservedJobsManager->ReserveJobs(shared_from_this());
         }
     }
@@ -45,7 +45,7 @@ void JobQueue::FlushJobs()
         {
             break;
         }
-        // 워커 루프 시간을 초과하면 다른 스레드가 job을 처리할 수 있도록 예약한다
+        // 워커 루프 시간을 초과하면 다음 루프에 job을 처리할 수 있도록 예약한다
         const Int64 now = ::GetTickCount64();
         if (now > tWorkerLoopTick)
         {

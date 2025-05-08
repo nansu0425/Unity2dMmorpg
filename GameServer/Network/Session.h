@@ -6,7 +6,7 @@
 
 struct Player;
 
-class GameSession
+class ClientSession
     : public Session
 {
 public:
@@ -25,3 +25,20 @@ private:
     Atomic<Bool>                mIsLogined = false;
     Vector<SharedPtr<Player>>   mPlayers;
 };
+
+class ClientSessionManager
+{
+public:
+    ClientSessionManager() = default;
+    ~ClientSessionManager() = default;
+
+    void    AddSession(SharedPtr<ClientSession> client);
+    void    RemoveSession(SharedPtr<ClientSession> client);
+    void    Broadcast(SharedPtr<SendMessageBuilder> message);
+
+private:
+    RW_LOCK;
+    HashSet<SharedPtr<ClientSession>>     mClients;
+};
+
+extern ClientSessionManager               gClientManager;

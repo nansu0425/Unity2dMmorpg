@@ -28,7 +28,7 @@ void ClientMessageHandlerManager::RegisterAllHandlers()
 
 Bool ClientMessageHandlerManager::HandleLogin(SharedPtr<Session> session, const MessageData::Client::Login* data)
 {
-    SharedPtr<GameSession> gameSession = std::static_pointer_cast<GameSession>(session);
+    SharedPtr<ClientSession> client = std::static_pointer_cast<ClientSession>(session);
 
     // TODO: DB에서 플레이어 정보를 가져온다
 
@@ -36,10 +36,10 @@ Bool ClientMessageHandlerManager::HandleLogin(SharedPtr<Session> session, const 
     static Atomic<Int64> sPlayerId = 1;
 
     // 플레이어 생성
-    SharedPtr<Player> player1 = std::make_shared<Player>(sPlayerId.fetch_add(1), TEXT_8("DB에서 긁어온 이름1"), MessageData::PlayerType_Knight, gameSession);
-    gameSession->AddPlayer(player1);
-    SharedPtr<Player> player2 = std::make_shared<Player>(sPlayerId.fetch_add(1), TEXT_8("DB에서 긁어온 이름2"), MessageData::PlayerType_Mage, gameSession);
-    gameSession->AddPlayer(player2);
+    SharedPtr<Player> player1 = std::make_shared<Player>(sPlayerId.fetch_add(1), TEXT_8("DB에서 긁어온 이름1"), MessageData::PlayerType_Knight, client);
+    client->AddPlayer(player1);
+    SharedPtr<Player> player2 = std::make_shared<Player>(sPlayerId.fetch_add(1), TEXT_8("DB에서 긁어온 이름2"), MessageData::PlayerType_Mage, client);
+    client->AddPlayer(player2);
 
     // 전송 메시지 빌더 생성
     auto msgBuilder = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ServerMessageId::Login));
@@ -56,20 +56,20 @@ Bool ClientMessageHandlerManager::HandleLogin(SharedPtr<Session> session, const 
     auto vectorPlayers = dataBuilder.CreateVector(dataPlayers);
 
     // 로그인 처리
-    gameSession->SetLogined();
+    client->SetLogined();
     gLogger->Info(TEXT_8("Logined: id={}, password={}"), data->id()->c_str(), data->password()->c_str());
 
     // 로그인 데이터 빌드 후 전송
     auto dataLogin = MessageData::Server::CreateLogin(dataBuilder, true, vectorPlayers);
     msgBuilder->FinishBuilding(dataLogin);
-    gameSession->Send(std::move(msgBuilder));
+    client->Send(std::move(msgBuilder));
 
     return true;
 }
 
 Bool ClientMessageHandlerManager::HandleEnterGame(SharedPtr<Session> session, const MessageData::Client::EnterGame* data)
 {
-    SharedPtr<GameSession> gameSession = std::static_pointer_cast<GameSession>(session);
+    SharedPtr<ClientSession> client = std::static_pointer_cast<ClientSession>(session);
 
     // 플레이어 인덱스 출력
     gLogger->Info(TEXT_8("EnterGame: player_idx={}"), data->player_idx());
@@ -77,7 +77,7 @@ Bool ClientMessageHandlerManager::HandleEnterGame(SharedPtr<Session> session, co
     // TODO: 인덱스 유효성 검사
 
     // 플레이어 룸 입장
-    SharedPtr<Player> player = gameSession->GetPlayer(data->player_idx());
+    SharedPtr<Player> player = client->GetPlayer(data->player_idx());
     gRoom->MakeJob(&Room::Enter, player);
 
     // 룸 입장 메시지 전송
@@ -92,10 +92,10 @@ Bool ClientMessageHandlerManager::HandleEnterGame(SharedPtr<Session> session, co
 
 Bool ClientMessageHandlerManager::HandleChat(SharedPtr<Session> session, const MessageData::Client::Chat* data)
 {
-    SharedPtr<GameSession> gameSession = std::static_pointer_cast<GameSession>(session);
+    SharedPtr<ClientSession> client = std::static_pointer_cast<ClientSession>(session);
 
     // 로그인 검사
-    if (false == gameSession->IsLogined())
+    if (false == client->IsLogined())
     {
         gLogger->Warn(TEXT_8("Not logined"));
         return false;
@@ -108,7 +108,7 @@ Bool ClientMessageHandlerManager::HandleChat(SharedPtr<Session> session, const M
     SharedPtr<SendMessageBuilder> sendMessage = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ServerMessageId::Chat));
     auto& dataBuilder = sendMessage->GetDataBuilder();
     auto messageData = dataBuilder.CreateString(data->message()->c_str());
-    auto chatData = MessageData::Server::CreateChat(dataBuilder, gameSession->GetPlayer(0)->id, messageData);
+    auto chatData = MessageData::Server::CreateChat(dataBuilder, client->GetPlayer(0)->id, messageData);
     sendMessage->FinishBuilding(chatData);
     gRoom->MakeJob(&Room::Broadcast, sendMessage);
 

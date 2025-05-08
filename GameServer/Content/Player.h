@@ -2,17 +2,17 @@
 
 #pragma once
 
-class GameSession;
+class ClientSession;
 
 struct Player
 {
     Int64                       id = 0;
     String8                     name;
     MessageData::PlayerType     type = MessageData::PlayerType_None;
-    SharedPtr<GameSession>      owner;
+    SharedPtr<ClientSession>    owner;
 
     Player() = default;
-    Player(Int64 id, String8 name, MessageData::PlayerType type, SharedPtr<GameSession> owner)
+    Player(Int64 id, String8 name, MessageData::PlayerType type, SharedPtr<ClientSession> owner)
         : id(id)
         , name(name)
         , type(type)
