@@ -3,6 +3,7 @@
 #include "GameServer/Pch.h"
 #include "GameServer/Network/Session.h"
 #include "GameServer/Network/Message.h"
+#include "GameServer/Content/Room.h"
 
 void ClientSession::OnConnected()
 {
@@ -18,6 +19,16 @@ void ClientSession::OnDisconnected(String8 cause)
 
     // 세션 매니저에서 세션 제거
     gClientManager.RemoveSession(std::static_pointer_cast<ClientSession>(shared_from_this()));
+
+    // 룸에서 세션의 현재 플레이어 제거
+    if (mCurrentPlayerIdx > -1)
+    {
+        GetPlayerRoom()->MakeJob(&Room::Leave, GetPlayer(mCurrentPlayerIdx));
+    }
+    mCurrentPlayerIdx = -1;
+
+    // Session -> Player 참조 해제
+    mPlayers.clear();
 }
 
 void ClientSession::OnReceived(ReceiveMessage message)

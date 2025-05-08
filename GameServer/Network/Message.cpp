@@ -76,16 +76,19 @@ Bool ClientMessageHandlerManager::HandleEnterGame(SharedPtr<Session> session, co
 
     // TODO: 인덱스 유효성 검사
 
-    // 플레이어 룸 입장
-    SharedPtr<Player> player = client->GetPlayer(data->player_idx());
-    gRoom->MakeJob(&Room::Enter, player);
+    // 클라이언트의 현재 플레이어와 룸 설정
+    client->SetCurrentPlayerIdx(data->player_idx());
+    client->SetPlayerRoom(gRoom);
+
+    // 현재 플레이어가 룸을 입장하는 Job 생성
+    client->GetPlayerRoom()->MakeJob(&Room::Enter, client->GetPlayer(client->GetCurrentPlayerIdx()));
 
     // 룸 입장 메시지 전송
     SharedPtr<SendMessageBuilder> message = std::make_shared<SendMessageBuilder>(MESSAGE_ID(ServerMessageId::EnterGame));
     auto& dataBuilder = message->GetDataBuilder();
     auto enterGame = MessageData::Server::CreateEnterGame(dataBuilder, true);
     message->FinishBuilding(enterGame);
-    player->owner->Send(std::move(message));
+    client->GetPlayer(client->GetCurrentPlayerIdx())->owner->Send(std::move(message));
 
     return true;
 }

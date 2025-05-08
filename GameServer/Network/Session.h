@@ -5,6 +5,7 @@
 #include "ServerEngine/Network/Session.h"
 
 struct Player;
+class Room;
 
 class ClientSession
     : public Session
@@ -14,6 +15,10 @@ public:
     Bool                IsLogined() const { return mIsLogined.load(); }
     SharedPtr<Player>   GetPlayer(Int64 idx) const { return mPlayers[idx]; }
     void                AddPlayer(SharedPtr<Player> player) { mPlayers.push_back(std::move(player)); }
+    void                SetCurrentPlayerIdx(Int64 idx) { mCurrentPlayerIdx = idx; }
+    Int64               GetCurrentPlayerIdx() const { return mCurrentPlayerIdx; }
+    void                SetPlayerRoom(SharedPtr<Room> room) { mPlayerRoom = std::move(room); }
+    SharedPtr<Room>     GetPlayerRoom() const { return mPlayerRoom.lock(); }
 
 protected:
     virtual void        OnConnected() override;
@@ -24,17 +29,19 @@ protected:
 private:
     Atomic<Bool>                mIsLogined = false;
     Vector<SharedPtr<Player>>   mPlayers;
+    Int64                       mCurrentPlayerIdx = -1;
+    WeakPtr<Room>               mPlayerRoom;
 };
 
 class ClientSessionManager
 {
 public:
-    ClientSessionManager() = default;
+    ClientSessionManager()  = default;
     ~ClientSessionManager() = default;
 
-    void    AddSession(SharedPtr<ClientSession> client);
-    void    RemoveSession(SharedPtr<ClientSession> client);
-    void    Broadcast(SharedPtr<SendMessageBuilder> message);
+    void                AddSession(SharedPtr<ClientSession> client);
+    void                RemoveSession(SharedPtr<ClientSession> client);
+    void                Broadcast(SharedPtr<SendMessageBuilder> message);
 
 private:
     RW_LOCK;
