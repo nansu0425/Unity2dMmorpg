@@ -10,7 +10,7 @@
 Logger*                 gLogger = nullptr;
 ThreadManager*          gThreadManager = nullptr;
 DeadlockDetector*       gDeadlockDetector = nullptr;
-ReservedJobManager*     gReservedJobManager = nullptr;
+JobQueueManager*        gJobQueueManager = nullptr;
 JobTimer*               gJobTimer = nullptr;
 
 GlobalContext::GlobalContext()
@@ -19,14 +19,14 @@ GlobalContext::GlobalContext()
     gThreadManager = new ThreadManager();
     gDeadlockDetector = new DeadlockDetector();
     SocketUtils::Init();
-    gReservedJobManager = new ReservedJobManager();
+    gJobQueueManager = new JobQueueManager();
     gJobTimer = new JobTimer();
 }
 
 GlobalContext::~GlobalContext()
 {
     delete gJobTimer;
-    delete gReservedJobManager;
+    delete gJobQueueManager;
     SocketUtils::Cleanup();
     delete gDeadlockDetector;
     delete gThreadManager;

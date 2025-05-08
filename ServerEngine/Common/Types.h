@@ -57,7 +57,7 @@ using Queue         = std::queue<T, Container>;
 template<typename T, typename Container = Deque<T>>
 using Stack         = std::stack<T, Container>;
 template<typename T, typename Container = Vector<T>, typename Pr = std::less<typename Container::value_type>>
-using RankQueue     = std::priority_queue<T, Container, Pr>;
+using PriorityQueue = std::priority_queue<T, Container, Pr>;
 
 using String8       = std::basic_string<Char8, std::char_traits<Char8>>;
 using String16      = std::basic_string<Char16, std::char_traits<Char16>>;

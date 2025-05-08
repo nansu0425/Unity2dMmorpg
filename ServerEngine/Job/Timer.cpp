@@ -8,10 +8,10 @@ void JobTimer::Schedule(SharedPtr<Job> job, WeakPtr<JobQueue> owner, Int64 delay
     const Int64 executeTick = ::GetTickCount64() + delayTick;
 
     WRITE_GUARD;
-    mReservedItems.push(TimerItem{executeTick, std::move(job), std::move(owner)});
+    mItems.push(Item{executeTick, std::move(job), std::move(owner)});
 }
 
-void JobTimer::Distribute(Int64 nowTick)
+void JobTimer::Distribute()
 {
     // 중복 실행 방지
     if (mIsDistributing.exchange(true))
@@ -19,31 +19,31 @@ void JobTimer::Distribute(Int64 nowTick)
         return;
     }
 
-    Vector<TimerItem> executeItems;
+    const Int64 nowTick = ::GetTickCount64();
+    Vector<Item> executeItems;
     {
         WRITE_GUARD;
-        // 실행해야 할 TimerItem을 모두 꺼낸다
-        while (!mReservedItems.empty())
+        // 실행 가능한 틱에 도달한 Item을 모두 꺼낸다
+        while (!mItems.empty())
         {
-            const TimerItem& reservedItem = mReservedItems.top();
-            // 현재 틱이 아직 실행할 틱에 도달하지 않은 경우
-            if (nowTick < reservedItem.executeTick)
+            const Item& item = mItems.top();
+            if (nowTick < item.executeTick)
             {
                 break;
             }
-            executeItems.push_back(reservedItem);
-            mReservedItems.pop();
+            executeItems.push_back(item);
+            mItems.pop();
         }
     }
 
-    // 꺼낸 TimerItem의 Job을 JobQueue에 Push한다 
-    for (const TimerItem& executeItem : executeItems)
+    // 꺼낸 Item의 Job을 JobQueue에 Push한다 
+    for (const Item& item : executeItems)
     {
-        SharedPtr<JobQueue> jobOwner = executeItem.jobOwner.lock();
-        if (jobOwner)
+        SharedPtr<JobQueue> owner = item.owner.lock();
+        if (owner)
         {
-            // 큐의 flush는 하지 않는다
-            jobOwner->Push(executeItem.job, false);
+            // 큐를 비우진 않는다
+            owner->Push(item.job, false);
         }
     }
 

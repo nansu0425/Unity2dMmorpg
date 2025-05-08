@@ -46,7 +46,7 @@ private:
 
 
 /*
- * JobSerializer가 Job을 직렬화하기 위해 사용하는 큐
+ * Job을 직렬화하기 위해 사용하는 큐
  * 여러 스레드가 Job을 Push할 때, 최초 Job을 Push한 스레드가 모든 Job을 처리한다.
  */
 class JobQueue
@@ -65,15 +65,14 @@ private:
 };
 
 /*
- * Job을 처리하기 벅찬 스레드는 JobQueue를 ReservedJobManager에 예약한다.
- * ProcessJobs()를 호출하는 스레드가 예약된 JobQueue를 처리한다.
+ * JobQueue를 Flush하기 힘든 스레드는 JobQueue를 JobQueueManager에 등록한다.
  */
-class ReservedJobManager
+class JobQueueManager
 {
 public:
-    void        ReserveJobs(SharedPtr<JobQueue> jobs);
-    void        ProcessJobs();
+    void        Register(SharedPtr<JobQueue> queue);
+    void        FlushQueues();
 
 private:
-    LockQueue<SharedPtr<JobQueue>>  mJobs;
+    LockQueue<SharedPtr<JobQueue>>  mQueues;
 };

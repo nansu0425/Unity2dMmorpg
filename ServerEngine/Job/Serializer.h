@@ -7,8 +7,7 @@
 
 /*
  * JobSerializer를 상속받은 클래스는 비동기 작업을 Job 형태로 만들 수 있다.
- * 만들어진 Job들은 JobQueue를 이용해 직렬화된다.
- * 여러 스레드가 Job을 Push할 때, 최초 Job을 Push한 스레드가 모든 Job을 처리한다.
+ * 바로 JobQueue에 Push할 수 있으며, 일정 시간 후에 JobQueue에 Push할 수도 있다.
  */
 class JobSerializer
     : public std::enable_shared_from_this<JobSerializer>
