@@ -38,12 +38,6 @@ void WorkerThread(SharedPtr<ServerService> service)
 
 int main()
 {
-    // 콘솔을 UTF-8 모드로 설정
-    ::SetConsoleOutputCP(CP_UTF8);
-    ::SetConsoleCP(CP_UTF8);
-    // CRT stdout을 UTF-8 narrow-text 모드로 전환
-    ::_setmode(::_fileno(stdout), _O_U8TEXT);
-
     // 모든 메시지 핸들러 등록
     gMessageHandlerManager.RegisterAllHandlers();
 

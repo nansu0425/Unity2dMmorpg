@@ -2,8 +2,11 @@
 
 #include "ServerEngine/Pch.h"
 #include "ServerEngine/Log/Logger.h"
+
 #include <spdlog/async.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <io.h>
+#include <fcntl.h>
 
 Logger::Logger(String8View name)
 {
@@ -38,6 +41,12 @@ void Logger::Init(String8View name)
 
     // 경고 이상일 때 즉시 버퍼를 비우고 기록
     mLogger->flush_on(spdlog::level::warn);
+
+    // 콘솔을 UTF-8 모드로 설정
+    ::SetConsoleOutputCP(CP_UTF8);
+    ::SetConsoleCP(CP_UTF8);
+    // CRT stdout을 UTF-8 narrow-text 모드로 전환
+    ::_setmode(::_fileno(stdout), _O_U8TEXT);
 }
 
 void Logger::Shutdown()
