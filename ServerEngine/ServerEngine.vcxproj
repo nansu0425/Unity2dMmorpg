@@ -28,6 +28,7 @@
     <ClInclude Include="Concurrency\Lock.h" />
     <ClInclude Include="Concurrency\Queue.h" />
     <ClInclude Include="Concurrency\Thread.h" />
+    <ClInclude Include="Database\Connection.h" />
     <ClInclude Include="Io\Event.h" />
     <ClInclude Include="Io\Dispatcher.h" />
     <ClInclude Include="Job\Queue.h" />
@@ -49,6 +50,7 @@
     <ClCompile Include="Concurrency\Deadlock.cpp" />
     <ClCompile Include="Concurrency\Lock.cpp" />
     <ClCompile Include="Concurrency\Thread.cpp" />
+    <ClCompile Include="Database\Connection.cpp" />
     <ClCompile Include="Io\Event.cpp" />
     <ClCompile Include="Io\Dispatcher.cpp" />
     <ClCompile Include="Job\Queue.cpp" />

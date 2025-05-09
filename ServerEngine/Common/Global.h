@@ -7,6 +7,7 @@ extern class ThreadManager*         gThreadManager;
 extern class DeadlockDetector*      gDeadlockDetector;
 extern class JobQueueManager*       gJobQueueManager;
 extern class JobTimer*              gJobTimer;
+extern class DbConnectionPool*      gDbConnectionPool;
 
 class GlobalContext
 {

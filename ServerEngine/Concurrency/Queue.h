@@ -54,7 +54,7 @@ public:
     void Clear()
     {
         WRITE_GUARD;
-        mItems.clear();
+        mItems = Queue<T>();
     }
 
 private:
