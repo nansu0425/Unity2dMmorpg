@@ -10,6 +10,8 @@
 #include "GameServer/Content/Room.h"
 #include "ServerEngine/Database/Connection.h"
 
+#include <google/protobuf/message.h>
+
 Service::Config gConfig =
 {
     NetAddress(TEXT_16("127.0.0.1"), 7777),
@@ -36,68 +38,7 @@ void WorkerThread(SharedPtr<ServerService> service)
 
 int main()
 {
-    ASSERT_CRASH(gDbConnectionPool->Connect(1, TEXT_16("Driver={ODBC Driver 17 for SQL Server};Server=(localdb)\\MSSQLLocalDB;Database=GameServerDb;Trusted_Connection=Yes;")));
-
-    // Create table
-    {
-        String16View query = TEXT_16("                                  \
-                            DROP TABLE IF EXISTS [dbo].[Gold];          \
-                            CREATE TABLE [dbo].[Gold]                   \
-                            (                                           \
-                                [id] INT NOT NULL PRIMARY KEY IDENTITY, \
-                                [gold] INT NULL                         \
-                            );");
-        SharedPtr<DbConnection> connection = gDbConnectionPool->Pop();
-        ASSERT_CRASH(connection->Execute(query));
-        gDbConnectionPool->Push(connection);
-    }
-
-    // Add data
-    for (Int64 i = 0; i < 3; ++i)
-    {
-        SharedPtr<DbConnection> connection = gDbConnectionPool->Pop();
-        connection->Unbind();
-
-        Int32 gold = 100;
-        SQLLEN len = 0;
-
-        // 파라미터 바인딩
-        ASSERT_CRASH(connection->BindParameter(1, SQL_C_LONG, SQL_INTEGER, SIZE_32(gold), &gold, OUT &len));
-        // Insert 쿼리
-        ASSERT_CRASH(connection->Execute(TEXT_16("INSERT INTO [dbo].[Gold]([gold]) VALUES(?)")));
-        gDbConnectionPool->Push(connection);
-    }
-
-    // Read data
-    {
-        SharedPtr<DbConnection> connection = gDbConnectionPool->Pop();
-        connection->Unbind();
-        Int32 gold = 100;
-        SQLLEN len = 0;
-        // 파라미터 바인딩
-        ASSERT_CRASH(connection->BindParameter(1, SQL_C_LONG, SQL_INTEGER, SIZE_32(gold), &gold, OUT & len));
-
-        Int32 outId = 0;
-        SQLLEN outIdLen = 0;
-        ASSERT_CRASH(connection->BindColumns(1, SQL_C_LONG, OUT & outId, SIZE_32(outId), OUT & outIdLen));
-
-        Int32 outGold = 0;
-        SQLLEN outGoldLen = 0;
-        ASSERT_CRASH(connection->BindColumns(2, SQL_C_LONG, OUT & outGold, SIZE_32(outGold), OUT & outGoldLen));
-
-        // Select 쿼리
-        ASSERT_CRASH(connection->Execute(TEXT_16("SELECT id, gold FROM [dbo].[Gold] WHERE gold = (?)")));
-
-        // Fetch
-        while (connection->Fetch())
-        {
-            gLogger->Info(TEXT_16("id: {}, gold: {}"), outId, outGold);
-        }
-
-        gDbConnectionPool->Push(connection);
-    }
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    gLogger->Debug(TEXT_8("Protobuf Message base size: {}"), sizeof(google::protobuf::Message));
 
     // 모든 메시지 핸들러 등록
     gMessageHandlerManager.RegisterAllHandlers();
