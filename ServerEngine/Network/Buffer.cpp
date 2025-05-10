@@ -35,11 +35,15 @@ void ReceiveBuffer::Clear()
 
 Bool ReceiveBuffer::OnRead(Int64 numBytes)
 {
+    ASSERT_CRASH(0 <= numBytes, "INVALID_NUM_BYTES");
+
     // 유효한 데이터보다 더 많이 읽은 경우
     if (numBytes > GetDataSize())
     {
+        gLogger->Error(TEXT_8("Failed to read receive buffer.: {} bytes"), numBytes);
         return false;
     }
+
     // 읽은 만큼 읽기 위치를 이동
     mReadPos += numBytes;
 
@@ -51,6 +55,7 @@ Bool ReceiveBuffer::OnWritten(Int64 numBytes)
     // 여유 공간보다 더 많이 쓴 경우
     if (numBytes > GetFreeSize())
     {
+        gLogger->Error(TEXT_8("Failed to write to receive buffer: {} bytes"), numBytes);
         return false;
     }
     // 쓴 만큼 쓰기 위치를 이동
@@ -135,7 +140,7 @@ SharedPtr<SendBuffer> SendChunkPool::Alloc(Int64 allocSize)
         tSendChunk->Clear();
     }
 
-    ASSERT_CRASH(tSendChunk->IsWriting() == false, "ALREADY_OPEND");
+    ASSERT_CRASH(tSendChunk->IsWriting() == false, "WRITING_STATE");
 
     // 더 이상 쓰기를 할 수 있는 여유 공간이 없으면 새로운 청크로 교체
     if (tSendChunk->GetFreeSize() < allocSize)

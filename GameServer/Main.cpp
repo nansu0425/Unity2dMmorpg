@@ -5,12 +5,9 @@
 #include "ServerEngine/Io/Dispatcher.h"
 #include "ServerEngine/Network/Service.h"
 #include "GameServer/Network/Session.h"
-#include "GameServer/Network/Message.h"
-#include "Common/Message.h"
-#include "GameServer/Content/Room.h"
-#include "ServerEngine/Database/Connection.h"
-
-#include <google/protobuf/message.h>
+// #include "GameServer/Network/Message.h"
+// #include "Common/Message.h"
+// #include "GameServer/Content/Room.h"
 
 Service::Config gConfig =
 {
@@ -38,25 +35,21 @@ void WorkerThread(SharedPtr<ServerService> service)
 
 int main()
 {
-    gLogger->Debug(TEXT_8("Protobuf Message base size: {}"), sizeof(google::protobuf::Message));
-
     // 모든 메시지 핸들러 등록
-    gMessageHandlerManager.RegisterAllHandlers();
+    // gMessageHandlerManager.RegisterAllHandlers();
 
     // 서버 서비스 생성 및 실행
     auto service = std::make_shared<ServerService>(gConfig);
     ASSERT_CRASH(SUCCESS == service->Run(), "SERVER_SERVICE_RUN_FAILED");
 
     // 워커 스레드 실행
-    for (Int64 i = 0; i < std::thread::hardware_concurrency() / 2; ++i)
+    for (Int64 i = 0; i < 4; ++i)
     {
         gThreadManager->Launch([service]()
                                {
                                    WorkerThread(service);
                                });
     }
-    WorkerThread(service);
-
     gThreadManager->Join();
 
     // 서버 서비스 서비스 중지

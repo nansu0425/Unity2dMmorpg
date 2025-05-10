@@ -168,6 +168,7 @@ Int64 Session::RegisterDisconnect(String8 cause)
 
 void Session::RegisterReceive()
 {
+    // 연결 상태 확인
     if (!IsConnected())
     {
         return;
@@ -181,6 +182,7 @@ void Session::RegisterReceive()
     mReceiveEvent.Init();
     mReceiveEvent.owner = GetSharedPtr();
 
+    // 비동기 수신 요청
     Int64 result = SocketUtils::ReceiveAsync(mSocket, &buffer, OUT &numBytes, OUT &flags, &mReceiveEvent);
     if ((result != SUCCESS) &&
         (result != WSA_IO_PENDING))
@@ -226,15 +228,15 @@ void Session::RegisterSend_Mgr()
         return;
     }
 
+    Int64 numBytes = 0;
+    mSendEvent.Init();
+    mSendEvent.owner = GetSharedPtr();
     // 송신 이벤트의 버퍼 매니저와 세션의 버퍼 매니저를 교체
     {
         WRITE_GUARD;
         mSendEvent.bufferMgr.Swap(mSendBufferMgr);
     }
 
-    Int64 numBytes = 0;
-    mSendEvent.Init();
-    mSendEvent.owner = GetSharedPtr();
     // 비동기 송신 요청
     Int64 result = SocketUtils::SendAsync(mSocket, mSendEvent.bufferMgr.GetWsaBuffers(), mSendEvent.bufferMgr.GetWsaBufferCount(), OUT &numBytes, &mSendEvent);
     if ((result != SUCCESS) &&
@@ -300,52 +302,48 @@ void Session::ProcessReceive(Int64 numBytes)
         return;
     }
     // 수신 버퍼 쓰기 처리
-    if (!mReceiveBuffer.OnWritten(numBytes))
+    if (mReceiveBuffer.OnWritten(numBytes) == false)
     {
-        gLogger->Error(TEXT_8("Failed to write to receive buffer: {} bytes"), numBytes);
         Disconnect(TEXT_8("Receive buffer error"));
         return;
     }
-    // 수신 버퍼에 있는 메시지 처리
-    Int64 processedSize = ProcessReceiveMessages();
-    if ((processedSize < 0) ||
-        (processedSize > mReceiveBuffer.GetDataSize()) ||
-        (false == mReceiveBuffer.OnRead(processedSize)))
+    // 콘텐츠 코드에서 수신 버퍼 데이터 처리
+    Int64 processedSize = OnReceived(mReceiveBuffer.AtReadPos(), numBytes);
+    if (mReceiveBuffer.OnRead(processedSize) == false)
     {
-        gLogger->Error(TEXT_8("Failed to read receive buffer.: {} bytes"), numBytes);
         Disconnect(TEXT_8("Receive buffer error"));
         return;
     }
     mReceiveBuffer.Clear();
-    // 처리 가능한 메시지 처리 후 다시 수신 등록
+    // 데이터 처리 후 다시 수신 등록
     RegisterReceive();
 }
 
-Int64 Session::ProcessReceiveMessages()
-{
-    Int64 processedSize = 0;
-
-    while (true)
-    {
-        Int64 remainingSize = mReceiveBuffer.GetDataSize() - processedSize;
-        // 메시지 헤더를 포함하는지 확인
-        if (remainingSize < sizeof(MessageHeader))
-        {
-            break;
-        }
-        MessageHeader* header = reinterpret_cast<MessageHeader*>(mReceiveBuffer.AtReadPos() + processedSize);
-        // 메시지 헤더부터 데이터까지 포함하는지 확인
-        if (remainingSize < header->size)
-        {
-            break;
-        }
-        // 콘텐츠 코드에서 수신 메시지 처리
-        OnReceived(ReceiveMessage(header));
-        processedSize += header->size;
-    }
-
-    return processedSize;
-}
+//Int64 Session::ProcessReceiveMessages()
+//{
+//    Int64 processedSize = 0;
+//
+//    while (true)
+//    {
+//        Int64 remainingSize = mReceiveBuffer.GetDataSize() - processedSize;
+//        // 메시지 헤더를 포함하는지 확인
+//        if (remainingSize < sizeof(MessageHeader))
+//        {
+//            break;
+//        }
+//        MessageHeader* header = reinterpret_cast<MessageHeader*>(mReceiveBuffer.AtReadPos() + processedSize);
+//        // 메시지 헤더부터 데이터까지 포함하는지 확인
+//        if (remainingSize < header->size)
+//        {
+//            break;
+//        }
+//        // 콘텐츠 코드에서 수신 메시지 처리
+//        OnReceived(ReceiveMessage(header));
+//        processedSize += header->size;
+//    }
+//
+//    return processedSize;
+//}
 
 void Session::ProcessSend(Int64 numBytes)
 {

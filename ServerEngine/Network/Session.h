@@ -46,7 +46,8 @@ public:     // 외부에서 호출하는 함수
 protected:  // 콘텐츠 코드 인터페이스
     virtual void        OnConnected() = 0;
     virtual void        OnDisconnected(String8 cause) = 0;
-    virtual void        OnReceived(ReceiveMessage message) = 0;
+    // virtual void        OnReceived(ReceiveMessage message) = 0;
+    virtual Int64       OnReceived(const Byte* buffer, Int64 numBytes) = 0;
     virtual void        OnSent(Int64 numBytes) = 0;
 
 private:    // IIoObjectOwner 인터페이스 구현
@@ -63,7 +64,7 @@ private:    // 입출력 요청 및 처리
     void                ProcessConnect();
     void                ProcessDisconnect();
     void                ProcessReceive(Int64 numBytes);
-    Int64               ProcessReceiveMessages();
+    // Int64               ProcessReceiveMessages();
     void                ProcessSend(Int64 numBytes);
     void                ProcessSend_Mgr(Int64 numBytes);
 

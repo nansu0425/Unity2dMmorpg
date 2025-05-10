@@ -6,10 +6,16 @@
     <ClCompile Include="Network\Message.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="Network\Session.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="Network\Message.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Session.h">
       <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
