@@ -87,98 +87,93 @@ void SendBuffers::Swap(SendBuffers& buffers) noexcept
     mMessages.swap(buffers.mMessages);
 }
 
-//SendBuffer::SendBuffer(SharedPtr<SendBufferChunk> owner, Byte* buffer, Int64 allocSize)
-//    : mBuffer(buffer)
-//    , mAllocSize(allocSize)
-//    , mOwner(std::move(owner))
-//{}
-//
-//SendBuffer::~SendBuffer()
-//{}
-//
-//void SendBuffer::Close(Int64 writtenSize)
-//{
-//    ASSERT_CRASH(writtenSize <= mAllocSize, "BUFFER_OVERFLOW");
-//    mWrittenSize = writtenSize;
-//    mOwner->Close(mWrittenSize);
-//}
-//
-//SharedPtr<SendBuffer> SendBufferManager::Open(Int64 allocSize)
-//{
-//    if (tSendBufferChunk == nullptr)
-//    {
-//        tSendBufferChunk = Pop();
-//        tSendBufferChunk->Clear();
-//    }
-//
-//    ASSERT_CRASH(tSendBufferChunk->IsOpen() == false, "ALREADY_OPEND");
-//
-//    // 더 이상 쓰기를 할 수 있는 여유 공간이 없으면 새로운 청크로 교체
-//    if (tSendBufferChunk->GetFreeSize() < allocSize)
-//    {
-//        tSendBufferChunk = Pop();
-//        tSendBufferChunk->Clear();
-//    }
-//
-//    return tSendBufferChunk->Open(allocSize);
-//}
-//
-//SharedPtr<SendBufferChunk> SendBufferManager::Pop()
-//{
-//    {
-//        WRITE_GUARD;
-//        // 사용 가능한 청크가 있는 경우
-//        if (false == mSendChunks.empty())
-//        {
-//            SharedPtr<SendBufferChunk> chunk = mSendChunks.back();
-//            mSendChunks.pop_back();
-//            return chunk;
-//        }
-//    }
-//    // 새로운 청크 할당
-//    return SharedPtr<SendBufferChunk>(new SendBufferChunk(), PushGlobal);
-//}
-//
-//void SendBufferManager::Push(SharedPtr<SendBufferChunk> chunk)
-//{
-//    WRITE_GUARD;
-//    mSendChunks.push_back(chunk);
-//}
-//
-//void SendBufferManager::PushGlobal(SendBufferChunk* chunk)
-//{
-//    // 청크를 재사용
-//    // gSendBufferManager->Push(SharedPtr<SendBufferChunk>(chunk, PushGlobal));
-//}
-//
-//SendBufferChunk::SendBufferChunk()
-//{}
-//
-//SendBufferChunk::~SendBufferChunk()
-//{}
-//
-//SharedPtr<SendBuffer> SendBufferChunk::Open(Int64 allocSize)
-//{
-//    ASSERT_CRASH(allocSize <= GetFreeSize(), "BUFFER_OVERFLOW");
-//    ASSERT_CRASH(mIsOpen == false, "ALREADY_OPEND");
-//
-//    mIsOpen = true;
-//
-//    return std::make_shared<SendBuffer>(shared_from_this(), AtWritePos(), allocSize);
-//}
-//
-//void SendBufferChunk::Close(Int64 writtenSize)
-//{
-//    ASSERT_CRASH(mIsOpen == true, "NOT_OPEND");
-//    mIsOpen = false;
-//    mWritePos += writtenSize;
-//}
-//
-//void SendBufferChunk::Clear()
-//{
-//    mIsOpen = false;
-//    mWritePos = 0;
-//}
+SendBuffer::SendBuffer(SharedPtr<SendChunk> owner, Byte* buffer, Int64 allocSize)
+    : mBuffer(buffer)
+    , mAllocSize(allocSize)
+    , mOwner(std::move(owner))
+{}
+
+SendBuffer::~SendBuffer()
+{}
+
+void SendBuffer::OnWritten(Int64 writtenSize)
+{
+    ASSERT_CRASH(writtenSize <= mAllocSize, "BUFFER_OVERFLOW");
+    mWrittenSize = writtenSize;
+    mOwner->OnWritten(mWrittenSize);
+}
+
+SharedPtr<SendBuffer> SendChunk::Alloc(Int64 allocSize)
+{
+    ASSERT_CRASH(allocSize <= GetFreeSize(), "BUFFER_OVERFLOW");
+    ASSERT_CRASH(mIsOpen == false, "ALREADY_OPEND");
+
+    mIsOpen = true;
+
+    return std::make_shared<SendBuffer>(shared_from_this(), AtWritePos(), allocSize);
+}
+
+void SendChunk::OnWritten(Int64 writtenSize)
+{
+    ASSERT_CRASH(mIsOpen == true, "NOT_OPEND");
+    mIsOpen = false;
+    mWritePos += writtenSize;
+}
+
+void SendChunk::Clear()
+{
+    mIsOpen = false;
+    mWritePos = 0;
+}
+
+SharedPtr<SendBuffer> SendChunkPool::Alloc(Int64 allocSize)
+{
+    // 현재 스레드에 청크가 없으면 가져온다
+    if (tSendChunk == nullptr)
+    {
+        tSendChunk = Pop();
+        tSendChunk->Clear();
+    }
+
+    ASSERT_CRASH(tSendChunk->IsOpen() == false, "ALREADY_OPEND");
+
+    // 더 이상 쓰기를 할 수 있는 여유 공간이 없으면 새로운 청크로 교체
+    if (tSendChunk->GetFreeSize() < allocSize)
+    {
+        tSendChunk = Pop();
+        tSendChunk->Clear();
+    }
+
+    return tSendChunk->Alloc(allocSize);
+}
+
+void SendChunkPool::Delete(SendChunk* chunk)
+{
+    // 청크를 재사용하기 위해 풀링
+    gSendChunkPool->Push(SharedPtr<SendChunk>(chunk, Delete));
+}
+
+SharedPtr<SendChunk> SendChunkPool::Pop()
+{
+    {
+        WRITE_GUARD;
+        // 사용 가능한 청크가 있는 경우
+        if (mSendChunks.empty() == false)
+        {
+            SharedPtr<SendChunk> chunk = mSendChunks.back();
+            mSendChunks.pop_back();
+            return chunk;
+        }
+    }
+    // 새로운 청크 할당
+    return SharedPtr<SendChunk>(new SendChunk(), Delete);
+}
+
+void SendChunkPool::Push(SharedPtr<SendChunk> chunk)
+{
+    WRITE_GUARD;
+    mSendChunks.push_back(chunk);
+}
 
 BufferReader::BufferReader()
 {}

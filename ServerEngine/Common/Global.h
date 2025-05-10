@@ -5,6 +5,7 @@
 extern class Logger*                gLogger;
 extern class ThreadManager*         gThreadManager;
 extern class DeadlockDetector*      gDeadlockDetector;
+extern class SendChunkPool*         gSendChunkPool;
 extern class JobQueueManager*       gJobQueueManager;
 extern class JobTimer*              gJobTimer;
 extern class DbConnectionPool*      gDbConnectionPool;
