@@ -106,24 +106,24 @@ void SendBuffer::OnWritten(Int64 writtenSize)
 SharedPtr<SendBuffer> SendChunk::Alloc(Int64 allocSize)
 {
     ASSERT_CRASH(allocSize <= GetFreeSize(), "BUFFER_OVERFLOW");
-    ASSERT_CRASH(mIsOpen == false, "ALREADY_OPEND");
+    ASSERT_CRASH(mIsWriting == false, "WRITING_STATE");
 
-    mIsOpen = true;
+    mIsWriting = true;
 
     return std::make_shared<SendBuffer>(shared_from_this(), AtWritePos(), allocSize);
 }
 
 void SendChunk::OnWritten(Int64 writtenSize)
 {
-    ASSERT_CRASH(mIsOpen == true, "NOT_OPEND");
-    mIsOpen = false;
-    mWritePos += writtenSize;
+    ASSERT_CRASH(mIsWriting == true, "NOT_WRITING_STATE");
+    mIsWriting = false;
+    mWrittenSize += writtenSize;
 }
 
 void SendChunk::Clear()
 {
-    mIsOpen = false;
-    mWritePos = 0;
+    mIsWriting = false;
+    mWrittenSize = 0;
 }
 
 SharedPtr<SendBuffer> SendChunkPool::Alloc(Int64 allocSize)
@@ -135,7 +135,7 @@ SharedPtr<SendBuffer> SendChunkPool::Alloc(Int64 allocSize)
         tSendChunk->Clear();
     }
 
-    ASSERT_CRASH(tSendChunk->IsOpen() == false, "ALREADY_OPEND");
+    ASSERT_CRASH(tSendChunk->IsWriting() == false, "ALREADY_OPEND");
 
     // 더 이상 쓰기를 할 수 있는 여유 공간이 없으면 새로운 청크로 교체
     if (tSendChunk->GetFreeSize() < allocSize)
@@ -231,4 +231,25 @@ Bool BufferWriter::Write(const Byte* src, Int64 size)
     mPos += size;
 
     return true;
+}
+
+void SendBufferManager::Register(SharedPtr<SendBuffer> sendBuf)
+{
+    mSendBufs.push_back(std::move(sendBuf));
+    WSABUF wsaBuf;
+    wsaBuf.buf = reinterpret_cast<CHAR*>(mSendBufs.back()->GetBuffer());
+    wsaBuf.len = static_cast<ULONG>(mSendBufs.back()->GetWrittenSize());
+    mWsaBufs.push_back(wsaBuf);
+}
+
+void SendBufferManager::Clear()
+{
+    mWsaBufs.clear();
+    mSendBufs.clear();
+}
+
+void SendBufferManager::Swap(SendBufferManager& other) noexcept
+{
+    mSendBufs.swap(other.mSendBufs);
+    mWsaBufs.swap(other.mWsaBufs);
 }

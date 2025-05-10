@@ -74,6 +74,23 @@ private:
     SharedPtr<SendChunk>    mOwner;
 };
 
+class SendBufferManager
+{
+public:
+    void        Register(SharedPtr<SendBuffer> sendBuf);
+    void        Clear();
+    void        Swap(SendBufferManager& other) noexcept;
+
+public:
+    WSABUF*     GetWsaBuffers() { return mWsaBufs.data(); }
+    Int64       GetWsaBufferCount() const { return mWsaBufs.size(); }
+    Bool        IsEmpty() const { return mSendBufs.empty(); }
+
+private:
+    Vector<SharedPtr<SendBuffer>>   mSendBufs;
+    Vector<WSABUF>                  mWsaBufs;
+};
+
 class SendChunk
     : public std::enable_shared_from_this<SendChunk>
 {
@@ -82,9 +99,9 @@ public:
     void                    OnWritten(Int64 writtenSize);
     void                    Clear();
 
-    bool                    IsOpen() const { return mIsOpen; }
-    Int64                   GetFreeSize() const { return kBufferSize - mWritePos; }
-    Byte*                   AtWritePos() { return mBuffer + mWritePos; }
+    bool                    IsWriting() const { return mIsWriting; }
+    Int64                   GetFreeSize() const { return kBufferSize - mWrittenSize; }
+    Byte*                   AtWritePos() { return mBuffer + mWrittenSize; }
 
 private:
     enum Constants : Int64
@@ -94,8 +111,8 @@ private:
 
 private:
     Byte    mBuffer[kBufferSize] = {};
-    Bool    mIsOpen = false;
-    Int64   mWritePos = 0;
+    Bool    mIsWriting = false;
+    Int64   mWrittenSize = 0;
 };
 
 class SendChunkPool

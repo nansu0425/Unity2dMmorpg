@@ -56,6 +56,25 @@ void Session::Send(SharedPtr<SendMessageBuilder> message)
     }
 }
 
+void Session::Send(SharedPtr<SendBuffer> buffer)
+{
+    Bool isSending = false;
+    {
+        WRITE_GUARD;
+        mSendBufferMgr.Register(std::move(buffer));
+        isSending = mIsSending.exchange(true);
+    }
+
+    // 다른 스레드가 송신 작업 중인 경우
+    if (isSending)
+    {
+        return;
+    }
+
+    // 송신 등록은 하나의 스레드만 진입
+    RegisterSend_Mgr();
+}
+
 HANDLE Session::GetIoObject()
 {
     return reinterpret_cast<HANDLE>(mSocket);
@@ -75,7 +94,8 @@ void Session::DispatchIoEvent(IoEvent* event, Int64 numBytes)
         ProcessReceive(numBytes);
         break;
     case IoEventType::Send:
-        ProcessSend(numBytes);
+        // ProcessSend(numBytes);
+        ProcessSend_Mgr(numBytes);
         break;
     default:
         CRASH("INVALID_EVENT_TYPE");
@@ -172,6 +192,7 @@ void Session::RegisterReceive()
 
 void Session::RegisterSend()
 {
+    // 연결 상태 확인
     if (!IsConnected())
     {
         return;
@@ -193,6 +214,35 @@ void Session::RegisterSend()
         HandleError(result);
         mSendEvent.owner.reset();
         mSendEvent.buffers.Clear();
+        mIsSending.store(false);
+    }
+}
+
+void Session::RegisterSend_Mgr()
+{
+    // 연결 상태 확인
+    if (!IsConnected())
+    {
+        return;
+    }
+
+    // 송신 이벤트의 버퍼 매니저와 세션의 버퍼 매니저를 교체
+    {
+        WRITE_GUARD;
+        mSendEvent.bufferMgr.Swap(mSendBufferMgr);
+    }
+
+    Int64 numBytes = 0;
+    mSendEvent.Init();
+    mSendEvent.owner = GetSharedPtr();
+    // 비동기 송신 요청
+    Int64 result = SocketUtils::SendAsync(mSocket, mSendEvent.bufferMgr.GetWsaBuffers(), mSendEvent.bufferMgr.GetWsaBufferCount(), OUT &numBytes, &mSendEvent);
+    if ((result != SUCCESS) &&
+        (result != WSA_IO_PENDING))
+    {
+        HandleError(result);
+        mSendEvent.owner.reset();
+        mSendBufferMgr.Clear();
         mIsSending.store(false);
     }
 }
@@ -323,6 +373,35 @@ void Session::ProcessSend(Int64 numBytes)
 
     // 송신 버퍼가 있으면 다시 송신 등록
     RegisterSend();
+}
+
+void Session::ProcessSend_Mgr(Int64 numBytes)
+{
+    mSendEvent.owner.reset();
+    mSendEvent.bufferMgr.Clear();
+    // 에러가 발생한 경우
+    if (mSendEvent.result != SUCCESS)
+    {
+        HandleError(mSendEvent.result);
+        return;
+    }
+
+    // 콘텐츠 코드에서 송신 처리
+    OnSent(numBytes);
+
+    { 
+        WRITE_GUARD;
+
+        // 등록된 송신 버퍼가 없으면 송신 상태를 해제
+        if (mSendBufferMgr.IsEmpty())
+        {
+            mIsSending.store(false);
+            return;
+        }
+    }
+
+    // 송신 버퍼가 있으면 다시 송신 등록
+    RegisterSend_Mgr();
 }
 
 void Session::HandleError(Int64 errorCode)

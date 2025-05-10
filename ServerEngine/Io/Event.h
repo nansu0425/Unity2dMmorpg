@@ -63,6 +63,7 @@ struct SendEvent
     : public IoEvent
 {
     SendBuffers     buffers;
+    SendBufferManager  bufferMgr;
 
     SendEvent() : IoEvent(IoEventType::Send) {}
 };

@@ -33,6 +33,7 @@ public:     // 외부에서 호출하는 함수
     Int64               Connect();
     void                Disconnect(String8 cause);
     void                Send(SharedPtr<SendMessageBuilder> message);
+    void                Send(SharedPtr<SendBuffer> buffer);
 
     SharedPtr<Service>  GetService() const { return mService.lock(); }
     void                SetService(SharedPtr<Service> service) { mService = std::move(service); }
@@ -57,12 +58,14 @@ private:    // 입출력 요청 및 처리
     Int64               RegisterDisconnect(String8 cause);
     void                RegisterReceive();
     void                RegisterSend();
+    void                RegisterSend_Mgr();
 
     void                ProcessConnect();
     void                ProcessDisconnect();
     void                ProcessReceive(Int64 numBytes);
     Int64               ProcessReceiveMessages();
     void                ProcessSend(Int64 numBytes);
+    void                ProcessSend_Mgr(Int64 numBytes);
 
     void                HandleError(Int64 errorCode);
 
@@ -83,4 +86,5 @@ private:
 private:
     ReceiveBuffer       mReceiveBuffer;
     SendBuffers         mSendBuffers;
+    SendBufferManager   mSendBufferMgr;
 };
