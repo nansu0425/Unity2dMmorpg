@@ -4,12 +4,12 @@ import "Common.proto";
 
 message LoginResponse
 {
-	string		id = 1;
-	bool		success = 2;
+    string  id = 1;
+    bool    success = 2;
 }
 
 message ChatNotify
 {
-	string		id = 1;
-	string		message = 2;
+    string  id = 1;
+    string  message = 2;
 }
