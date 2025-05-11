@@ -42,21 +42,21 @@
 
 void ClientSession::OnConnected()
 {
-    gLogger->Info(TEXT_8("Connected to client"));
+    gLogger->Info(TEXT_8("Session[{}]: Connected to client"), GetId());
     // 세션 매니저에 세션 추가
     gClientManager.AddSession(std::static_pointer_cast<ClientSession>(shared_from_this()));
 }
 
 void ClientSession::OnDisconnected(String8 cause)
 {
-    gLogger->Warn(TEXT_8("Disconnected from client: {}"), cause);
+    gLogger->Warn(TEXT_8("Session[{}]: Disconnected from client: {}"), GetId(), cause);
     // 세션 매니저에서 세션 제거
     gClientManager.RemoveSession(std::static_pointer_cast<ClientSession>(shared_from_this()));
 }
 
 Int64 ClientSession::OnReceived(const Byte* buffer, Int64 numBytes)
 {
-    gLogger->Debug(TEXT_8("Received {} bytes"), numBytes);
+    gLogger->Debug(TEXT_8("Session[{}]: Received {} bytes"), GetId(), numBytes);
 
     // 수신 버퍼 데이터를 모든 클라이언트에게 브로드캐스트
     SharedPtr<SendBuffer> sendBuf = gSendChunkPool->Alloc(1024);

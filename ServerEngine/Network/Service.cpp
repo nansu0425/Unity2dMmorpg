@@ -15,11 +15,16 @@ Service::~Service()
 
 SharedPtr<Session> Service::CreateSession()
 {
+    static Atomic<Int64> sNextSessionId = 1;
+
     SharedPtr<Session> session = mConfig.sessionFactory();
     session->SetService(shared_from_this());
+    session->SetId(sNextSessionId.fetch_add(1));
+
+    gLogger->Debug(TEXT_8("Session[{}]: Created"), session->GetId());
 
     // IoEventDispatcher에 세션 등록
-    if (SUCCESS == mConfig.ioDispatcher->Register(session))
+    if (SUCCESS == mConfig.ioEventDispatcher->Register(session))
     {
         return session;
     }

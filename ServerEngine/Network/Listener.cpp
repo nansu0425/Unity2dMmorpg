@@ -30,8 +30,8 @@ Int64 Listener::StartAccept(SharedPtr<ServerService> service)
     {
         return result;
     }
-    // 리슨 소켓을 io 매니저에 등록
-    if (result = mService->GetIoDispatcher()->Register(shared_from_this()))
+    // 리슨 소켓을 입출력 이벤트 디스패처에 등록
+    if (result = mService->GetIoEventDispatcher()->Register(shared_from_this()))
     {
         return result;
     }
@@ -88,8 +88,8 @@ void Listener::RegisterAccept(AcceptEvent* event)
     event->session = session;
     event->owner = shared_from_this();
 
+    // 비동기 accept 요청
     Int64 result = SocketUtils::AcceptAsync(mSocket, session->GetSocket(), OUT session->mReceiveBuffer.AtWritePos(), OUT &numBytes, event);
-    // accept 요청이 실패한 경우
     if ((SUCCESS != result) &&
         (WSA_IO_PENDING != result))
     {

@@ -24,11 +24,11 @@ void WorkerThread(SharedPtr<ServerService> service)
     while (true)
     {
         tWorkerLoopTick = ::GetTickCount64() + kLoopTick;
-        // 네트워크 입출력부터 콘텐츠 로직까지 처리
-        Int64 result = service->GetIoDispatcher()->Dispatch(10);
+        // 서비스의 입출력 이벤트 전달
+        Int64 result = service->GetIoEventDispatcher()->Dispatch(10);
         // 타이머에 의해 스케줄링된 작업들을 분배
         gJobTimer->Distribute();
-        // 아직 비우지 못한 큐들을 비운다
+        // 등록된 큐들을 비운다
         gJobQueueManager->FlushQueues();
     }
 }

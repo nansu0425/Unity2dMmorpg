@@ -53,7 +53,7 @@ class JobQueue
     : public std::enable_shared_from_this<JobQueue>
 {
 public:
-    void        Push(SharedPtr<Job> job, Bool canFlush = true);
+    void        Push(SharedPtr<Job> job, Bool canFlush = false);
 
 public:
     // 큐에 남은 job이 없을 때까지 처리

@@ -36,14 +36,13 @@ void JobTimer::Distribute()
         }
     }
 
-    // 꺼낸 Item의 Job을 JobQueue에 Push한다 
+    // 꺼낸 모든 아이템의 job을 큐에 넣는다
     for (const Item& item : executeItems)
     {
         SharedPtr<JobQueue> owner = item.owner.lock();
         if (owner)
         {
-            // 큐를 비우진 않는다
-            owner->Push(item.job, false);
+            owner->Push(item.job);
         }
     }
 

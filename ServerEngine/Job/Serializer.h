@@ -15,20 +15,20 @@ class JobSerializer
 public:
     void MakeJob(Job::CallbackType&& callback)
     {
-        mJobs->Push(std::make_shared<Job>(std::move(callback)));
+        mQueue->Push(std::make_shared<Job>(std::move(callback)));
     }
 
     void MakeJob(Job::CallbackType&& callback, Int64 delayTick)
     {
         SharedPtr<Job> job = std::make_shared<Job>(std::move(callback));
-        gJobTimer->Schedule(job, mJobs, delayTick);
+        gJobTimer->Schedule(job, mQueue, delayTick);
     }
 
     template<typename T, typename Ret, typename... Args>
     void MakeJob(Ret(T::* method)(Args...), Args... args)
     {
         SharedPtr<T> obj = std::static_pointer_cast<T>(shared_from_this());
-        mJobs->Push(std::make_shared<Job>(std::move(obj), method, std::forward<Args>(args)...));
+        mQueue->Push(std::make_shared<Job>(std::move(obj), method, std::forward<Args>(args)...));
     }
 
     template<typename T, typename Ret, typename... Args>
@@ -36,9 +36,9 @@ public:
     {
         SharedPtr<T> obj = std::static_pointer_cast<T>(shared_from_this());
         SharedPtr<Job> job = std::make_shared<Job>(std::move(obj), method, std::forward<Args>(args)...);
-        gJobTimer->Schedule(job, mJobs, delayTick);
+        gJobTimer->Schedule(job, mQueue, delayTick);
     }
 
 protected:
-    SharedPtr<JobQueue>     mJobs = std::make_shared<JobQueue>();
+    SharedPtr<JobQueue>     mQueue = std::make_shared<JobQueue>();
 };

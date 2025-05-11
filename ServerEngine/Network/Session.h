@@ -40,6 +40,8 @@ public:     // 외부에서 호출하는 함수
     SOCKET              GetSocket() const { return mSocket; }
     const NetAddress&   GetNetAddress() const { return mAddress; }
     void                SetNetAddress(const NetAddress& address) { mAddress = address; }
+    Int64               GetId() const { return mId; }
+    void                SetId(Int64 id) { mId = id; }
     Bool                IsConnected() const { return mIsConnected; }
     SharedPtr<Session>  GetSharedPtr() { return std::static_pointer_cast<Session>(shared_from_this()); }
 
@@ -75,6 +77,7 @@ private:
     WeakPtr<Service>    mService;
     SOCKET              mSocket = INVALID_SOCKET;
     NetAddress          mAddress;
+    Int64               mId = 0;
     Atomic<Bool>        mIsConnected = false;
     Atomic<Bool>        mIsSending = false;
 

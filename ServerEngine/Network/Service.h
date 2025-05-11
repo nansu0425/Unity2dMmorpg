@@ -24,7 +24,7 @@ public:
     struct Config
     {
         NetAddress                      address;
-        SharedPtr<IoEventDispatcher>    ioDispatcher;
+        SharedPtr<IoEventDispatcher>    ioEventDispatcher;
         SessionFactory                  sessionFactory;
         Int64                           maxSessionCount = 1;
     };
@@ -47,7 +47,7 @@ public:     // 외부에서 호출하는 함수
     Int64                           GetMaxSessionCount() const { return mConfig.maxSessionCount; }
     ServiceType                     GetType() const { return mType; }
     const NetAddress&               GetAddress() const { return mConfig.address; }
-    SharedPtr<IoEventDispatcher>    GetIoDispatcher() const { return mConfig.ioDispatcher; }
+    SharedPtr<IoEventDispatcher>    GetIoEventDispatcher() const { return mConfig.ioEventDispatcher; }
 
 protected:
     ServiceType                     mType;

@@ -5,21 +5,21 @@
 
 void ServerSession::OnConnected()
 {
-    gLogger->Info(TEXT_8("Connected to server"));
+    gLogger->Info(TEXT_8("Session[{}]: Connected to server"), GetId());
     // 서버 매니저에 세션 추가
     gServerManager->MakeJob(&ServerSessionManager::AddSession, std::static_pointer_cast<ServerSession>(shared_from_this()));
 }
 
 void ServerSession::OnDisconnected(String8 cause)
 {
-    gLogger->Warn(TEXT_8("Disconnected from server: {}"), cause);
+    gLogger->Warn(TEXT_8("Session[{}]: Disconnected from server: {}"), GetId(), cause);
     // 서버 매니저에서 세션 제거
     gServerManager->MakeJob(&ServerSessionManager::RemoveSession, std::static_pointer_cast<ServerSession>(shared_from_this()));
 }
 
 Int64 ServerSession::OnReceived(const Byte* buffer, Int64 numBytes)
 {
-    gLogger->Debug(TEXT_8("Received {} bytes"), numBytes);
+    gLogger->Debug(TEXT_8("Session[{}]: Received {} bytes"), GetId(), numBytes);
     return numBytes;
 }
 
