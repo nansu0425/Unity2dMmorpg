@@ -59,13 +59,14 @@ void Session::Send(SharedPtr<SendMessageBuilder> message)
 void Session::Send(SharedPtr<SendBuffer> buffer)
 {
     Bool isSending = false;
+    // 송신 버퍼 매니저에 버퍼 등록
     {
         WRITE_GUARD;
         mSendBufferMgr.Register(std::move(buffer));
         isSending = mIsSending.exchange(true);
     }
 
-    // 다른 스레드가 송신 작업 중인 경우
+    // 이미 송신 작업 중인 경우
     if (isSending)
     {
         return;

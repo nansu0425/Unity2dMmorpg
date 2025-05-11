@@ -3,6 +3,7 @@
 #pragma once
 
 #include "ServerEngine/Network/Session.h"
+#include "GameServer/Network/Protocol/Packet.pb.h"
 
 struct Player;
 class Room;

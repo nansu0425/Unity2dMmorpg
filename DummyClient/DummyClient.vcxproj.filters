@@ -9,6 +9,18 @@
     <ClCompile Include="Network\Session.cpp">
       <Filter>Network</Filter>
     </ClCompile>
+    <ClCompile Include="Network\Protocol\ClientPayload.pb.cc">
+      <Filter>Network\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Protocol\Common.pb.cc">
+      <Filter>Network\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Protocol\Packet.pb.cc">
+      <Filter>Network\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Protocol\ServerPayload.pb.cc">
+      <Filter>Network\Protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
@@ -18,10 +30,25 @@
     <ClInclude Include="Network\Session.h">
       <Filter>Network</Filter>
     </ClInclude>
+    <ClInclude Include="Network\Protocol\ClientPayload.pb.h">
+      <Filter>Network\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Protocol\Common.pb.h">
+      <Filter>Network\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Protocol\Packet.pb.h">
+      <Filter>Network\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Protocol\ServerPayload.pb.h">
+      <Filter>Network\Protocol</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Network">
       <UniqueIdentifier>{7145323d-aff7-4821-8676-6599937f6871}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network\Protocol">
+      <UniqueIdentifier>{8940a05d-f053-448f-9a06-cc7003112487}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

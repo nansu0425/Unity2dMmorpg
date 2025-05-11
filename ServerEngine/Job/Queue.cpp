@@ -18,7 +18,7 @@ void JobQueue::Push(SharedPtr<Job> job, Bool canFlush)
         }
         else
         {
-            // 다른 스레드가 현재 큐를 비우게 한다
+            // 큐 매니저의 FlushQueues()를 호출할 때 큐를 비운다
             gJobQueueManager->Register(shared_from_this());
         }
     }

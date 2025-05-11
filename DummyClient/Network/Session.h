@@ -1,6 +1,7 @@
 ﻿/*    DummyClient/Network/Session.h    */
 
 #include "ServerEngine/Network/Session.h"
+#include "DummyClient/Network/Protocol/Packet.pb.h"
 
 #pragma once
 

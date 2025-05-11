@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+import "Common.proto";
+
+message LoginRequest
+{
+	string		id = 1;
+	string		password = 2;
+}
+
+message ChatRequest
+{
+	string		message = 1;
+}
