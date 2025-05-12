@@ -8,10 +8,10 @@ void JobQueue::Push(SharedPtr<Job> job, Bool canFlush)
     const Int64 prevCount = mJobCount.fetch_add(1);
     mJobs.Push(std::move(job));
 
-    // 큐에 job이 없을 때만 진입
+    // 큐에 job을 처음 넣은 스레드만 진입
     if (prevCount == 0)
     {
-        if (tFlushingQueue.expired() &&
+        if (tFlushingQueue.expired() && // 현재 스레드가 비우고 있는 큐가 없는 경우
             (canFlush == true))
         {
             Flush();
@@ -26,7 +26,7 @@ void JobQueue::Push(SharedPtr<Job> job, Bool canFlush)
 
 void JobQueue::Flush()
 {
-    // 현재 큐를 비우는 스레드로 설정
+    // 현재 스레드가 비우고 있는 큐로 설정
     tFlushingQueue = shared_from_this();
 
     Vector<SharedPtr<Job>> jobs;

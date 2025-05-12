@@ -42,7 +42,8 @@ void JobTimer::Distribute()
         SharedPtr<JobQueue> owner = item.owner.lock();
         if (owner)
         {
-            owner->Push(item.job);
+            // 큐를 비우지 않고 job을 넣기만 한다
+            owner->Push(item.job, false);
         }
     }
 
