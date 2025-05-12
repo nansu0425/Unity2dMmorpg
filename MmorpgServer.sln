@@ -36,7 +36,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protocol", "Protocol", "{9E
 	ProjectSection(SolutionItems) = preProject
 		Common\Protocol\ClientPayload.proto = Common\Protocol\ClientPayload.proto
 		Common\Protocol\Common.proto = Common\Protocol\Common.proto
-		Common\Protocol\Packet.proto = Common\Protocol\Packet.proto
 		Common\Protocol\ServerPayload.proto = Common\Protocol\ServerPayload.proto
 	EndProjectSection
 EndProject

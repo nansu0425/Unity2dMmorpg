@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+import "ServerPayload.proto";
+import "ClientPayload.proto";
+
+message PacketHeader 
+{
+    int32   size = 1;
+}
+
+message Packet
+{
+    PacketHeader    header = 1;
+    oneof           payload
+    {
+        EnterRoomRequest        enter_room_request = 1000;
+        ChatNotify              chat_notify = 1001;
+        EnterRoomResponse       enter_room_response = 1002;
+        ChatBroadcast           chat_broadcast = 1003;
+    }
+}

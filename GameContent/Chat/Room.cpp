@@ -5,24 +5,27 @@
 #include "GameContent/Common/Player.h"
 #include "ServerEngine/Network/Session.h"
 
-void Room::Enter(SharedPtr<Session> session)
+void Room::Enter(SharedPtr<Player> player)
 {
-    auto player = std::make_shared<Player>(session);
-    mPlayerMap.insert({player->GetId(), player});
+    mPlayers.insert({player->GetId(), player});
+
+    gLogger->Debug(TEXT_8("Player[{}]: Entered room"), player->GetId());
 }
 
-void Room::Leave(SharedPtr<Session> session)
+void Room::Leave(SharedPtr<Player> player)
 {
-    auto it = mPlayerMap.find(session->GetId());
-    if (it != mPlayerMap.end())
+    auto it = mPlayers.find(player->GetId());
+    if (it != mPlayers.end())
     {
-        mPlayerMap.erase(it);
+        mPlayers.erase(it);
     }
+
+    gLogger->Debug(TEXT_8("Player[{}]: Left room"), player->GetId());
 }
 
 void Room::Broadcast(SharedPtr<SendBuffer> buffer)
 {
-    for (auto& [id, player] : mPlayerMap)
+    for (auto& [id, player] : mPlayers)
     {
         player->SendAsync(buffer);
     }

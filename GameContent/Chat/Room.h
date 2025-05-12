@@ -9,10 +9,10 @@ class Room
     : public JobSerializer
 {
 public:
-    void Enter(SharedPtr<Session> session);
-    void Leave(SharedPtr<Session> session);
-    void Broadcast(SharedPtr<SendBuffer> buffer);
+    void    Enter(SharedPtr<Player> player);
+    void    Leave(SharedPtr<Player> player);
+    void    Broadcast(SharedPtr<SendBuffer> buffer);
 
 private:
-    HashMap<Int64, SharedPtr<Player>>  mPlayerMap;
+    HashMap<Int64, SharedPtr<Player>>   mPlayers;
 };

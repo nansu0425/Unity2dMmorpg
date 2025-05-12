@@ -52,12 +52,12 @@ struct TableStruct_ClientPayload_2eproto {
 };
 extern const ::google::protobuf::internal::DescriptorTable
     descriptor_table_ClientPayload_2eproto;
-class ChatRequest;
-struct ChatRequestDefaultTypeInternal;
-extern ChatRequestDefaultTypeInternal _ChatRequest_default_instance_;
-class LoginRequest;
-struct LoginRequestDefaultTypeInternal;
-extern LoginRequestDefaultTypeInternal _LoginRequest_default_instance_;
+class ChatNotify;
+struct ChatNotifyDefaultTypeInternal;
+extern ChatNotifyDefaultTypeInternal _ChatNotify_default_instance_;
+class EnterRoomRequest;
+struct EnterRoomRequestDefaultTypeInternal;
+extern EnterRoomRequestDefaultTypeInternal _EnterRoomRequest_default_instance_;
 namespace google {
 namespace protobuf {
 }  // namespace protobuf
@@ -69,32 +69,32 @@ namespace protobuf {
 
 // -------------------------------------------------------------------
 
-class LoginRequest final
+class EnterRoomRequest final
     : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:LoginRequest) */ {
+/* @@protoc_insertion_point(class_definition:EnterRoomRequest) */ {
  public:
-  inline LoginRequest() : LoginRequest(nullptr) {}
-  ~LoginRequest() PROTOBUF_FINAL;
+  inline EnterRoomRequest() : EnterRoomRequest(nullptr) {}
+  ~EnterRoomRequest() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(LoginRequest* msg, std::destroying_delete_t) {
+  void operator delete(EnterRoomRequest* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(LoginRequest));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(EnterRoomRequest));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR LoginRequest(
+  explicit PROTOBUF_CONSTEXPR EnterRoomRequest(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline LoginRequest(const LoginRequest& from) : LoginRequest(nullptr, from) {}
-  inline LoginRequest(LoginRequest&& from) noexcept
-      : LoginRequest(nullptr, std::move(from)) {}
-  inline LoginRequest& operator=(const LoginRequest& from) {
+  inline EnterRoomRequest(const EnterRoomRequest& from) : EnterRoomRequest(nullptr, from) {}
+  inline EnterRoomRequest(EnterRoomRequest&& from) noexcept
+      : EnterRoomRequest(nullptr, std::move(from)) {}
+  inline EnterRoomRequest& operator=(const EnterRoomRequest& from) {
     CopyFrom(from);
     return *this;
   }
-  inline LoginRequest& operator=(LoginRequest&& from) noexcept {
+  inline EnterRoomRequest& operator=(EnterRoomRequest&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -122,16 +122,16 @@ class LoginRequest final
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const LoginRequest& default_instance() {
+  static const EnterRoomRequest& default_instance() {
     return *internal_default_instance();
   }
-  static inline const LoginRequest* internal_default_instance() {
-    return reinterpret_cast<const LoginRequest*>(
-        &_LoginRequest_default_instance_);
+  static inline const EnterRoomRequest* internal_default_instance() {
+    return reinterpret_cast<const EnterRoomRequest*>(
+        &_EnterRoomRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages = 0;
-  friend void swap(LoginRequest& a, LoginRequest& b) { a.Swap(&b); }
-  inline void Swap(LoginRequest* other) {
+  friend void swap(EnterRoomRequest& a, EnterRoomRequest& b) { a.Swap(&b); }
+  inline void Swap(EnterRoomRequest* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -139,7 +139,7 @@ class LoginRequest final
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(LoginRequest* other) {
+  void UnsafeArenaSwap(EnterRoomRequest* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -147,13 +147,13 @@ class LoginRequest final
 
   // implements Message ----------------------------------------------
 
-  LoginRequest* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<LoginRequest>(arena);
+  EnterRoomRequest* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<EnterRoomRequest>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const LoginRequest& from);
+  void CopyFrom(const EnterRoomRequest& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const LoginRequest& from) { LoginRequest::MergeImpl(*this, from); }
+  void MergeFrom(const EnterRoomRequest& from) { EnterRoomRequest::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -190,18 +190,18 @@ class LoginRequest final
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(LoginRequest* other);
+  void InternalSwap(EnterRoomRequest* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "LoginRequest"; }
+  static ::absl::string_view FullMessageName() { return "EnterRoomRequest"; }
 
  protected:
-  explicit LoginRequest(::google::protobuf::Arena* arena);
-  LoginRequest(::google::protobuf::Arena* arena, const LoginRequest& from);
-  LoginRequest(::google::protobuf::Arena* arena, LoginRequest&& from) noexcept
-      : LoginRequest(arena) {
+  explicit EnterRoomRequest(::google::protobuf::Arena* arena);
+  EnterRoomRequest(::google::protobuf::Arena* arena, const EnterRoomRequest& from);
+  EnterRoomRequest(::google::protobuf::Arena* arena, EnterRoomRequest&& from) noexcept
+      : EnterRoomRequest(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -216,25 +216,9 @@ class LoginRequest final
 
   // accessors -------------------------------------------------------
   enum : int {
-    kIdFieldNumber = 1,
     kPasswordFieldNumber = 2,
+    kIdFieldNumber = 1,
   };
-  // string id = 1;
-  void clear_id() ;
-  const std::string& id() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_id(Arg_&& arg, Args_... args);
-  std::string* mutable_id();
-  PROTOBUF_NODISCARD std::string* release_id();
-  void set_allocated_id(std::string* value);
-
-  private:
-  const std::string& _internal_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_id(
-      const std::string& value);
-  std::string* _internal_mutable_id();
-
-  public:
   // string password = 2;
   void clear_password() ;
   const std::string& password() const;
@@ -251,13 +235,23 @@ class LoginRequest final
   std::string* _internal_mutable_password();
 
   public:
-  // @@protoc_insertion_point(class_scope:LoginRequest)
+  // int64 id = 1;
+  void clear_id() ;
+  ::int64_t id() const;
+  void set_id(::int64_t value);
+
+  private:
+  ::int64_t _internal_id() const;
+  void _internal_set_id(::int64_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:EnterRoomRequest)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       1, 2, 0,
-      31, 2>
+      33, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -273,9 +267,9 @@ class LoginRequest final
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const LoginRequest& from_msg);
-    ::google::protobuf::internal::ArenaStringPtr id_;
+                          const EnterRoomRequest& from_msg);
     ::google::protobuf::internal::ArenaStringPtr password_;
+    ::int64_t id_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -284,32 +278,32 @@ class LoginRequest final
 };
 // -------------------------------------------------------------------
 
-class ChatRequest final
+class ChatNotify final
     : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:ChatRequest) */ {
+/* @@protoc_insertion_point(class_definition:ChatNotify) */ {
  public:
-  inline ChatRequest() : ChatRequest(nullptr) {}
-  ~ChatRequest() PROTOBUF_FINAL;
+  inline ChatNotify() : ChatNotify(nullptr) {}
+  ~ChatNotify() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(ChatRequest* msg, std::destroying_delete_t) {
+  void operator delete(ChatNotify* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(ChatRequest));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(ChatNotify));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR ChatRequest(
+  explicit PROTOBUF_CONSTEXPR ChatNotify(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline ChatRequest(const ChatRequest& from) : ChatRequest(nullptr, from) {}
-  inline ChatRequest(ChatRequest&& from) noexcept
-      : ChatRequest(nullptr, std::move(from)) {}
-  inline ChatRequest& operator=(const ChatRequest& from) {
+  inline ChatNotify(const ChatNotify& from) : ChatNotify(nullptr, from) {}
+  inline ChatNotify(ChatNotify&& from) noexcept
+      : ChatNotify(nullptr, std::move(from)) {}
+  inline ChatNotify& operator=(const ChatNotify& from) {
     CopyFrom(from);
     return *this;
   }
-  inline ChatRequest& operator=(ChatRequest&& from) noexcept {
+  inline ChatNotify& operator=(ChatNotify&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -337,16 +331,16 @@ class ChatRequest final
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const ChatRequest& default_instance() {
+  static const ChatNotify& default_instance() {
     return *internal_default_instance();
   }
-  static inline const ChatRequest* internal_default_instance() {
-    return reinterpret_cast<const ChatRequest*>(
-        &_ChatRequest_default_instance_);
+  static inline const ChatNotify* internal_default_instance() {
+    return reinterpret_cast<const ChatNotify*>(
+        &_ChatNotify_default_instance_);
   }
   static constexpr int kIndexInFileMessages = 1;
-  friend void swap(ChatRequest& a, ChatRequest& b) { a.Swap(&b); }
-  inline void Swap(ChatRequest* other) {
+  friend void swap(ChatNotify& a, ChatNotify& b) { a.Swap(&b); }
+  inline void Swap(ChatNotify* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -354,7 +348,7 @@ class ChatRequest final
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(ChatRequest* other) {
+  void UnsafeArenaSwap(ChatNotify* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -362,13 +356,13 @@ class ChatRequest final
 
   // implements Message ----------------------------------------------
 
-  ChatRequest* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<ChatRequest>(arena);
+  ChatNotify* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<ChatNotify>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const ChatRequest& from);
+  void CopyFrom(const ChatNotify& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const ChatRequest& from) { ChatRequest::MergeImpl(*this, from); }
+  void MergeFrom(const ChatNotify& from) { ChatNotify::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -405,18 +399,18 @@ class ChatRequest final
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(ChatRequest* other);
+  void InternalSwap(ChatNotify* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "ChatRequest"; }
+  static ::absl::string_view FullMessageName() { return "ChatNotify"; }
 
  protected:
-  explicit ChatRequest(::google::protobuf::Arena* arena);
-  ChatRequest(::google::protobuf::Arena* arena, const ChatRequest& from);
-  ChatRequest(::google::protobuf::Arena* arena, ChatRequest&& from) noexcept
-      : ChatRequest(arena) {
+  explicit ChatNotify(::google::protobuf::Arena* arena);
+  ChatNotify(::google::protobuf::Arena* arena, const ChatNotify& from);
+  ChatNotify(::google::protobuf::Arena* arena, ChatNotify&& from) noexcept
+      : ChatNotify(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -431,9 +425,10 @@ class ChatRequest final
 
   // accessors -------------------------------------------------------
   enum : int {
-    kMessageFieldNumber = 1,
+    kMessageFieldNumber = 2,
+    kIdFieldNumber = 1,
   };
-  // string message = 1;
+  // string message = 2;
   void clear_message() ;
   const std::string& message() const;
   template <typename Arg_ = const std::string&, typename... Args_>
@@ -449,13 +444,23 @@ class ChatRequest final
   std::string* _internal_mutable_message();
 
   public:
-  // @@protoc_insertion_point(class_scope:ChatRequest)
+  // int64 id = 1;
+  void clear_id() ;
+  ::int64_t id() const;
+  void set_id(::int64_t value);
+
+  private:
+  ::int64_t _internal_id() const;
+  void _internal_set_id(::int64_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:ChatNotify)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      0, 1, 0,
-      27, 2>
+      1, 2, 0,
+      26, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -471,8 +476,9 @@ class ChatRequest final
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const ChatRequest& from_msg);
+                          const ChatNotify& from_msg);
     ::google::protobuf::internal::ArenaStringPtr message_;
+    ::int64_t id_;
     ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -494,154 +500,150 @@ class ChatRequest final
 #endif  // __GNUC__
 // -------------------------------------------------------------------
 
-// LoginRequest
+// EnterRoomRequest
 
-// string id = 1;
-inline void LoginRequest::clear_id() {
+// int64 id = 1;
+inline void EnterRoomRequest::clear_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.id_.ClearToEmpty();
+  _impl_.id_ = ::int64_t{0};
 }
-inline const std::string& LoginRequest::id() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:LoginRequest.id)
+inline ::int64_t EnterRoomRequest::id() const {
+  // @@protoc_insertion_point(field_get:EnterRoomRequest.id)
   return _internal_id();
 }
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void LoginRequest::set_id(Arg_&& arg,
-                                                     Args_... args) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.id_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:LoginRequest.id)
+inline void EnterRoomRequest::set_id(::int64_t value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:EnterRoomRequest.id)
 }
-inline std::string* LoginRequest::mutable_id() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_id();
-  // @@protoc_insertion_point(field_mutable:LoginRequest.id)
-  return _s;
-}
-inline const std::string& LoginRequest::_internal_id() const {
+inline ::int64_t EnterRoomRequest::_internal_id() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
-  return _impl_.id_.Get();
+  return _impl_.id_;
 }
-inline void LoginRequest::_internal_set_id(const std::string& value) {
+inline void EnterRoomRequest::_internal_set_id(::int64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.id_.Set(value, GetArena());
-}
-inline std::string* LoginRequest::_internal_mutable_id() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  return _impl_.id_.Mutable( GetArena());
-}
-inline std::string* LoginRequest::release_id() {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:LoginRequest.id)
-  return _impl_.id_.Release();
-}
-inline void LoginRequest::set_allocated_id(std::string* value) {
-  ::google::protobuf::internal::TSanWrite(&_impl_);
-  _impl_.id_.SetAllocated(value, GetArena());
-  if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.id_.IsDefault()) {
-    _impl_.id_.Set("", GetArena());
-  }
-  // @@protoc_insertion_point(field_set_allocated:LoginRequest.id)
+  _impl_.id_ = value;
 }
 
 // string password = 2;
-inline void LoginRequest::clear_password() {
+inline void EnterRoomRequest::clear_password() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.password_.ClearToEmpty();
 }
-inline const std::string& LoginRequest::password() const
+inline const std::string& EnterRoomRequest::password() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:LoginRequest.password)
+  // @@protoc_insertion_point(field_get:EnterRoomRequest.password)
   return _internal_password();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void LoginRequest::set_password(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void EnterRoomRequest::set_password(Arg_&& arg,
                                                      Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.password_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:LoginRequest.password)
+  // @@protoc_insertion_point(field_set:EnterRoomRequest.password)
 }
-inline std::string* LoginRequest::mutable_password() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline std::string* EnterRoomRequest::mutable_password() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   std::string* _s = _internal_mutable_password();
-  // @@protoc_insertion_point(field_mutable:LoginRequest.password)
+  // @@protoc_insertion_point(field_mutable:EnterRoomRequest.password)
   return _s;
 }
-inline const std::string& LoginRequest::_internal_password() const {
+inline const std::string& EnterRoomRequest::_internal_password() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.password_.Get();
 }
-inline void LoginRequest::_internal_set_password(const std::string& value) {
+inline void EnterRoomRequest::_internal_set_password(const std::string& value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.password_.Set(value, GetArena());
 }
-inline std::string* LoginRequest::_internal_mutable_password() {
+inline std::string* EnterRoomRequest::_internal_mutable_password() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _impl_.password_.Mutable( GetArena());
 }
-inline std::string* LoginRequest::release_password() {
+inline std::string* EnterRoomRequest::release_password() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:LoginRequest.password)
+  // @@protoc_insertion_point(field_release:EnterRoomRequest.password)
   return _impl_.password_.Release();
 }
-inline void LoginRequest::set_allocated_password(std::string* value) {
+inline void EnterRoomRequest::set_allocated_password(std::string* value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.password_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.password_.IsDefault()) {
     _impl_.password_.Set("", GetArena());
   }
-  // @@protoc_insertion_point(field_set_allocated:LoginRequest.password)
+  // @@protoc_insertion_point(field_set_allocated:EnterRoomRequest.password)
 }
 
 // -------------------------------------------------------------------
 
-// ChatRequest
+// ChatNotify
 
-// string message = 1;
-inline void ChatRequest::clear_message() {
+// int64 id = 1;
+inline void ChatNotify::clear_id() {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.id_ = ::int64_t{0};
+}
+inline ::int64_t ChatNotify::id() const {
+  // @@protoc_insertion_point(field_get:ChatNotify.id)
+  return _internal_id();
+}
+inline void ChatNotify::set_id(::int64_t value) {
+  _internal_set_id(value);
+  // @@protoc_insertion_point(field_set:ChatNotify.id)
+}
+inline ::int64_t ChatNotify::_internal_id() const {
+  ::google::protobuf::internal::TSanRead(&_impl_);
+  return _impl_.id_;
+}
+inline void ChatNotify::_internal_set_id(::int64_t value) {
+  ::google::protobuf::internal::TSanWrite(&_impl_);
+  _impl_.id_ = value;
+}
+
+// string message = 2;
+inline void ChatNotify::clear_message() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_.ClearToEmpty();
 }
-inline const std::string& ChatRequest::message() const
+inline const std::string& ChatNotify::message() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:ChatRequest.message)
+  // @@protoc_insertion_point(field_get:ChatNotify.message)
   return _internal_message();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void ChatRequest::set_message(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void ChatNotify::set_message(Arg_&& arg,
                                                      Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:ChatRequest.message)
+  // @@protoc_insertion_point(field_set:ChatNotify.message)
 }
-inline std::string* ChatRequest::mutable_message() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline std::string* ChatNotify::mutable_message() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   std::string* _s = _internal_mutable_message();
-  // @@protoc_insertion_point(field_mutable:ChatRequest.message)
+  // @@protoc_insertion_point(field_mutable:ChatNotify.message)
   return _s;
 }
-inline const std::string& ChatRequest::_internal_message() const {
+inline const std::string& ChatNotify::_internal_message() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.message_.Get();
 }
-inline void ChatRequest::_internal_set_message(const std::string& value) {
+inline void ChatNotify::_internal_set_message(const std::string& value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_.Set(value, GetArena());
 }
-inline std::string* ChatRequest::_internal_mutable_message() {
+inline std::string* ChatNotify::_internal_mutable_message() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _impl_.message_.Mutable( GetArena());
 }
-inline std::string* ChatRequest::release_message() {
+inline std::string* ChatNotify::release_message() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:ChatRequest.message)
+  // @@protoc_insertion_point(field_release:ChatNotify.message)
   return _impl_.message_.Release();
 }
-inline void ChatRequest::set_allocated_message(std::string* value) {
+inline void ChatNotify::set_allocated_message(std::string* value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.message_.IsDefault()) {
     _impl_.message_.Set("", GetArena());
   }
-  // @@protoc_insertion_point(field_set_allocated:ChatRequest.message)
+  // @@protoc_insertion_point(field_set_allocated:ChatNotify.message)
 }
 
 #ifdef __GNUC__

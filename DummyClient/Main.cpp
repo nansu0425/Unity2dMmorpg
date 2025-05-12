@@ -5,9 +5,6 @@
 #include "ServerEngine/Io/Dispatcher.h"
 #include "ServerEngine/Network/Service.h"
 #include "DummyClient/Network/Session.h"
-#include "GameContent/Chat/Room.h"
-
-constexpr Byte gBroadcastMessage[] = TEXT_8("Hello, world!");
 
 void WorkerThread(SharedPtr<ClientService> service)
 {
@@ -25,23 +22,12 @@ void WorkerThread(SharedPtr<ClientService> service)
     }
 }
 
-void BroadcastAsync(SharedPtr<SendBuffer> sendBuf)
-{
-    // 1초마다 브로드캐스트
-    gRoom->MakeJob([sendBuf]
-                   {
-                       gRoom->Broadcast(sendBuf);
-                       BroadcastAsync(sendBuf);
-                   }, 1000);
-
-}
-
 Service::Config gConfig =
 {
     NetAddress(TEXT_16("127.0.0.1"), 7777),
     std::make_shared<IoEventDispatcher>(),
     std::make_shared<ServerSession>,
-    100,
+    1,
 };
 
 int main()
@@ -61,16 +47,6 @@ int main()
                                    WorkerThread(service);
                                });
     }
-
-    // 브로드캐스트 메시지를 송신 버퍼로 만든다
-    SharedPtr<SendBuffer> sendBuf = gSendChunkPool->Alloc(1024);
-    BufferWriter writer(sendBuf->GetBuffer(), sendBuf->GetAllocSize());
-    writer.Write(gBroadcastMessage, NUM_ELEM_64(gBroadcastMessage));
-    sendBuf->OnWritten(NUM_ELEM_64(gBroadcastMessage));
-
-    // 브로드캐스트 메시지를 모든 서버 세션에 1초마다 전송
-    BroadcastAsync(std::move(sendBuf));
-
     gThreadManager->Join();
 
     // 클라이언트 서비스 중지

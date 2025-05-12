@@ -12,10 +12,13 @@
     <ClCompile Include="Network\Protocol\Common.pb.cc">
       <Filter>Network\Protocol</Filter>
     </ClCompile>
-    <ClCompile Include="Network\Protocol\Packet.pb.cc">
+    <ClCompile Include="Network\Protocol\ServerPayload.pb.cc">
       <Filter>Network\Protocol</Filter>
     </ClCompile>
-    <ClCompile Include="Network\Protocol\ServerPayload.pb.cc">
+    <ClCompile Include="Network\PacketHandler.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Protocol\Packet.cpp">
       <Filter>Network\Protocol</Filter>
     </ClCompile>
   </ItemGroup>
@@ -30,10 +33,13 @@
     <ClInclude Include="Network\Protocol\Common.pb.h">
       <Filter>Network\Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="Network\Protocol\Packet.pb.h">
+    <ClInclude Include="Network\Protocol\ServerPayload.pb.h">
       <Filter>Network\Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="Network\Protocol\ServerPayload.pb.h">
+    <ClInclude Include="Network\PacketHandler.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Protocol\Packet.h">
       <Filter>Network\Protocol</Filter>
     </ClInclude>
   </ItemGroup>

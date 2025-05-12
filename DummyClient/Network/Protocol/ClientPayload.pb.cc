@@ -25,18 +25,16 @@ namespace _pb = ::google::protobuf;
 namespace _pbi = ::google::protobuf::internal;
 namespace _fl = ::google::protobuf::internal::field_layout;
 
-inline constexpr LoginRequest::Impl_::Impl_(
+inline constexpr EnterRoomRequest::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
-      : id_(
+      : password_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        password_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
+        id_{::int64_t{0}},
         _cached_size_{0} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR LoginRequest::LoginRequest(::_pbi::ConstantInitialized)
+PROTOBUF_CONSTEXPR EnterRoomRequest::EnterRoomRequest(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(_class_data_.base()),
 #else   // PROTOBUF_CUSTOM_VTABLE
@@ -44,26 +42,27 @@ PROTOBUF_CONSTEXPR LoginRequest::LoginRequest(::_pbi::ConstantInitialized)
 #endif  // PROTOBUF_CUSTOM_VTABLE
       _impl_(::_pbi::ConstantInitialized()) {
 }
-struct LoginRequestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR LoginRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~LoginRequestDefaultTypeInternal() {}
+struct EnterRoomRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR EnterRoomRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~EnterRoomRequestDefaultTypeInternal() {}
   union {
-    LoginRequest _instance;
+    EnterRoomRequest _instance;
   };
 };
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 LoginRequestDefaultTypeInternal _LoginRequest_default_instance_;
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 EnterRoomRequestDefaultTypeInternal _EnterRoomRequest_default_instance_;
 
-inline constexpr ChatRequest::Impl_::Impl_(
+inline constexpr ChatNotify::Impl_::Impl_(
     ::_pbi::ConstantInitialized) noexcept
       : message_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
+        id_{::int64_t{0}},
         _cached_size_{0} {}
 
 template <typename>
-PROTOBUF_CONSTEXPR ChatRequest::ChatRequest(::_pbi::ConstantInitialized)
+PROTOBUF_CONSTEXPR ChatNotify::ChatNotify(::_pbi::ConstantInitialized)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(_class_data_.base()),
 #else   // PROTOBUF_CUSTOM_VTABLE
@@ -71,16 +70,16 @@ PROTOBUF_CONSTEXPR ChatRequest::ChatRequest(::_pbi::ConstantInitialized)
 #endif  // PROTOBUF_CUSTOM_VTABLE
       _impl_(::_pbi::ConstantInitialized()) {
 }
-struct ChatRequestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR ChatRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~ChatRequestDefaultTypeInternal() {}
+struct ChatNotifyDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ChatNotifyDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ChatNotifyDefaultTypeInternal() {}
   union {
-    ChatRequest _instance;
+    ChatNotify _instance;
   };
 };
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ChatRequestDefaultTypeInternal _ChatRequest_default_instance_;
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ChatNotifyDefaultTypeInternal _ChatNotify_default_instance_;
 static constexpr const ::_pb::EnumDescriptor**
     file_level_enum_descriptors_ClientPayload_2eproto = nullptr;
 static constexpr const ::_pb::ServiceDescriptor**
@@ -89,41 +88,42 @@ const ::uint32_t
     TableStruct_ClientPayload_2eproto::offsets[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
         protodesc_cold) = {
         ~0u,  // no _has_bits_
-        PROTOBUF_FIELD_OFFSET(::LoginRequest, _internal_metadata_),
+        PROTOBUF_FIELD_OFFSET(::EnterRoomRequest, _internal_metadata_),
         ~0u,  // no _extensions_
         ~0u,  // no _oneof_case_
         ~0u,  // no _weak_field_map_
         ~0u,  // no _inlined_string_donated_
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::LoginRequest, _impl_.id_),
-        PROTOBUF_FIELD_OFFSET(::LoginRequest, _impl_.password_),
+        PROTOBUF_FIELD_OFFSET(::EnterRoomRequest, _impl_.id_),
+        PROTOBUF_FIELD_OFFSET(::EnterRoomRequest, _impl_.password_),
         ~0u,  // no _has_bits_
-        PROTOBUF_FIELD_OFFSET(::ChatRequest, _internal_metadata_),
+        PROTOBUF_FIELD_OFFSET(::ChatNotify, _internal_metadata_),
         ~0u,  // no _extensions_
         ~0u,  // no _oneof_case_
         ~0u,  // no _weak_field_map_
         ~0u,  // no _inlined_string_donated_
         ~0u,  // no _split_
         ~0u,  // no sizeof(Split)
-        PROTOBUF_FIELD_OFFSET(::ChatRequest, _impl_.message_),
+        PROTOBUF_FIELD_OFFSET(::ChatNotify, _impl_.id_),
+        PROTOBUF_FIELD_OFFSET(::ChatNotify, _impl_.message_),
 };
 
 static const ::_pbi::MigrationSchema
     schemas[] ABSL_ATTRIBUTE_SECTION_VARIABLE(protodesc_cold) = {
-        {0, -1, -1, sizeof(::LoginRequest)},
-        {10, -1, -1, sizeof(::ChatRequest)},
+        {0, -1, -1, sizeof(::EnterRoomRequest)},
+        {10, -1, -1, sizeof(::ChatNotify)},
 };
 static const ::_pb::Message* const file_default_instances[] = {
-    &::_LoginRequest_default_instance_._instance,
-    &::_ChatRequest_default_instance_._instance,
+    &::_EnterRoomRequest_default_instance_._instance,
+    &::_ChatNotify_default_instance_._instance,
 };
 const char descriptor_table_protodef_ClientPayload_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
-    "\n\023ClientPayload.proto\032\014Common.proto\",\n\014L"
-    "oginRequest\022\n\n\002id\030\001 \001(\t\022\020\n\010password\030\002 \001("
-    "\t\"\036\n\013ChatRequest\022\017\n\007message\030\001 \001(\tb\006proto"
-    "3"
+    "\n\023ClientPayload.proto\032\014Common.proto\"0\n\020E"
+    "nterRoomRequest\022\n\n\002id\030\001 \001(\003\022\020\n\010password\030"
+    "\002 \001(\t\")\n\nChatNotify\022\n\n\002id\030\001 \001(\003\022\017\n\007messa"
+    "ge\030\002 \001(\tb\006proto3"
 };
 static const ::_pbi::DescriptorTable* const descriptor_table_ClientPayload_2eproto_deps[1] =
     {
@@ -133,7 +133,7 @@ static ::absl::once_flag descriptor_table_ClientPayload_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_ClientPayload_2eproto = {
     false,
     false,
-    121,
+    136,
     descriptor_table_protodef_ClientPayload_2eproto,
     "ClientPayload.proto",
     &descriptor_table_ClientPayload_2eproto_once,
@@ -148,102 +148,101 @@ PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_ClientPayload_
 };
 // ===================================================================
 
-class LoginRequest::_Internal {
+class EnterRoomRequest::_Internal {
  public:
 };
 
-LoginRequest::LoginRequest(::google::protobuf::Arena* arena)
+EnterRoomRequest::EnterRoomRequest(::google::protobuf::Arena* arena)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(arena, _class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
   SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:LoginRequest)
+  // @@protoc_insertion_point(arena_constructor:EnterRoomRequest)
 }
-inline PROTOBUF_NDEBUG_INLINE LoginRequest::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE EnterRoomRequest::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from, const ::LoginRequest& from_msg)
-      : id_(arena, from.id_),
-        password_(arena, from.password_),
+    const Impl_& from, const ::EnterRoomRequest& from_msg)
+      : password_(arena, from.password_),
         _cached_size_{0} {}
 
-LoginRequest::LoginRequest(
+EnterRoomRequest::EnterRoomRequest(
     ::google::protobuf::Arena* arena,
-    const LoginRequest& from)
+    const EnterRoomRequest& from)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(arena, _class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
-  LoginRequest* const _this = this;
+  EnterRoomRequest* const _this = this;
   (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.id_ = from._impl_.id_;
 
-  // @@protoc_insertion_point(copy_constructor:LoginRequest)
+  // @@protoc_insertion_point(copy_constructor:EnterRoomRequest)
 }
-inline PROTOBUF_NDEBUG_INLINE LoginRequest::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE EnterRoomRequest::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
-      : id_(arena),
-        password_(arena),
+      : password_(arena),
         _cached_size_{0} {}
 
-inline void LoginRequest::SharedCtor(::_pb::Arena* arena) {
+inline void EnterRoomRequest::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.id_ = {};
 }
-LoginRequest::~LoginRequest() {
-  // @@protoc_insertion_point(destructor:LoginRequest)
+EnterRoomRequest::~EnterRoomRequest() {
+  // @@protoc_insertion_point(destructor:EnterRoomRequest)
   SharedDtor(*this);
 }
-inline void LoginRequest::SharedDtor(MessageLite& self) {
-  LoginRequest& this_ = static_cast<LoginRequest&>(self);
+inline void EnterRoomRequest::SharedDtor(MessageLite& self) {
+  EnterRoomRequest& this_ = static_cast<EnterRoomRequest&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
-  this_._impl_.id_.Destroy();
   this_._impl_.password_.Destroy();
   this_._impl_.~Impl_();
 }
 
-inline void* LoginRequest::PlacementNew_(const void*, void* mem,
+inline void* EnterRoomRequest::PlacementNew_(const void*, void* mem,
                                         ::google::protobuf::Arena* arena) {
-  return ::new (mem) LoginRequest(arena);
+  return ::new (mem) EnterRoomRequest(arena);
 }
-constexpr auto LoginRequest::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(LoginRequest),
-                                            alignof(LoginRequest));
+constexpr auto EnterRoomRequest::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(EnterRoomRequest),
+                                            alignof(EnterRoomRequest));
 }
 PROTOBUF_CONSTINIT
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::google::protobuf::internal::ClassDataFull LoginRequest::_class_data_ = {
+const ::google::protobuf::internal::ClassDataFull EnterRoomRequest::_class_data_ = {
     ::google::protobuf::internal::ClassData{
-        &_LoginRequest_default_instance_._instance,
+        &_EnterRoomRequest_default_instance_._instance,
         &_table_.header,
         nullptr,  // OnDemandRegisterArenaDtor
         nullptr,  // IsInitialized
-        &LoginRequest::MergeImpl,
-        ::google::protobuf::Message::GetNewImpl<LoginRequest>(),
+        &EnterRoomRequest::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<EnterRoomRequest>(),
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        &LoginRequest::SharedDtor,
-        ::google::protobuf::Message::GetClearImpl<LoginRequest>(), &LoginRequest::ByteSizeLong,
-            &LoginRequest::_InternalSerialize,
+        &EnterRoomRequest::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<EnterRoomRequest>(), &EnterRoomRequest::ByteSizeLong,
+            &EnterRoomRequest::_InternalSerialize,
 #endif  // PROTOBUF_CUSTOM_VTABLE
-        PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_._cached_size_),
+        PROTOBUF_FIELD_OFFSET(EnterRoomRequest, _impl_._cached_size_),
         false,
     },
-    &LoginRequest::kDescriptorMethods,
+    &EnterRoomRequest::kDescriptorMethods,
     &descriptor_table_ClientPayload_2eproto,
     nullptr,  // tracker
 };
-const ::google::protobuf::internal::ClassData* LoginRequest::GetClassData() const {
+const ::google::protobuf::internal::ClassData* EnterRoomRequest::GetClassData() const {
   ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
   ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 31, 2> LoginRequest::_table_ = {
+const ::_pbi::TcParseTable<1, 2, 0, 33, 2> EnterRoomRequest::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
@@ -258,74 +257,72 @@ const ::_pbi::TcParseTable<1, 2, 0, 31, 2> LoginRequest::_table_ = {
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
     #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::LoginRequest>(),  // to_prefetch
+    ::_pbi::TcParser::GetTable<::EnterRoomRequest>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
     // string password = 2;
     {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_.password_)}},
-    // string id = 1;
-    {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_.id_)}},
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(EnterRoomRequest, _impl_.password_)}},
+    // int64 id = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(EnterRoomRequest, _impl_.id_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(EnterRoomRequest, _impl_.id_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // string id = 1;
-    {PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_.id_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
+    // int64 id = 1;
+    {PROTOBUF_FIELD_OFFSET(EnterRoomRequest, _impl_.id_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
     // string password = 2;
-    {PROTOBUF_FIELD_OFFSET(LoginRequest, _impl_.password_), 0, 0,
+    {PROTOBUF_FIELD_OFFSET(EnterRoomRequest, _impl_.password_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\14\2\10\0\0\0\0\0"
-    "LoginRequest"
-    "id"
+    "\20\0\10\0\0\0\0\0"
+    "EnterRoomRequest"
     "password"
   }},
 };
 
-PROTOBUF_NOINLINE void LoginRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:LoginRequest)
+PROTOBUF_NOINLINE void EnterRoomRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:EnterRoomRequest)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.id_.ClearToEmpty();
   _impl_.password_.ClearToEmpty();
+  _impl_.id_ = ::int64_t{0};
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::uint8_t* LoginRequest::_InternalSerialize(
+        ::uint8_t* EnterRoomRequest::_InternalSerialize(
             const MessageLite& base, ::uint8_t* target,
             ::google::protobuf::io::EpsCopyOutputStream* stream) {
-          const LoginRequest& this_ = static_cast<const LoginRequest&>(base);
+          const EnterRoomRequest& this_ = static_cast<const EnterRoomRequest&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-        ::uint8_t* LoginRequest::_InternalSerialize(
+        ::uint8_t* EnterRoomRequest::_InternalSerialize(
             ::uint8_t* target,
             ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-          const LoginRequest& this_ = *this;
+          const EnterRoomRequest& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(serialize_to_array_start:LoginRequest)
+          // @@protoc_insertion_point(serialize_to_array_start:EnterRoomRequest)
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string id = 1;
-          if (!this_._internal_id().empty()) {
-            const std::string& _s = this_._internal_id();
-            ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "LoginRequest.id");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+          // int64 id = 1;
+          if (this_._internal_id() != 0) {
+            target = ::google::protobuf::internal::WireFormatLite::
+                WriteInt64ToArrayWithField<1>(
+                    stream, this_._internal_id(), target);
           }
 
           // string password = 2;
           if (!this_._internal_password().empty()) {
             const std::string& _s = this_._internal_password();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "LoginRequest.password");
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "EnterRoomRequest.password");
             target = stream->WriteStringMaybeAliased(2, _s, target);
           }
 
@@ -334,18 +331,18 @@ PROTOBUF_NOINLINE void LoginRequest::Clear() {
                 ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
                     this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
           }
-          // @@protoc_insertion_point(serialize_to_array_end:LoginRequest)
+          // @@protoc_insertion_point(serialize_to_array_end:EnterRoomRequest)
           return target;
         }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::size_t LoginRequest::ByteSizeLong(const MessageLite& base) {
-          const LoginRequest& this_ = static_cast<const LoginRequest&>(base);
+        ::size_t EnterRoomRequest::ByteSizeLong(const MessageLite& base) {
+          const EnterRoomRequest& this_ = static_cast<const EnterRoomRequest&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-        ::size_t LoginRequest::ByteSizeLong() const {
-          const LoginRequest& this_ = *this;
+        ::size_t EnterRoomRequest::ByteSizeLong() const {
+          const EnterRoomRequest& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(message_byte_size_start:LoginRequest)
+          // @@protoc_insertion_point(message_byte_size_start:EnterRoomRequest)
           ::size_t total_size = 0;
 
           ::uint32_t cached_has_bits = 0;
@@ -354,220 +351,236 @@ PROTOBUF_NOINLINE void LoginRequest::Clear() {
 
           ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string id = 1;
-            if (!this_._internal_id().empty()) {
-              total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                              this_._internal_id());
-            }
             // string password = 2;
             if (!this_._internal_password().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_password());
+            }
+            // int64 id = 1;
+            if (this_._internal_id() != 0) {
+              total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+                  this_._internal_id());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
                                                      &this_._impl_._cached_size_);
         }
 
-void LoginRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
-  auto* const _this = static_cast<LoginRequest*>(&to_msg);
-  auto& from = static_cast<const LoginRequest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:LoginRequest)
+void EnterRoomRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<EnterRoomRequest*>(&to_msg);
+  auto& from = static_cast<const EnterRoomRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:EnterRoomRequest)
   ABSL_DCHECK_NE(&from, _this);
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_id().empty()) {
-    _this->_internal_set_id(from._internal_id());
-  }
   if (!from._internal_password().empty()) {
     _this->_internal_set_password(from._internal_password());
+  }
+  if (from._internal_id() != 0) {
+    _this->_impl_.id_ = from._impl_.id_;
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void LoginRequest::CopyFrom(const LoginRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:LoginRequest)
+void EnterRoomRequest::CopyFrom(const EnterRoomRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:EnterRoomRequest)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 
-void LoginRequest::InternalSwap(LoginRequest* PROTOBUF_RESTRICT other) {
+void EnterRoomRequest::InternalSwap(EnterRoomRequest* PROTOBUF_RESTRICT other) {
   using std::swap;
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.id_, &other->_impl_.id_, arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.password_, &other->_impl_.password_, arena);
+        swap(_impl_.id_, other->_impl_.id_);
 }
 
-::google::protobuf::Metadata LoginRequest::GetMetadata() const {
+::google::protobuf::Metadata EnterRoomRequest::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // ===================================================================
 
-class ChatRequest::_Internal {
+class ChatNotify::_Internal {
  public:
 };
 
-ChatRequest::ChatRequest(::google::protobuf::Arena* arena)
+ChatNotify::ChatNotify(::google::protobuf::Arena* arena)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(arena, _class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
   SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:ChatRequest)
+  // @@protoc_insertion_point(arena_constructor:ChatNotify)
 }
-inline PROTOBUF_NDEBUG_INLINE ChatRequest::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE ChatNotify::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from, const ::ChatRequest& from_msg)
+    const Impl_& from, const ::ChatNotify& from_msg)
       : message_(arena, from.message_),
         _cached_size_{0} {}
 
-ChatRequest::ChatRequest(
+ChatNotify::ChatNotify(
     ::google::protobuf::Arena* arena,
-    const ChatRequest& from)
+    const ChatNotify& from)
 #if defined(PROTOBUF_CUSTOM_VTABLE)
     : ::google::protobuf::Message(arena, _class_data_.base()) {
 #else   // PROTOBUF_CUSTOM_VTABLE
     : ::google::protobuf::Message(arena) {
 #endif  // PROTOBUF_CUSTOM_VTABLE
-  ChatRequest* const _this = this;
+  ChatNotify* const _this = this;
   (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_, from);
+  _impl_.id_ = from._impl_.id_;
 
-  // @@protoc_insertion_point(copy_constructor:ChatRequest)
+  // @@protoc_insertion_point(copy_constructor:ChatNotify)
 }
-inline PROTOBUF_NDEBUG_INLINE ChatRequest::Impl_::Impl_(
+inline PROTOBUF_NDEBUG_INLINE ChatNotify::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : message_(arena),
         _cached_size_{0} {}
 
-inline void ChatRequest::SharedCtor(::_pb::Arena* arena) {
+inline void ChatNotify::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
+  _impl_.id_ = {};
 }
-ChatRequest::~ChatRequest() {
-  // @@protoc_insertion_point(destructor:ChatRequest)
+ChatNotify::~ChatNotify() {
+  // @@protoc_insertion_point(destructor:ChatNotify)
   SharedDtor(*this);
 }
-inline void ChatRequest::SharedDtor(MessageLite& self) {
-  ChatRequest& this_ = static_cast<ChatRequest&>(self);
+inline void ChatNotify::SharedDtor(MessageLite& self) {
+  ChatNotify& this_ = static_cast<ChatNotify&>(self);
   this_._internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
   ABSL_DCHECK(this_.GetArena() == nullptr);
   this_._impl_.message_.Destroy();
   this_._impl_.~Impl_();
 }
 
-inline void* ChatRequest::PlacementNew_(const void*, void* mem,
+inline void* ChatNotify::PlacementNew_(const void*, void* mem,
                                         ::google::protobuf::Arena* arena) {
-  return ::new (mem) ChatRequest(arena);
+  return ::new (mem) ChatNotify(arena);
 }
-constexpr auto ChatRequest::InternalNewImpl_() {
-  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(ChatRequest),
-                                            alignof(ChatRequest));
+constexpr auto ChatNotify::InternalNewImpl_() {
+  return ::google::protobuf::internal::MessageCreator::CopyInit(sizeof(ChatNotify),
+                                            alignof(ChatNotify));
 }
 PROTOBUF_CONSTINIT
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::google::protobuf::internal::ClassDataFull ChatRequest::_class_data_ = {
+const ::google::protobuf::internal::ClassDataFull ChatNotify::_class_data_ = {
     ::google::protobuf::internal::ClassData{
-        &_ChatRequest_default_instance_._instance,
+        &_ChatNotify_default_instance_._instance,
         &_table_.header,
         nullptr,  // OnDemandRegisterArenaDtor
         nullptr,  // IsInitialized
-        &ChatRequest::MergeImpl,
-        ::google::protobuf::Message::GetNewImpl<ChatRequest>(),
+        &ChatNotify::MergeImpl,
+        ::google::protobuf::Message::GetNewImpl<ChatNotify>(),
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        &ChatRequest::SharedDtor,
-        ::google::protobuf::Message::GetClearImpl<ChatRequest>(), &ChatRequest::ByteSizeLong,
-            &ChatRequest::_InternalSerialize,
+        &ChatNotify::SharedDtor,
+        ::google::protobuf::Message::GetClearImpl<ChatNotify>(), &ChatNotify::ByteSizeLong,
+            &ChatNotify::_InternalSerialize,
 #endif  // PROTOBUF_CUSTOM_VTABLE
-        PROTOBUF_FIELD_OFFSET(ChatRequest, _impl_._cached_size_),
+        PROTOBUF_FIELD_OFFSET(ChatNotify, _impl_._cached_size_),
         false,
     },
-    &ChatRequest::kDescriptorMethods,
+    &ChatNotify::kDescriptorMethods,
     &descriptor_table_ClientPayload_2eproto,
     nullptr,  // tracker
 };
-const ::google::protobuf::internal::ClassData* ChatRequest::GetClassData() const {
+const ::google::protobuf::internal::ClassData* ChatNotify::GetClassData() const {
   ::google::protobuf::internal::PrefetchToLocalCache(&_class_data_);
   ::google::protobuf::internal::PrefetchToLocalCache(_class_data_.tc_table);
   return _class_data_.base();
 }
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<0, 1, 0, 27, 2> ChatRequest::_table_ = {
+const ::_pbi::TcParseTable<1, 2, 0, 26, 2> ChatNotify::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    1, 0,  // max_field_number, fast_idx_mask
+    2, 8,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967294,  // skipmap
+    4294967292,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    1,  // num_field_entries
+    2,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     _class_data_.base(),
     nullptr,  // post_loop_handler
     ::_pbi::TcParser::GenericFallback,  // fallback
     #ifdef PROTOBUF_PREFETCH_PARSE_TABLE
-    ::_pbi::TcParser::GetTable<::ChatRequest>(),  // to_prefetch
+    ::_pbi::TcParser::GetTable<::ChatNotify>(),  // to_prefetch
     #endif  // PROTOBUF_PREFETCH_PARSE_TABLE
   }, {{
-    // string message = 1;
+    // string message = 2;
     {::_pbi::TcParser::FastUS1,
-     {10, 63, 0, PROTOBUF_FIELD_OFFSET(ChatRequest, _impl_.message_)}},
+     {18, 63, 0, PROTOBUF_FIELD_OFFSET(ChatNotify, _impl_.message_)}},
+    // int64 id = 1;
+    {::_pbi::TcParser::SingularVarintNoZag1<::uint64_t, offsetof(ChatNotify, _impl_.id_), 63>(),
+     {8, 63, 0, PROTOBUF_FIELD_OFFSET(ChatNotify, _impl_.id_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // string message = 1;
-    {PROTOBUF_FIELD_OFFSET(ChatRequest, _impl_.message_), 0, 0,
+    // int64 id = 1;
+    {PROTOBUF_FIELD_OFFSET(ChatNotify, _impl_.id_), 0, 0,
+    (0 | ::_fl::kFcSingular | ::_fl::kInt64)},
+    // string message = 2;
+    {PROTOBUF_FIELD_OFFSET(ChatNotify, _impl_.message_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\13\7\0\0\0\0\0\0"
-    "ChatRequest"
+    "\12\0\7\0\0\0\0\0"
+    "ChatNotify"
     "message"
   }},
 };
 
-PROTOBUF_NOINLINE void ChatRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:ChatRequest)
+PROTOBUF_NOINLINE void ChatNotify::Clear() {
+// @@protoc_insertion_point(message_clear_start:ChatNotify)
   ::google::protobuf::internal::TSanWrite(&_impl_);
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   _impl_.message_.ClearToEmpty();
+  _impl_.id_ = ::int64_t{0};
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::uint8_t* ChatRequest::_InternalSerialize(
+        ::uint8_t* ChatNotify::_InternalSerialize(
             const MessageLite& base, ::uint8_t* target,
             ::google::protobuf::io::EpsCopyOutputStream* stream) {
-          const ChatRequest& this_ = static_cast<const ChatRequest&>(base);
+          const ChatNotify& this_ = static_cast<const ChatNotify&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-        ::uint8_t* ChatRequest::_InternalSerialize(
+        ::uint8_t* ChatNotify::_InternalSerialize(
             ::uint8_t* target,
             ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-          const ChatRequest& this_ = *this;
+          const ChatNotify& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(serialize_to_array_start:ChatRequest)
+          // @@protoc_insertion_point(serialize_to_array_start:ChatNotify)
           ::uint32_t cached_has_bits = 0;
           (void)cached_has_bits;
 
-          // string message = 1;
+          // int64 id = 1;
+          if (this_._internal_id() != 0) {
+            target = ::google::protobuf::internal::WireFormatLite::
+                WriteInt64ToArrayWithField<1>(
+                    stream, this_._internal_id(), target);
+          }
+
+          // string message = 2;
           if (!this_._internal_message().empty()) {
             const std::string& _s = this_._internal_message();
             ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "ChatRequest.message");
-            target = stream->WriteStringMaybeAliased(1, _s, target);
+                _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "ChatNotify.message");
+            target = stream->WriteStringMaybeAliased(2, _s, target);
           }
 
           if (PROTOBUF_PREDICT_FALSE(this_._internal_metadata_.have_unknown_fields())) {
@@ -575,39 +588,45 @@ PROTOBUF_NOINLINE void ChatRequest::Clear() {
                 ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
                     this_._internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
           }
-          // @@protoc_insertion_point(serialize_to_array_end:ChatRequest)
+          // @@protoc_insertion_point(serialize_to_array_end:ChatNotify)
           return target;
         }
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-        ::size_t ChatRequest::ByteSizeLong(const MessageLite& base) {
-          const ChatRequest& this_ = static_cast<const ChatRequest&>(base);
+        ::size_t ChatNotify::ByteSizeLong(const MessageLite& base) {
+          const ChatNotify& this_ = static_cast<const ChatNotify&>(base);
 #else   // PROTOBUF_CUSTOM_VTABLE
-        ::size_t ChatRequest::ByteSizeLong() const {
-          const ChatRequest& this_ = *this;
+        ::size_t ChatNotify::ByteSizeLong() const {
+          const ChatNotify& this_ = *this;
 #endif  // PROTOBUF_CUSTOM_VTABLE
-          // @@protoc_insertion_point(message_byte_size_start:ChatRequest)
+          // @@protoc_insertion_point(message_byte_size_start:ChatNotify)
           ::size_t total_size = 0;
 
           ::uint32_t cached_has_bits = 0;
           // Prevent compiler warnings about cached_has_bits being unused
           (void)cached_has_bits;
 
+          ::_pbi::Prefetch5LinesFrom7Lines(&this_);
            {
-            // string message = 1;
+            // string message = 2;
             if (!this_._internal_message().empty()) {
               total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
                                               this_._internal_message());
+            }
+            // int64 id = 1;
+            if (this_._internal_id() != 0) {
+              total_size += ::_pbi::WireFormatLite::Int64SizePlusOne(
+                  this_._internal_id());
             }
           }
           return this_.MaybeComputeUnknownFieldsSize(total_size,
                                                      &this_._impl_._cached_size_);
         }
 
-void ChatRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
-  auto* const _this = static_cast<ChatRequest*>(&to_msg);
-  auto& from = static_cast<const ChatRequest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:ChatRequest)
+void ChatNotify::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::google::protobuf::MessageLite& from_msg) {
+  auto* const _this = static_cast<ChatNotify*>(&to_msg);
+  auto& from = static_cast<const ChatNotify&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:ChatNotify)
   ABSL_DCHECK_NE(&from, _this);
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -615,26 +634,30 @@ void ChatRequest::MergeImpl(::google::protobuf::MessageLite& to_msg, const ::goo
   if (!from._internal_message().empty()) {
     _this->_internal_set_message(from._internal_message());
   }
+  if (from._internal_id() != 0) {
+    _this->_impl_.id_ = from._impl_.id_;
+  }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void ChatRequest::CopyFrom(const ChatRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:ChatRequest)
+void ChatNotify::CopyFrom(const ChatNotify& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:ChatNotify)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
 
-void ChatRequest::InternalSwap(ChatRequest* PROTOBUF_RESTRICT other) {
+void ChatNotify::InternalSwap(ChatNotify* PROTOBUF_RESTRICT other) {
   using std::swap;
   auto* arena = GetArena();
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.message_, &other->_impl_.message_, arena);
+        swap(_impl_.id_, other->_impl_.id_);
 }
 
-::google::protobuf::Metadata ChatRequest::GetMetadata() const {
+::google::protobuf::Metadata ChatNotify::GetMetadata() const {
   return ::google::protobuf::Message::GetMetadataImpl(GetClassData()->full());
 }
 // @@protoc_insertion_point(namespace_scope)
