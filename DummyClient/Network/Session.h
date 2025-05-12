@@ -18,17 +18,3 @@ protected:
     virtual Int64       OnReceived(const Byte* buffer, Int64 numBytes) override;
     virtual void        OnSent(Int64 numBytes) override;
 };
-
-//class ServerSessionManager
-//    : public JobSerializer
-//{
-//public:
-//    void                AddSession(SharedPtr<ServerSession> server);
-//    void                RemoveSession(SharedPtr<ServerSession> server); 
-//    void                Broadcast(SharedPtr<SendBuffer> buffer);
-//
-//private:
-//    HashSet<SharedPtr<ServerSession>>   mServers;
-//};
-//
-//extern SharedPtr<ServerSessionManager>  gServerManager;

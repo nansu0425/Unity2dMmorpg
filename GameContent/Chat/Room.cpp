@@ -24,6 +24,6 @@ void Room::Broadcast(SharedPtr<SendBuffer> buffer)
 {
     for (auto& [id, player] : mPlayerMap)
     {
-        player->Send(buffer);
+        player->SendAsync(buffer);
     }
 }

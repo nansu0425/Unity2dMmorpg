@@ -18,17 +18,3 @@ protected:
     virtual Int64       OnReceived(const Byte* buffer, Int64 numBytes) override;
     virtual void        OnSent(Int64 numBytes) override;
 };
-
-class ClientSessionManager
-    : public JobSerializer
-{
-public:
-    void                AddSession(SharedPtr<ClientSession> client);
-    void                RemoveSession(SharedPtr<ClientSession> client);
-    void                Broadcast(SharedPtr<SendBuffer> buffer);
-
-private:
-    HashSet<SharedPtr<ClientSession>>       mClients;
-};
-
-extern SharedPtr<ClientSessionManager>      gClientManager;

@@ -42,11 +42,12 @@ Int64 Service::AddSession(SharedPtr<Session> session)
     }
 
     // 세션 추가
-    if (!mSessions.insert(session).second)
+    if (!mSessions.insert({session->GetId(), session}).second)
     {
         gLogger->Error(TEXT_8("Session already exists: session"));
         return FAILURE;
     }
+
     // 세션 카운트 증가
     ++mSessionCount;
 
@@ -56,25 +57,18 @@ Int64 Service::AddSession(SharedPtr<Session> session)
 Int64 Service::RemoveSession(SharedPtr<Session> session)
 {
     WRITE_GUARD;
+
     // 세션 제거
-    if (mSessions.erase(session) == 0)
+    if (mSessions.erase(session->GetId()) == 0)
     {
         gLogger->Error(TEXT_8("Session not found"));
         return FAILURE;
     }
+
     // 세션 카운트 감소
     --mSessionCount;
 
     return SUCCESS;
-}
-
-void Service::Broadcast(SharedPtr<SendMessageBuilder> message)
-{
-    WRITE_GUARD;
-    for (const auto& session : mSessions)
-    {
-        session->Send(message);
-    }
 }
 
 ClientService::ClientService(const Config& config)
@@ -101,8 +95,9 @@ Int64 ClientService::Run()
             result = FAILURE;
             break;
         }
-        // 비동기 연결
-        result = session->Connect();
+
+        // 비동기 연결 요청
+        result = session->ConnectAsync();
         if (result != SUCCESS)
         {
             break;

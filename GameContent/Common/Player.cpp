@@ -7,7 +7,7 @@ Player::Player(SharedPtr<Session> session)
     : mSession(std::move(session))
 {}
 
-void Player::Send(SharedPtr<SendBuffer> buffer)
+void Player::SendAsync(SharedPtr<SendBuffer> buffer)
 {
-    mSession->Send(std::move(buffer));
+    mSession->SendAsync(std::move(buffer));
 }

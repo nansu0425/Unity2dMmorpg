@@ -40,7 +40,7 @@ Bool ServerMessageHandlerManager::HandleLogin(SharedPtr<Session> session, const 
     auto& dataBuilder = message->GetDataBuilder();
     auto enterGame = MessageData::Client::CreateEnterGame(dataBuilder, 0);
     message->FinishBuilding(enterGame);
-    session->Send(std::move(message));
+    session->SendAsync(std::move(message));
 
     return true;
 }

@@ -21,20 +21,17 @@ void WorkerThread(SharedPtr<ServerService> service)
     while (true)
     {
         tWorkerLoopTick = ::GetTickCount64() + kLoopTick;
-        // 서비스의 입출력 이벤트 전달
+        // 서비스의 입출력 이벤트 전달 및 처리
         Int64 result = service->GetIoEventDispatcher()->Dispatch(10);
-        // 타이머에 의해 스케줄링된 작업들을 분배
+        // 타이머 설정 시간이 지난 잡을 큐에 분배
         gJobTimer->Distribute();
-        // 등록된 큐들을 비운다
+        // 아직 비우지 못한 큐를 비운다
         gJobQueueManager->FlushQueues();
     }
 }
 
 int main()
 {
-    // 모든 메시지 핸들러 등록
-    // gMessageHandlerManager.RegisterAllHandlers();
-
     // 서버 서비스 생성 및 실행
     auto service = std::make_shared<ServerService>(gConfig);
     ASSERT_CRASH(SUCCESS == service->Run(), "SERVER_SERVICE_RUN_FAILED");

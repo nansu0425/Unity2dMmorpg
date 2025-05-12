@@ -5,12 +5,10 @@
 #include "ServerEngine/Io/Dispatcher.h"
 #include "ServerEngine/Network/Address.h"
 #include "ServerEngine/Io/Event.h"
-#include "ServerEngine/Network/Message.h"
 
 class Listener;
 class IoEventDispatcher;
 class Service;
-class SendMessageBuilder;
 
 class Session
     : public IIoObjectOwner
@@ -30,10 +28,9 @@ public:
     virtual ~Session();
 
 public:     // 외부에서 호출하는 함수
-    Int64               Connect();
-    void                Disconnect(String8 cause);
-    void                Send(SharedPtr<SendMessageBuilder> message);
-    void                Send(SharedPtr<SendBuffer> buffer);
+    Int64               ConnectAsync();
+    void                DisconnectAsync(String8 cause);
+    void                SendAsync(SharedPtr<SendBuffer> buffer);
 
     SharedPtr<Service>  GetService() const { return mService.lock(); }
     void                SetService(SharedPtr<Service> service) { mService = std::move(service); }
@@ -43,12 +40,11 @@ public:     // 외부에서 호출하는 함수
     Int64               GetId() const { return mId; }
     void                SetId(Int64 id) { mId = id; }
     Bool                IsConnected() const { return mIsConnected; }
-    SharedPtr<Session>  GetSharedPtr() { return std::static_pointer_cast<Session>(shared_from_this()); }
+    SharedPtr<Session>  GetSession() { return std::static_pointer_cast<Session>(shared_from_this()); }
 
 protected:  // 콘텐츠 코드 인터페이스
     virtual void        OnConnected() = 0;
     virtual void        OnDisconnected(String8 cause) = 0;
-    // virtual void        OnReceived(ReceiveMessage message) = 0;
     virtual Int64       OnReceived(const Byte* buffer, Int64 numBytes) = 0;
     virtual void        OnSent(Int64 numBytes) = 0;
 
@@ -61,14 +57,11 @@ private:    // 입출력 요청 및 처리
     Int64               RegisterDisconnect(String8 cause);
     void                RegisterReceive();
     void                RegisterSend();
-    void                RegisterSend_Mgr();
 
     void                ProcessConnect();
     void                ProcessDisconnect();
     void                ProcessReceive(Int64 numBytes);
-    // Int64               ProcessReceiveMessages();
     void                ProcessSend(Int64 numBytes);
-    void                ProcessSend_Mgr(Int64 numBytes);
 
     void                HandleError(Int64 errorCode);
 
@@ -89,6 +82,5 @@ private:
 
 private:
     ReceiveBuffer       mReceiveBuffer;
-    SendBuffers         mSendBuffers;
     SendBufferManager   mSendBufferMgr;
 };

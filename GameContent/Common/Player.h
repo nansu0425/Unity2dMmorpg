@@ -10,7 +10,7 @@ class Player
 public:
     Player(SharedPtr<Session> session);
 
-    void    Send(SharedPtr<SendBuffer> buffer);
+    void    SendAsync(SharedPtr<SendBuffer> buffer);
     Int64   GetId() const { return mSession->GetId(); }
 
 private:
