@@ -5,6 +5,7 @@
 #include "ServerEngine/Io/Dispatcher.h"
 #include "ServerEngine/Network/Service.h"
 #include "DummyClient/Network/Session.h"
+#include "GameContent/Chat/Room.h"
 
 //class ServerSession
 //    : public Session
@@ -60,11 +61,11 @@ void WorkerThread(SharedPtr<ClientService> service)
 void BroadcastAsync(SharedPtr<SendBuffer> sendBuf)
 {
     // 1초마다 브로드캐스트
-    gServerManager->MakeJob([sendBuf]
-                            {
-                                gServerManager->Broadcast(sendBuf);
-                                BroadcastAsync(sendBuf);
-                            }, 1000);
+    gRoom->MakeJob([sendBuf]
+                   {
+                       gRoom->Broadcast(sendBuf);
+                       BroadcastAsync(sendBuf);
+                   }, 1000);
 
 }
 

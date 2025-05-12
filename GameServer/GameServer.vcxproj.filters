@@ -6,12 +6,6 @@
     <ClCompile Include="Network\Session.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Content\Player.cpp">
-      <Filter>Content</Filter>
-    </ClCompile>
-    <ClCompile Include="Content\Room.cpp">
-      <Filter>Content</Filter>
-    </ClCompile>
     <ClCompile Include="Network\Protocol\ClientPayload.pb.cc">
       <Filter>Network\Protocol</Filter>
     </ClCompile>
@@ -30,12 +24,6 @@
     <ClInclude Include="Network\Session.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Content\Player.h">
-      <Filter>Content</Filter>
-    </ClInclude>
-    <ClInclude Include="Content\Room.h">
-      <Filter>Content</Filter>
-    </ClInclude>
     <ClInclude Include="Network\Protocol\ClientPayload.pb.h">
       <Filter>Network\Protocol</Filter>
     </ClInclude>
@@ -52,9 +40,6 @@
   <ItemGroup>
     <Filter Include="Network">
       <UniqueIdentifier>{c4d61db3-d7c0-47b5-b9f7-a39f60073311}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Content">
-      <UniqueIdentifier>{1e81a57d-5a97-4093-a165-8e76f5d1109c}</UniqueIdentifier>
     </Filter>
     <Filter Include="Network\Protocol">
       <UniqueIdentifier>{7add8c19-2743-49e2-adb4-3c7a92e82a03}</UniqueIdentifier>
