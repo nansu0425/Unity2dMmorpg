@@ -42,7 +42,7 @@ Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> session, cons
         return false;
     }
 
-    gRoom->MakeJob([session, id = payload.id()]
+    gRoom->PushJob([session, id = payload.id()]
                    {
                        // 플레이어 생성 후 방 입장
                        auto player = std::make_shared<Player>(session, id);
@@ -50,7 +50,7 @@ Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> session, cons
                        gRoom->Enter(std::move(player));
 
                        // 1초마다 채팅 메시지 전송
-                       gRoom->MakeJob([id]
+                       gRoom->PushJob([id]
                                       {
                                           C2S_Chat payload;
                                           payload.set_id(id);
@@ -64,7 +64,7 @@ Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> session, cons
 
 Bool S2C_PacketHandlerMap::Handle_S2C_Chat(SharedPtr<Session> session, const S2C_Chat& payload)
 {
-    gLogger->Info(TEXT_8("Player[{}]: Chat message: {}"), payload.id(), payload.message());
+    gLogger->Debug(TEXT_8("Player[{}]: Chat message: {}"), payload.id(), payload.message());
 
     return true;
 }

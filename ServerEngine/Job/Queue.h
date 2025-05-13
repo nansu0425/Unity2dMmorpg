@@ -47,7 +47,7 @@ private:
 
 /*
  * Job을 직렬화하기 위해 사용하는 큐
- * 여러 스레드가 Job을 Push할 때, 최초 Job을 Push한 스레드가 모든 Job을 처리한다.
+ * 여러 스레드가 Job을 Push할 수 있지만, Flush하는 스레드는 유일해야 한다.
  */
 class JobQueue
     : public std::enable_shared_from_this<JobQueue>

@@ -9,7 +9,7 @@ void Room::Enter(SharedPtr<Player> player)
 {
     mPlayers.insert({player->GetId(), player});
 
-    gLogger->Debug(TEXT_8("Player[{}]: Entered room"), player->GetId());
+    gLogger->Info(TEXT_8("Player[{}]: Entered room"), player->GetId());
 }
 
 void Room::Leave(Int64 playerId)
@@ -20,7 +20,7 @@ void Room::Leave(Int64 playerId)
         mPlayers.erase(it);
     }
 
-    gLogger->Debug(TEXT_8("Player[{}]: Left room"), playerId);
+    gLogger->Info(TEXT_8("Player[{}]: Left room"), playerId);
 }
 
 void Room::Broadcast(SharedPtr<SendBuffer> buffer)
@@ -41,9 +41,6 @@ void Room::StartSendLoop(Int64 playerId, SharedPtr<SendBuffer> sendBuf, Int64 lo
         player->SendAsync(sendBuf);
 
         // 다음 루프 예약
-        MakeJob([self = shared_from_this(), playerId, sendBuf, loopTick]
-                {
-                    std::static_pointer_cast<Room>(self)->StartSendLoop(playerId, sendBuf, loopTick);
-                }, loopTick);
+        ScheduleJob(loopTick, &Room::StartSendLoop, playerId, sendBuf, loopTick);
     }
 }

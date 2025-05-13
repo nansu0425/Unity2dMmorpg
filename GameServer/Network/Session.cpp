@@ -15,7 +15,7 @@ void ClientSession::OnDisconnected(String8 cause)
     gLogger->Warn(TEXT_8("Session[{}]: Disconnected from client: {}"), GetId(), cause);
 
     // 방에서 퇴장
-    gRoom->MakeJob(&Room::Leave, GetPlayerId());
+    gRoom->PushJob(&Room::Leave, GetPlayerId());
     SetPlayerId(0);
 }
 
