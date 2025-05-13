@@ -2,13 +2,13 @@ syntax = "proto3";
 
 import "Common.proto";
 
-message EnterRoomResponse
+message S2C_EnterRoom
 {
     int64   id = 1;
     bool    success = 2;
 }
 
-message ChatBroadcast
+message S2C_Chat
 {
     int64   id = 1;
     string  message = 2;

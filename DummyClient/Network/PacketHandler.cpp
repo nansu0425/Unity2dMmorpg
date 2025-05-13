@@ -6,35 +6,35 @@
 #include "GameContent/Common/Player.h"
 #include "DummyClient/Network/Session.h"
 
-ServerPacketHandlerMap& ServerPacketHandlerMap::GetInstance()
+S2C_PacketHandlerMap& S2C_PacketHandlerMap::GetInstance()
 {
-    static ServerPacketHandlerMap sInstance;
+    static S2C_PacketHandlerMap sInstance;
     return sInstance;
 }
 
-void ServerPacketHandlerMap::RegisterAllHandlers()
+void S2C_PacketHandlerMap::RegisterAllHandlers()
 {
     RegisterHandler(
         [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
         {
-            return HandlePayload<EnterRoomResponse>(ServerPacketHandlerMap::Handle_EnterRoomResponse, std::move(session), buffer, numBytes);
+            return HandlePayload<S2C_EnterRoom>(S2C_PacketHandlerMap::Handle_S2C_EnterRoom, std::move(session), buffer, numBytes);
         },
-        PacketId::EnterRoomResponse);
+        PacketId::S2C_EnterRoom);
 
     RegisterHandler(
         [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
         {
-            return HandlePayload<ChatBroadcast>(ServerPacketHandlerMap::Handle_ChatBroadcast, std::move(session), buffer, numBytes);
+            return HandlePayload<S2C_Chat>(S2C_PacketHandlerMap::Handle_S2C_Chat, std::move(session), buffer, numBytes);
         },
-        PacketId::ChatBroadcast);
+        PacketId::S2C_Chat);
 }
 
-ServerPacketHandlerMap::ServerPacketHandlerMap()
+S2C_PacketHandlerMap::S2C_PacketHandlerMap()
 {
     RegisterAllHandlers();
 }
 
-Bool ServerPacketHandlerMap::Handle_EnterRoomResponse(SharedPtr<Session> session, EnterRoomResponse payload)
+Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> session, const S2C_EnterRoom& payload)
 {
     if (!payload.success())
     {
@@ -52,17 +52,17 @@ Bool ServerPacketHandlerMap::Handle_EnterRoomResponse(SharedPtr<Session> session
                        // 1초마다 채팅 메시지 전송
                        gRoom->MakeJob([id]
                                       {
-                                          ChatNotify payload;
+                                          C2S_Chat payload;
                                           payload.set_id(id);
                                           payload.set_message(TEXT_8("Hello, world!"));
-                                          gRoom->StartSendLoop(id, PacketUtils::MakeSendBuffer(payload, PacketId::ChatNotify), 1000);
+                                          gRoom->StartSendLoop(id, PacketUtils::MakePacketBuffer(payload, PacketId::C2S_Chat), 1000);
                                       });
                    });
 
     return true;
 }
 
-Bool ServerPacketHandlerMap::Handle_ChatBroadcast(SharedPtr<Session> session, ChatBroadcast payload)
+Bool S2C_PacketHandlerMap::Handle_S2C_Chat(SharedPtr<Session> session, const S2C_Chat& payload)
 {
     gLogger->Info(TEXT_8("Player[{}]: Chat message: {}"), payload.id(), payload.message());
 

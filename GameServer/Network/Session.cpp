@@ -21,7 +21,7 @@ void ClientSession::OnDisconnected(String8 cause)
 
 Int64 ClientSession::OnReceived(const Byte* buffer, Int64 numBytes)
 {
-    return PacketUtils::ProcessPackets(ClientPacketHandlerMap::GetInstance(), GetSession(), buffer, numBytes);
+    return PacketUtils::ProcessPackets(C2S_PacketHandlerMap::GetInstance(), GetSession(), buffer, numBytes);
 }
 
 void ClientSession::OnSent(Int64 numBytes)

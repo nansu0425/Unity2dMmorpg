@@ -2,20 +2,18 @@
 
 #pragma once
 
-#include "GameServer/Network/Protocol/ServerPayload.pb.h"
-#include "GameServer/Network/Protocol/ClientPayload.pb.h"
+#include "GameServer/Network/Protocol/C2S_Packet.pb.h"
+#include "GameServer/Network/Protocol/S2C_Packet.pb.h"
 
 class Session;
 
 enum class PacketId : Int16
 {
-    Invalid = 0,
-    // 서버 패킷
-    EnterRoomResponse = 1000,
-    ChatBroadcast,
-    // 클라이언트 패킷
-    EnterRoomRequest = 2000,
-    ChatNotify,
+    Invalid         = 0,
+    C2S_EnterRoom   = 1000,
+    C2S_Chat,
+    S2C_EnterRoom   = 2000,
+    S2C_Chat,
 };
 
 #pragma pack(push, 1)
@@ -63,7 +61,7 @@ class PacketUtils
 {
 public:
     template<typename T>
-    static SharedPtr<SendBuffer>    MakeSendBuffer(const T& payload, PacketId packetId)
+    static SharedPtr<SendBuffer>    MakePacketBuffer(const T& payload, PacketId packetId)
     {
         const Int16 payloadSize = static_cast<Int16>(payload.ByteSizeLong());
         const Int16 packetSize = SIZE_16(PacketHeader) + payloadSize;

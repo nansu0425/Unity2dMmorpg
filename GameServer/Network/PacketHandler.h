@@ -4,20 +4,20 @@
 
 #include "GameServer/Network/Protocol/Packet.h"
 
-class ClientPacketHandlerMap
+class C2S_PacketHandlerMap
     : public PacketHandlerMap
 {
 public:
-    static ClientPacketHandlerMap&  GetInstance();
+    static C2S_PacketHandlerMap&    GetInstance();
 
 protected:
     virtual void    RegisterAllHandlers() override;
 
 private:
-    ClientPacketHandlerMap();
+    C2S_PacketHandlerMap();
 
-    static Bool     Handle_EnterRoomRequest(SharedPtr<Session> session, const EnterRoomRequest& payload);
-    static Bool     Handle_ChatNotify(SharedPtr<Session> session, ChatNotify payload);
+    static Bool     Handle_C2S_EnterRoom(SharedPtr<Session> session, const C2S_EnterRoom& payload);
+    static Bool     Handle_C2S_Chat(SharedPtr<Session> session, const C2S_Chat& payload);
 };
 
 class Room;

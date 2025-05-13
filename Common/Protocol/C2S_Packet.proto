@@ -2,13 +2,13 @@ syntax = "proto3";
 
 import "Common.proto";
 
-message EnterRoomRequest
+message C2S_EnterRoom
 {
     int64   id = 1;
     string  password = 2;
 }
 
-message ChatNotify
+message C2S_Chat
 {
     int64   id = 1;
     string  message = 2;

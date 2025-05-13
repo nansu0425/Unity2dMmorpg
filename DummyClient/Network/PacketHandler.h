@@ -4,20 +4,20 @@
 
 #include "DummyClient/Network/Protocol/Packet.h"
 
-class ServerPacketHandlerMap
+class S2C_PacketHandlerMap
     : public PacketHandlerMap
 {
 public:
-    static ServerPacketHandlerMap&  GetInstance();
+    static S2C_PacketHandlerMap&    GetInstance();
 
 protected:
     virtual void    RegisterAllHandlers() override;
 
 private:
-    ServerPacketHandlerMap();
+    S2C_PacketHandlerMap();
 
-    static Bool     Handle_EnterRoomResponse(SharedPtr<Session> session, EnterRoomResponse payload);
-    static Bool     Handle_ChatBroadcast(SharedPtr<Session> session, ChatBroadcast payload);
+    static Bool     Handle_S2C_EnterRoom(SharedPtr<Session> session, const S2C_EnterRoom& payload);
+    static Bool     Handle_S2C_Chat(SharedPtr<Session> session, const S2C_Chat& payload);
 };
 
 class Room;

@@ -6,35 +6,35 @@
 #include "GameContent/Chat/Room.h"
 #include "GameContent/Common/Player.h"
 
-ClientPacketHandlerMap& ClientPacketHandlerMap::GetInstance()
+C2S_PacketHandlerMap& C2S_PacketHandlerMap::GetInstance()
 {
-    static ClientPacketHandlerMap instance;
-    return instance;
+    static C2S_PacketHandlerMap sInstance;
+    return sInstance;
 }
 
-void ClientPacketHandlerMap::RegisterAllHandlers()
+void C2S_PacketHandlerMap::RegisterAllHandlers()
 {
     RegisterHandler(
         [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
         {
-            return HandlePayload<EnterRoomRequest>(ClientPacketHandlerMap::Handle_EnterRoomRequest, std::move(session), buffer, numBytes);
+            return HandlePayload<C2S_EnterRoom>(C2S_PacketHandlerMap::Handle_C2S_EnterRoom, std::move(session), buffer, numBytes);
         },
-        PacketId::EnterRoomRequest);
+        PacketId::C2S_EnterRoom);
 
     RegisterHandler(
         [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
         {
-            return HandlePayload<ChatNotify>(ClientPacketHandlerMap::Handle_ChatNotify, std::move(session), buffer, numBytes);
+            return HandlePayload<C2S_Chat>(C2S_PacketHandlerMap::Handle_C2S_Chat, std::move(session), buffer, numBytes);
         },
-        PacketId::ChatNotify);
+        PacketId::C2S_Chat);
 }
 
-ClientPacketHandlerMap::ClientPacketHandlerMap()
+C2S_PacketHandlerMap::C2S_PacketHandlerMap()
 {
     RegisterAllHandlers();
 }
 
-Bool ClientPacketHandlerMap::Handle_EnterRoomRequest(SharedPtr<Session> session, const EnterRoomRequest& payload)
+Bool C2S_PacketHandlerMap::Handle_C2S_EnterRoom(SharedPtr<Session> session, const C2S_EnterRoom& payload)
 {
     gRoom->MakeJob([session, id = payload.id()]
                    {
@@ -44,27 +44,27 @@ Bool ClientPacketHandlerMap::Handle_EnterRoomRequest(SharedPtr<Session> session,
                        gRoom->Enter(std::move(player));
 
                        // 방 입장 응답 전송
-                       EnterRoomResponse payload;
+                       S2C_EnterRoom payload;
                        payload.set_id(id);
                        payload.set_success(true);
-                       session->SendAsync(PacketUtils::MakeSendBuffer(payload, PacketId::EnterRoomResponse));
+                       session->SendAsync(PacketUtils::MakePacketBuffer(payload, PacketId::S2C_EnterRoom));
                    });
 
 
     return true;
 }
 
-Bool ClientPacketHandlerMap::Handle_ChatNotify(SharedPtr<Session> session, ChatNotify payload)
+Bool C2S_PacketHandlerMap::Handle_C2S_Chat(SharedPtr<Session> session, const C2S_Chat& payload)
 {
     gLogger->Info(TEXT_8("Player[{}]: Chat message: {}"), payload.id(), payload.message());
 
     gRoom->MakeJob([session, id = payload.id(), msg = payload.message()]()
                    {
                        // 룸의 모든 플레이어에게 메시지 전송
-                       ChatBroadcast broadcast;
-                       broadcast.set_id(id);
-                       broadcast.set_message(msg);
-                       gRoom->Broadcast(PacketUtils::MakeSendBuffer(broadcast, PacketId::ChatBroadcast));
+                       S2C_Chat payload;
+                       payload.set_id(id);
+                       payload.set_message(msg);
+                       gRoom->Broadcast(PacketUtils::MakePacketBuffer(payload, PacketId::S2C_Chat));
                    });
 
     return true;

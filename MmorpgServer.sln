@@ -34,9 +34,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessageData", "MessageData"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protocol", "Protocol", "{9EECD632-FD61-4240-AC8F-5AF959A00FA7}"
 	ProjectSection(SolutionItems) = preProject
-		Common\Protocol\ClientPayload.proto = Common\Protocol\ClientPayload.proto
 		Common\Protocol\Common.proto = Common\Protocol\Common.proto
-		Common\Protocol\ServerPayload.proto = Common\Protocol\ServerPayload.proto
+		Common\Protocol\C2S_Packet.proto = Common\Protocol\C2S_Packet.proto
+		Common\Protocol\S2C_Packet.proto = Common\Protocol\S2C_Packet.proto
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{B8766B3A-3438-407B-B746-30680F57A5A3}"

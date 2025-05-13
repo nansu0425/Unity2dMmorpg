@@ -6,13 +6,7 @@
     <ClCompile Include="Network\Session.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Network\Protocol\ClientPayload.pb.cc">
-      <Filter>Network\Protocol</Filter>
-    </ClCompile>
     <ClCompile Include="Network\Protocol\Common.pb.cc">
-      <Filter>Network\Protocol</Filter>
-    </ClCompile>
-    <ClCompile Include="Network\Protocol\ServerPayload.pb.cc">
       <Filter>Network\Protocol</Filter>
     </ClCompile>
     <ClCompile Include="Network\PacketHandler.cpp">
@@ -21,25 +15,31 @@
     <ClCompile Include="Network\Protocol\Packet.cpp">
       <Filter>Network\Protocol</Filter>
     </ClCompile>
+    <ClCompile Include="Network\Protocol\C2S_Packet.pb.cc">
+      <Filter>Network\Protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Protocol\S2C_Packet.pb.cc">
+      <Filter>Network\Protocol</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
     <ClInclude Include="Network\Session.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Network\Protocol\ClientPayload.pb.h">
-      <Filter>Network\Protocol</Filter>
-    </ClInclude>
     <ClInclude Include="Network\Protocol\Common.pb.h">
-      <Filter>Network\Protocol</Filter>
-    </ClInclude>
-    <ClInclude Include="Network\Protocol\ServerPayload.pb.h">
       <Filter>Network\Protocol</Filter>
     </ClInclude>
     <ClInclude Include="Network\PacketHandler.h">
       <Filter>Network</Filter>
     </ClInclude>
     <ClInclude Include="Network\Protocol\Packet.h">
+      <Filter>Network\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Protocol\C2S_Packet.pb.h">
+      <Filter>Network\Protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Protocol\S2C_Packet.pb.h">
       <Filter>Network\Protocol</Filter>
     </ClInclude>
   </ItemGroup>
