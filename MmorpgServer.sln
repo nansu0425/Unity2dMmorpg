@@ -20,14 +20,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A58A2D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protocol", "Protocol", "{9EECD632-FD61-4240-AC8F-5AF959A00FA7}"
 	ProjectSection(SolutionItems) = preProject
-		Common\Protocol\C2S_Packet.proto = Common\Protocol\C2S_Packet.proto
 		Common\Protocol\Common.proto = Common\Protocol\Common.proto
-		Common\Protocol\S2C_Packet.proto = Common\Protocol\S2C_Packet.proto
+		Common\Protocol\C2S_Payload.proto = Common\Protocol\C2S_Payload.proto
+		Common\Protocol\S2C_Payload.proto = Common\Protocol\S2C_Payload.proto
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{B8766B3A-3438-407B-B746-30680F57A5A3}"
 	ProjectSection(SolutionItems) = preProject
-		Tools\GenProtocol.bat = Tools\GenProtocol.bat
+		Tools\GenProto.bat = Tools\GenProto.bat
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameContent", "GameContent\GameContent.vcxproj", "{33033385-DBDC-4862-87F0-79FF8C49984A}"
@@ -35,52 +35,79 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameContent", "GameContent\
 		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E} = {3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}
 	EndProjectSection
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "PacketGenerator", "Tools\PacketGenerator\PacketGenerator.pyproj", "{5439DF71-CB6A-4F88-9DCA-FA1F3F490B84}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Debug|Any CPU.Build.0 = Debug|x64
 		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Debug|x64.ActiveCfg = Debug|x64
 		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Debug|x64.Build.0 = Debug|x64
 		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Debug|x86.ActiveCfg = Debug|Win32
 		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Debug|x86.Build.0 = Debug|Win32
+		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Release|Any CPU.ActiveCfg = Release|x64
+		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Release|Any CPU.Build.0 = Release|x64
 		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Release|x64.ActiveCfg = Release|x64
 		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Release|x64.Build.0 = Release|x64
 		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Release|x86.ActiveCfg = Release|Win32
 		{FDD99D4B-ED41-4BB6-BD75-0830F27D2689}.Release|x86.Build.0 = Release|Win32
+		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Debug|Any CPU.Build.0 = Debug|x64
 		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Debug|x64.ActiveCfg = Debug|x64
 		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Debug|x64.Build.0 = Debug|x64
 		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Debug|x86.ActiveCfg = Debug|Win32
 		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Debug|x86.Build.0 = Debug|Win32
+		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Release|Any CPU.ActiveCfg = Release|x64
+		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Release|Any CPU.Build.0 = Release|x64
 		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Release|x64.ActiveCfg = Release|x64
 		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Release|x64.Build.0 = Release|x64
 		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Release|x86.ActiveCfg = Release|Win32
 		{3BC62D3B-A3FE-4B7C-BBCA-4987DACEF59E}.Release|x86.Build.0 = Release|Win32
+		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Debug|Any CPU.Build.0 = Debug|x64
 		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Debug|x64.ActiveCfg = Debug|x64
 		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Debug|x64.Build.0 = Debug|x64
 		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Debug|x86.ActiveCfg = Debug|Win32
 		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Debug|x86.Build.0 = Debug|Win32
+		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Release|Any CPU.ActiveCfg = Release|x64
+		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Release|Any CPU.Build.0 = Release|x64
 		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Release|x64.ActiveCfg = Release|x64
 		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Release|x64.Build.0 = Release|x64
 		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Release|x86.ActiveCfg = Release|Win32
 		{7E683075-6FA8-4864-9395-AE8BA508AEAE}.Release|x86.Build.0 = Release|Win32
+		{33033385-DBDC-4862-87F0-79FF8C49984A}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{33033385-DBDC-4862-87F0-79FF8C49984A}.Debug|Any CPU.Build.0 = Debug|x64
 		{33033385-DBDC-4862-87F0-79FF8C49984A}.Debug|x64.ActiveCfg = Debug|x64
 		{33033385-DBDC-4862-87F0-79FF8C49984A}.Debug|x64.Build.0 = Debug|x64
 		{33033385-DBDC-4862-87F0-79FF8C49984A}.Debug|x86.ActiveCfg = Debug|Win32
 		{33033385-DBDC-4862-87F0-79FF8C49984A}.Debug|x86.Build.0 = Debug|Win32
+		{33033385-DBDC-4862-87F0-79FF8C49984A}.Release|Any CPU.ActiveCfg = Release|x64
+		{33033385-DBDC-4862-87F0-79FF8C49984A}.Release|Any CPU.Build.0 = Release|x64
 		{33033385-DBDC-4862-87F0-79FF8C49984A}.Release|x64.ActiveCfg = Release|x64
 		{33033385-DBDC-4862-87F0-79FF8C49984A}.Release|x64.Build.0 = Release|x64
 		{33033385-DBDC-4862-87F0-79FF8C49984A}.Release|x86.ActiveCfg = Release|Win32
 		{33033385-DBDC-4862-87F0-79FF8C49984A}.Release|x86.Build.0 = Release|Win32
+		{5439DF71-CB6A-4F88-9DCA-FA1F3F490B84}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5439DF71-CB6A-4F88-9DCA-FA1F3F490B84}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5439DF71-CB6A-4F88-9DCA-FA1F3F490B84}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{5439DF71-CB6A-4F88-9DCA-FA1F3F490B84}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5439DF71-CB6A-4F88-9DCA-FA1F3F490B84}.Release|x64.ActiveCfg = Release|Any CPU
+		{5439DF71-CB6A-4F88-9DCA-FA1F3F490B84}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{9EECD632-FD61-4240-AC8F-5AF959A00FA7} = {A58A2D29-790D-401E-A315-A47791AA2D5C}
+		{5439DF71-CB6A-4F88-9DCA-FA1F3F490B84} = {B8766B3A-3438-407B-B746-30680F57A5A3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7A16D7E2-68B6-431B-80E6-2B13B17C2EA1}

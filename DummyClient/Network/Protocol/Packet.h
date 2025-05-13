@@ -1,7 +1,6 @@
 ﻿/*    DummyClient/Network/Protocol/Packet.h    */
 
 #pragma once
-
 #include "DummyClient/Network/Protocol/C2S_Payload.pb.h"
 #include "DummyClient/Network/Protocol/S2C_Payload.pb.h"
 
@@ -9,18 +8,18 @@ class Session;
 
 enum class PacketId : Int16
 {
-    Invalid         = 0,
-    C2S_EnterRoom   = 1000,
-    C2S_Chat,
-    S2C_EnterRoom   = 2000,
-    S2C_Chat,
+    Invalid = 0,
+    C2S_EnterRoom = 1000,
+    C2S_Chat = 1001,
+    S2C_EnterRoom = 1002,
+    S2C_Chat = 1003,
 };
 
 #pragma pack(push, 1)
 struct PacketHeader
 {
-    Int16       size = 0;   // 헤더까지 포함한 패킷의 전체 크기
-    PacketId    id  = PacketId::Invalid; // 패킷 ID
+    Int16       size = 0; // 헤더까지 포함한 패킷의 전체 크기
+    PacketId    id = PacketId::Invalid; // 패킷 ID
 };
 #pragma pack(pop)
 

@@ -1,4 +1,4 @@
-﻿/*    GameServer/Network/Packet.h    */
+﻿/*    GameServer/Network/PacketHandler.h    */
 
 #pragma once
 
@@ -8,30 +8,32 @@ class C2S_PacketHandlerMap
     : public PacketHandlerMap
 {
 public:
-    static C2S_PacketHandlerMap&    GetInstance()
+    static C2S_PacketHandlerMap& GetInstance()
     {
         static C2S_PacketHandlerMap sInstance;
         return sInstance;
     }
 
-protected:
+protected:  // 모든 패킷 핸들러 등록
     C2S_PacketHandlerMap() { RegisterAllHandlers(); }
 
     virtual void    RegisterAllHandlers() override
     {
+        
         RegisterHandler(
             [this](const Packet& packet)
             {
                 return HandlePayload<C2S_EnterRoom>(C2S_PacketHandlerMap::Handle_C2S_EnterRoom, packet);
             },
             PacketId::C2S_EnterRoom);
-
+        
         RegisterHandler(
             [this](const Packet& packet)
             {
                 return HandlePayload<C2S_Chat>(C2S_PacketHandlerMap::Handle_C2S_Chat, packet);
             },
             PacketId::C2S_Chat);
+        
     }
 
 private:    // 모든 페이로드 핸들러

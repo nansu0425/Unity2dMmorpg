@@ -1,18 +1,21 @@
-﻿/*    GameServer/Network/Protocol/Packet.h    */
+﻿/*    {{ project_name }}/Network/Protocol/Packet.h    */
 
 #pragma once
-#include "GameServer/Network/Protocol/C2S_Payload.pb.h"
-#include "GameServer/Network/Protocol/S2C_Payload.pb.h"
+
+{%- for prefix, payloads in parser.payload_dict.items() %}
+#include "{{ project_name }}/Network/Protocol/{{ prefix }}_Payload.pb.h"
+{%- endfor %}
 
 class Session;
 
 enum class PacketId : Int16
 {
     Invalid = 0,
-    C2S_EnterRoom = 1000,
-    C2S_Chat = 1001,
-    S2C_EnterRoom = 1002,
-    S2C_Chat = 1003,
+    {%- for prefix, payloads in parser.payload_dict.items() %}
+    {%- for payload in payloads %}
+    {{ payload.name }} = {{ payload.pkt_id }},
+    {%- endfor %}
+    {%- endfor %}
 };
 
 #pragma pack(push, 1)
