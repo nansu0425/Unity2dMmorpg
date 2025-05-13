@@ -10,12 +10,15 @@ Bool C2S_PacketHandlerMap::Handle_C2S_EnterRoom(SharedPtr<Session> session, cons
 {
     gRoom->PushJob([session, id = payload.id()]
                    {
-                       // 플레이어 생성 후 방 입장
+                       // 플레이어 생성 및 매니저에 추가
                        auto player = std::make_shared<Player>(session, id);
                        std::static_pointer_cast<ClientSession>(session)->SetPlayerId(id);
+                       PlayerManager::GetInstance().AddPlayer(player);
+
+                       // 방 입장
                        gRoom->Enter(std::move(player));
 
-                       // 방 입장 응답 전송
+                       // 방 입장 처리 패킷 전송
                        S2C_EnterRoom payload;
                        payload.set_id(id);
                        payload.set_success(true);
@@ -28,7 +31,7 @@ Bool C2S_PacketHandlerMap::Handle_C2S_EnterRoom(SharedPtr<Session> session, cons
 
 Bool C2S_PacketHandlerMap::Handle_C2S_Chat(SharedPtr<Session> session, const C2S_Chat& payload)
 {
-    gLogger->Debug(TEXT_8("Player[{}]: Chat message: {}"), payload.id(), payload.message());
+    gLogger->Info(TEXT_8("Player[{}]: Chat message: {}"), payload.id(), payload.message());
 
     gRoom->PushJob([session, id = payload.id(), msg = payload.message()]()
                    {

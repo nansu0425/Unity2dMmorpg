@@ -14,9 +14,14 @@ void ClientSession::OnDisconnected(String8 cause)
 {
     gLogger->Warn(TEXT_8("Session[{}]: Disconnected from client: {}"), GetId(), cause);
 
-    // 방에서 퇴장
-    gRoom->PushJob(&Room::Leave, GetPlayerId());
-    SetPlayerId(0);
+    gRoom->PushJob([session = std::static_pointer_cast<ClientSession>(GetSession())]
+                   {
+                       // 방에서 퇴장
+                       gRoom->Leave(session->GetPlayerId());
+                       // 플레이어 매니저에서 제거
+                       PlayerManager::GetInstance().RemovePlayer(session->GetPlayerId());
+                       session->SetPlayerId(0);
+                   });
 }
 
 Int64 ClientSession::OnReceived(const Byte* buffer, Int64 numBytes)
