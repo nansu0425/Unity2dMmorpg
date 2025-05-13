@@ -20,16 +20,16 @@ protected:
     virtual void    RegisterAllHandlers() override
     {
         RegisterHandler(
-            [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
+            [this](const Packet& packet)
             {
-                return HandlePayload<C2S_EnterRoom>(C2S_PacketHandlerMap::Handle_C2S_EnterRoom, std::move(session), buffer, numBytes);
+                return HandlePayload<C2S_EnterRoom>(C2S_PacketHandlerMap::Handle_C2S_EnterRoom, packet);
             },
             PacketId::C2S_EnterRoom);
 
         RegisterHandler(
-            [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
+            [this](const Packet& packet)
             {
-                return HandlePayload<C2S_Chat>(C2S_PacketHandlerMap::Handle_C2S_Chat, std::move(session), buffer, numBytes);
+                return HandlePayload<C2S_Chat>(C2S_PacketHandlerMap::Handle_C2S_Chat, packet);
             },
             PacketId::C2S_Chat);
     }

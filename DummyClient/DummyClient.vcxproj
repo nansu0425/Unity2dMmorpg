@@ -21,7 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Network\PacketHandler.cpp" />
-    <ClCompile Include="Network\Protocol\C2S_Packet.pb.cc">
+    <ClCompile Include="Network\Protocol\C2S_Payload.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -30,7 +30,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Network\Protocol\Packet.cpp" />
-    <ClCompile Include="Network\Protocol\S2C_Packet.pb.cc">
+    <ClCompile Include="Network\Protocol\S2C_Payload.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -44,10 +44,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Network\PacketHandler.h" />
-    <ClInclude Include="Network\Protocol\C2S_Packet.pb.h" />
+    <ClInclude Include="Network\Protocol\C2S_Payload.pb.h" />
     <ClInclude Include="Network\Protocol\Common.pb.h" />
     <ClInclude Include="Network\Protocol\Packet.h" />
-    <ClInclude Include="Network\Protocol\S2C_Packet.pb.h" />
+    <ClInclude Include="Network\Protocol\S2C_Payload.pb.h" />
     <ClInclude Include="Network\Session.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>

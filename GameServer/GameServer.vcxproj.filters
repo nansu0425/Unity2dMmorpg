@@ -15,10 +15,10 @@
     <ClCompile Include="Network\Protocol\Packet.cpp">
       <Filter>Network\Protocol</Filter>
     </ClCompile>
-    <ClCompile Include="Network\Protocol\C2S_Packet.pb.cc">
+    <ClCompile Include="Network\Protocol\C2S_Payload.pb.cc">
       <Filter>Network\Protocol</Filter>
     </ClCompile>
-    <ClCompile Include="Network\Protocol\S2C_Packet.pb.cc">
+    <ClCompile Include="Network\Protocol\S2C_Payload.pb.cc">
       <Filter>Network\Protocol</Filter>
     </ClCompile>
   </ItemGroup>
@@ -36,10 +36,10 @@
     <ClInclude Include="Network\Protocol\Packet.h">
       <Filter>Network\Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="Network\Protocol\C2S_Packet.pb.h">
+    <ClInclude Include="Network\Protocol\C2S_Payload.pb.h">
       <Filter>Network\Protocol</Filter>
     </ClInclude>
-    <ClInclude Include="Network\Protocol\S2C_Packet.pb.h">
+    <ClInclude Include="Network\Protocol\S2C_Payload.pb.h">
       <Filter>Network\Protocol</Filter>
     </ClInclude>
   </ItemGroup>

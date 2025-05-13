@@ -14,6 +14,7 @@ Service::Config gConfig =
     100,
 };
 
+// TODO: 네트워크 입출력 스레드와 잡 처리 스레드를 분리할 것
 void WorkerThread(SharedPtr<ServerService> service)
 {
     static constexpr UInt64 kLoopTick = 64;

@@ -14,22 +14,22 @@ public:
         return sInstance;
     }
 
-protected:
+protected:  // 모든 패킷 핸들러 등록
     S2C_PacketHandlerMap() { RegisterAllHandlers(); }
 
     virtual void    RegisterAllHandlers() override
     {
         RegisterHandler(
-            [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
+            [this](const Packet& packet)
             {
-                return HandlePayload<S2C_EnterRoom>(S2C_PacketHandlerMap::Handle_S2C_EnterRoom, std::move(session), buffer, numBytes);
+                return HandlePayload<S2C_EnterRoom>(S2C_PacketHandlerMap::Handle_S2C_EnterRoom, packet);
             },
             PacketId::S2C_EnterRoom);
 
         RegisterHandler(
-            [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
+            [this](const Packet& packet)
             {
-                return HandlePayload<S2C_Chat>(S2C_PacketHandlerMap::Handle_S2C_Chat, std::move(session), buffer, numBytes);
+                return HandlePayload<S2C_Chat>(S2C_PacketHandlerMap::Handle_S2C_Chat, packet);
             },
             PacketId::S2C_Chat);
     }

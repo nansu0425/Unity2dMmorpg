@@ -2,17 +2,17 @@
 
 #pragma once
 
-#include "GameServer/Network/Protocol/C2S_Packet.pb.h"
-#include "GameServer/Network/Protocol/S2C_Packet.pb.h"
+#include "GameServer/Network/Protocol/C2S_Payload.pb.h"
+#include "GameServer/Network/Protocol/S2C_Payload.pb.h"
 
 class Session;
 
 enum class PacketId : Int16
 {
-    Invalid         = 0,
-    C2S_EnterRoom   = 1000,
+    Invalid = 0,
+    C2S_EnterRoom = 1000,
     C2S_Chat,
-    S2C_EnterRoom   = 2000,
+    S2C_EnterRoom = 2000,
     S2C_Chat,
 };
 
@@ -24,13 +24,34 @@ struct PacketHeader
 };
 #pragma pack(pop)
 
+class Packet
+{
+public:
+    explicit Packet(SharedPtr<Session> owner, const Byte* buffer)
+        : mOwner(std::move(owner))
+        , mHeader(reinterpret_cast<const PacketHeader*>(buffer))
+        , mPayload(buffer + SIZE_16(PacketHeader))
+    {}
+
+    SharedPtr<Session>      GetOwner() const { return mOwner; }
+    const PacketHeader* GetHeader() const { return mHeader; }
+    Int16                   GetSize() const { return mHeader->size; }
+    Int16                   GetId() const { return static_cast<Int16>(mHeader->id); }
+    const Byte* GetPayload() const { return mPayload; }
+
+private:
+    SharedPtr<Session>      mOwner;
+    const PacketHeader* mHeader;
+    const Byte* mPayload;
+};
+
 class PacketHandlerMap
 {
 public:
-    using Handler       = Function<Bool(SharedPtr<Session>, const Byte*, Int64)>;
+    using Handler = Function<Bool(const Packet&)>;
 
 public:
-    Bool                HandlePacket(SharedPtr<Session> session, const Byte* buffer, Int64 numBytes);
+    Bool                HandlePacket(const Packet& packet) { return mIdToHandler[packet.GetId()](packet); }
 
 protected:
     PacketHandlerMap();
@@ -39,19 +60,19 @@ protected:
     virtual void        RegisterAllHandlers() = 0;
 
     template<typename TPayload, typename THandler>
-    Bool                HandlePayload(THandler handler, SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
+    Bool                HandlePayload(THandler handler, const Packet& packet)
     {
         TPayload payload;
-        if (!payload.ParseFromArray(buffer + SIZE_16(PacketHeader), static_cast<Int32>(numBytes) - SIZE_16(PacketHeader)))
+        if (!payload.ParseFromArray(packet.GetPayload(), packet.GetSize() - SIZE_16(PacketHeader)))
         {
             return false;
         }
 
         // 페이로드 처리
-        return handler(std::move(session), payload);
+        return handler(packet.GetOwner(), payload);
     }
 
-    static Bool         Handle_Invalid(SharedPtr<Session> session, const Byte* buffer, Int64 numBytes);
+    static Bool         Handle_Invalid(const Packet& packet);
 
 private:
     Handler             mIdToHandler[std::numeric_limits<Int16>::max() + 1];
@@ -60,8 +81,8 @@ private:
 class PacketUtils
 {
 public:
-    template<typename T>
-    static SharedPtr<SendBuffer>    MakePacketBuffer(const T& payload, PacketId packetId)
+    template<typename TPayload>
+    static SharedPtr<SendBuffer>    MakePacketBuffer(const TPayload& payload, PacketId packetId)
     {
         const Int16 payloadSize = static_cast<Int16>(payload.ByteSizeLong());
         const Int16 packetSize = SIZE_16(PacketHeader) + payloadSize;

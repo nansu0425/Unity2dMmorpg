@@ -9,23 +9,14 @@ PacketHandlerMap::PacketHandlerMap()
     // Invalid 핸들러로 초기화
     for (Int32 i = 0; i < std::numeric_limits<Int16>::max() + 1; ++i)
     {
-        mIdToHandler[i] = [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
-            {
-                return Handle_Invalid(std::move(session), buffer, numBytes);
-            };
+        mIdToHandler[i] = [this](const Packet& packet) { return Handle_Invalid(packet); };
     }
 }
 
-Bool PacketHandlerMap::HandlePacket(SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
-{
-    const PacketHeader* header = reinterpret_cast<const PacketHeader*>(buffer);
-    // 패킷 id에 매핑된 핸들러 호출
-    return mIdToHandler[static_cast<Int16>(header->id)](std::move(session), buffer, numBytes);
-}
 
-Bool PacketHandlerMap::Handle_Invalid(SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
+Bool PacketHandlerMap::Handle_Invalid(const Packet& packet)
 {
-    gLogger->Error("Session[{}]: Invalid packet", session->GetId());
+    gLogger->Error(TEXT_8("Session[{}]: Invalid packet id: {}"), packet.GetOwner()->GetId(), packet.GetId());
     return false;
 }
 
@@ -36,9 +27,15 @@ Int64 PacketUtils::ProcessPackets(PacketHandlerMap& handlers, SharedPtr<Session>
     // 처리 가능한 모든 패킷 처리
     while (processedSize < numBytes)
     {
+        // 패킷 헤더 크기만큼 수신했는지 확인
+        if (numBytes - processedSize < SIZE_64(PacketHeader))
+        {
+            break;
+        }
+
         // 패킷 헤더를 읽어 패킷 크기와 ID를 확인
         const PacketHeader* header = reinterpret_cast<const PacketHeader*>(buffer + processedSize);
-        ASSERT_CRASH(header->size > 0, "INVALID_PACKET_SIZE");
+        ASSERT_CRASH_DEBUG(header->size > 0, "INVALID_PACKET_SIZE");
 
         // 패킷의 일부만 수신한 경우
         if (header->size > numBytes - processedSize)
@@ -47,7 +44,7 @@ Int64 PacketUtils::ProcessPackets(PacketHandlerMap& handlers, SharedPtr<Session>
         }
 
         // 패킷 처리
-        handlers.HandlePacket(session, buffer + processedSize, header->size);
+        handlers.HandlePacket(Packet(session, buffer + processedSize));
         processedSize += header->size;
     }
 
