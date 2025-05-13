@@ -21,3 +21,6 @@ protected:
 private:
     Int64               mPlayerId = 0;
 };
+
+class Room;
+extern SharedPtr<Room>  gRoom;

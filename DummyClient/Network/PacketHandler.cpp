@@ -6,34 +6,6 @@
 #include "GameContent/Common/Player.h"
 #include "DummyClient/Network/Session.h"
 
-S2C_PacketHandlerMap& S2C_PacketHandlerMap::GetInstance()
-{
-    static S2C_PacketHandlerMap sInstance;
-    return sInstance;
-}
-
-void S2C_PacketHandlerMap::RegisterAllHandlers()
-{
-    RegisterHandler(
-        [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
-        {
-            return HandlePayload<S2C_EnterRoom>(S2C_PacketHandlerMap::Handle_S2C_EnterRoom, std::move(session), buffer, numBytes);
-        },
-        PacketId::S2C_EnterRoom);
-
-    RegisterHandler(
-        [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
-        {
-            return HandlePayload<S2C_Chat>(S2C_PacketHandlerMap::Handle_S2C_Chat, std::move(session), buffer, numBytes);
-        },
-        PacketId::S2C_Chat);
-}
-
-S2C_PacketHandlerMap::S2C_PacketHandlerMap()
-{
-    RegisterAllHandlers();
-}
-
 Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> session, const S2C_EnterRoom& payload)
 {
     if (!payload.success())
@@ -68,5 +40,3 @@ Bool S2C_PacketHandlerMap::Handle_S2C_Chat(SharedPtr<Session> session, const S2C
 
     return true;
 }
-
-SharedPtr<Room> gRoom = std::make_shared<Room>();

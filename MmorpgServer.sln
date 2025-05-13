@@ -17,25 +17,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameServer", "GameServer\Ga
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A58A2D29-790D-401E-A315-A47791AA2D5C}"
-	ProjectSection(SolutionItems) = preProject
-		Common\Message.h = Common\Message.h
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MessageData", "MessageData", "{BE7791E1-09DC-4303-87C5-ADEA62AC72A3}"
-	ProjectSection(SolutionItems) = preProject
-		Common\MessageData\Client.fbs = Common\MessageData\Client.fbs
-		Common\MessageData\Client_generated.h = Common\MessageData\Client_generated.h
-		Common\MessageData\Common.fbs = Common\MessageData\Common.fbs
-		Common\MessageData\Common_generated.h = Common\MessageData\Common_generated.h
-		Common\MessageData\Generator.bat = Common\MessageData\Generator.bat
-		Common\MessageData\Server.fbs = Common\MessageData\Server.fbs
-		Common\MessageData\Server_generated.h = Common\MessageData\Server_generated.h
-	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protocol", "Protocol", "{9EECD632-FD61-4240-AC8F-5AF959A00FA7}"
 	ProjectSection(SolutionItems) = preProject
-		Common\Protocol\Common.proto = Common\Protocol\Common.proto
 		Common\Protocol\C2S_Packet.proto = Common\Protocol\C2S_Packet.proto
+		Common\Protocol\Common.proto = Common\Protocol\Common.proto
 		Common\Protocol\S2C_Packet.proto = Common\Protocol\S2C_Packet.proto
 	EndProjectSection
 EndProject
@@ -94,7 +80,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{BE7791E1-09DC-4303-87C5-ADEA62AC72A3} = {A58A2D29-790D-401E-A315-A47791AA2D5C}
 		{9EECD632-FD61-4240-AC8F-5AF959A00FA7} = {A58A2D29-790D-401E-A315-A47791AA2D5C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

@@ -26,3 +26,5 @@ Int64 ClientSession::OnReceived(const Byte* buffer, Int64 numBytes)
 
 void ClientSession::OnSent(Int64 numBytes)
 {}
+
+SharedPtr<Room>  gRoom = std::make_shared<Room>();

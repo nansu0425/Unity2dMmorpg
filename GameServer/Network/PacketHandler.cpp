@@ -6,34 +6,6 @@
 #include "GameContent/Chat/Room.h"
 #include "GameContent/Common/Player.h"
 
-C2S_PacketHandlerMap& C2S_PacketHandlerMap::GetInstance()
-{
-    static C2S_PacketHandlerMap sInstance;
-    return sInstance;
-}
-
-void C2S_PacketHandlerMap::RegisterAllHandlers()
-{
-    RegisterHandler(
-        [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
-        {
-            return HandlePayload<C2S_EnterRoom>(C2S_PacketHandlerMap::Handle_C2S_EnterRoom, std::move(session), buffer, numBytes);
-        },
-        PacketId::C2S_EnterRoom);
-
-    RegisterHandler(
-        [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
-        {
-            return HandlePayload<C2S_Chat>(C2S_PacketHandlerMap::Handle_C2S_Chat, std::move(session), buffer, numBytes);
-        },
-        PacketId::C2S_Chat);
-}
-
-C2S_PacketHandlerMap::C2S_PacketHandlerMap()
-{
-    RegisterAllHandlers();
-}
-
 Bool C2S_PacketHandlerMap::Handle_C2S_EnterRoom(SharedPtr<Session> session, const C2S_EnterRoom& payload)
 {
     gRoom->PushJob([session, id = payload.id()]
@@ -69,5 +41,3 @@ Bool C2S_PacketHandlerMap::Handle_C2S_Chat(SharedPtr<Session> session, const C2S
 
     return true;
 }
-
-SharedPtr<Room> gRoom = std::make_shared<Room>();

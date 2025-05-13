@@ -1,7 +1,6 @@
 ﻿/*    DummyClient/Network/Session.h    */
 
 #include "ServerEngine/Network/Session.h"
-#include "GameContent/Common/Player.h"
 
 #pragma once
 
@@ -21,3 +20,6 @@ protected:
 private:
     Int64               mPlayerId = 0;
 };
+
+class Room;
+extern SharedPtr<Room> gRoom;

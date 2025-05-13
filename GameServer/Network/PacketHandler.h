@@ -8,17 +8,33 @@ class C2S_PacketHandlerMap
     : public PacketHandlerMap
 {
 public:
-    static C2S_PacketHandlerMap&    GetInstance();
+    static C2S_PacketHandlerMap&    GetInstance()
+    {
+        static C2S_PacketHandlerMap sInstance;
+        return sInstance;
+    }
 
 protected:
-    virtual void    RegisterAllHandlers() override;
+    C2S_PacketHandlerMap() { RegisterAllHandlers(); }
 
-private:
-    C2S_PacketHandlerMap();
+    virtual void    RegisterAllHandlers() override
+    {
+        RegisterHandler(
+            [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
+            {
+                return HandlePayload<C2S_EnterRoom>(C2S_PacketHandlerMap::Handle_C2S_EnterRoom, std::move(session), buffer, numBytes);
+            },
+            PacketId::C2S_EnterRoom);
 
+        RegisterHandler(
+            [this](SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
+            {
+                return HandlePayload<C2S_Chat>(C2S_PacketHandlerMap::Handle_C2S_Chat, std::move(session), buffer, numBytes);
+            },
+            PacketId::C2S_Chat);
+    }
+
+private:    // 모든 페이로드 핸들러
     static Bool     Handle_C2S_EnterRoom(SharedPtr<Session> session, const C2S_EnterRoom& payload);
     static Bool     Handle_C2S_Chat(SharedPtr<Session> session, const C2S_Chat& payload);
 };
-
-class Room;
-extern SharedPtr<Room> gRoom;
