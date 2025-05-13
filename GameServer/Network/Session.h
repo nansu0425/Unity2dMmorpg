@@ -9,8 +9,8 @@ class ClientSession
     : public Session
 {
 public:
-    void                SetPlayer(WeakPtr<Player> player) { mPlayer = std::move(player); }
-    SharedPtr<Player>   GetPlayer() const { return mPlayer.lock(); }
+    void                SetPlayerId(Int64 id) { mPlayerId = id; }
+    Int64               GetPlayerId() const { return mPlayerId; }
 
 protected:
     virtual void        OnConnected() override;
@@ -19,5 +19,5 @@ protected:
     virtual void        OnSent(Int64 numBytes) override;
 
 private:
-    WeakPtr<Player>     mPlayer;
+    Int64               mPlayerId = 0;
 };

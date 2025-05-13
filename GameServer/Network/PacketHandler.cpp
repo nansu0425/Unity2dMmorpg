@@ -36,11 +36,11 @@ ClientPacketHandlerMap::ClientPacketHandlerMap()
 
 Bool ClientPacketHandlerMap::Handle_EnterRoomRequest(SharedPtr<Session> session, const EnterRoomRequest& payload)
 {
-    // 방 입장 잡 생성
     gRoom->MakeJob([session, id = payload.id()]
                    {
+                       // 플레이어 생성 후 방 입장
                        auto player = std::make_shared<Player>(session, id);
-                       std::static_pointer_cast<ClientSession>(session)->SetPlayer(player);
+                       std::static_pointer_cast<ClientSession>(session)->SetPlayerId(id);
                        gRoom->Enter(std::move(player));
 
                        // 방 입장 응답 전송
@@ -58,9 +58,9 @@ Bool ClientPacketHandlerMap::Handle_ChatNotify(SharedPtr<Session> session, ChatN
 {
     gLogger->Info(TEXT_8("Player[{}]: Chat message: {}"), payload.id(), payload.message());
 
-    // 방에 브로드캐스트 잡 생성
     gRoom->MakeJob([session, id = payload.id(), msg = payload.message()]()
                    {
+                       // 룸의 모든 플레이어에게 메시지 전송
                        ChatBroadcast broadcast;
                        broadcast.set_id(id);
                        broadcast.set_message(msg);
