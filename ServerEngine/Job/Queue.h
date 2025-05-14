@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ServerEngine/Concurrency/Queue.h"
+#include <concurrentqueue/concurrentqueue.h>
 
 /*
  * 비동기 작업을 Job 형태로 만들 수 있다.
@@ -53,26 +53,68 @@ class JobQueue
     : public std::enable_shared_from_this<JobQueue>
 {
 public:
-    void        Push(SharedPtr<Job> job, Bool canFlush = true);
+    JobQueue();
 
-public:
-    // 큐에 남은 job이 없을 때까지 처리
-    void        Flush();
+    // void        Push(SharedPtr<Job> job, Bool canFlush = true);
+    void        Push(SharedPtr<Job> job);
+    Bool        Flush(UInt64 timeoutMs);
 
 private:
-    LockQueue<SharedPtr<Job>>       mJobs;
-    Atomic<Int64>                   mJobCount = 0;
+    enum Constants
+    {
+        kQueueSize  = 128,
+    };
+
+private:
+    moodycamel::ConcurrentQueue<SharedPtr<Job>>    mQueue;
+    Atomic<Int64>                                  mJobCount;
 };
 
-/*
- * JobQueue를 Flush하기 힘든 스레드는 JobQueue를 JobQueueManager에 등록한다.
- */
 class JobQueueManager
 {
 public:
+    struct RegisterEvent
+        : public OVERLAPPED
+    {
+        SharedPtr<JobQueue> queue;
+
+        void Init()
+        {
+            Internal = 0;
+            InternalHigh = 0;
+            Offset = 0;
+            OffsetHigh = 0;
+            hEvent = NULL;
+        }
+    };
+
+public:
+    JobQueueManager();
+    ~JobQueueManager();
+
     void        Register(SharedPtr<JobQueue> queue);
-    void        FlushQueues();
+    void        FlushQueues(UInt32 timeoutMs = INFINITE);
+    void        HandleError(Int64 errorCode);
 
 private:
-    LockQueue<SharedPtr<JobQueue>>  mQueues;
+    void        PostRegisterEvent(RegisterEvent* event);
+
+private:
+    HANDLE      mIocp = nullptr;
+    Bool        mRunning = false;
+
+    static constexpr Int64      kFlushTimeoutMs = 10;
 };
+
+///*
+// * JobQueue를 Flush하기 힘든 스레드는 JobQueue를 JobQueueManager에 등록한다.
+// */
+//class JobQueueManager
+//{
+//public:
+//    void        Register(SharedPtr<JobQueue> queue);
+//    void        FlushQueues();
+//
+//private:
+//    LockQueue<SharedPtr<JobQueue>>  mQueues;
+//};
