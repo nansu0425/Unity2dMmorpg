@@ -37,6 +37,6 @@ protected:  // 모든 패킷 핸들러 등록
     }
 
 private:    // 모든 페이로드 핸들러
-    static Bool     Handle_C2S_EnterRoom(SharedPtr<Session> session, const C2S_EnterRoom& payload);
-    static Bool     Handle_C2S_Chat(SharedPtr<Session> session, const C2S_Chat& payload);
+    static Bool     Handle_C2S_EnterRoom(SharedPtr<Session> owner, const C2S_EnterRoom& payload);
+    static Bool     Handle_C2S_Chat(SharedPtr<Session> owner, const C2S_Chat& payload);
 };

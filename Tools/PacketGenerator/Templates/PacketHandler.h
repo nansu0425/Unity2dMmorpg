@@ -31,6 +31,6 @@ protected:  // 모든 패킷 핸들러 등록
 
 private:    // 모든 페이로드 핸들러
     {%- for payload in parser.payload_dict[prefix_key] %}
-    static Bool     Handle_{{ payload.name }}(SharedPtr<Session> session, const {{ payload.name }}& payload);
+    static Bool     Handle_{{ payload.name }}(SharedPtr<Session> owner, const {{ payload.name }}& payload);
     {%- endfor %}
 };

@@ -6,21 +6,21 @@
 #include "GameContent/Common/Player.h"
 #include "DummyClient/Network/Session.h"
 
-Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> session, const S2C_EnterRoom& payload)
+Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> owner, const S2C_EnterRoom& payload)
 {
     if (!payload.success())
     {
-        gLogger->Error(TEXT_8("Session[{}]: Failed to enter room"), session->GetId());
+        gLogger->Error(TEXT_8("Session[{}]: Failed to enter room"), owner->GetId());
         return false;
     }
 
-    gRoom->PushJob([session, id = payload.id()]
+    gRoom->PushJob([owner, id = payload.id()]
                    {
                        // 플레이어 찾기
                        auto player = PlayerManager::GetInstance().GetPlayer(id);
                        if (player == nullptr)
                        {
-                           gLogger->Error(TEXT_8("Session[{}]: Player[{}] not found"), session->GetId(), id);
+                           gLogger->Error(TEXT_8("Session[{}]: Player[{}] not found"), owner->GetId(), id);
                            return;
                        }
 
@@ -37,7 +37,7 @@ Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> session, cons
     return true;
 }
 
-Bool S2C_PacketHandlerMap::Handle_S2C_Chat(SharedPtr<Session> session, const S2C_Chat& payload)
+Bool S2C_PacketHandlerMap::Handle_S2C_Chat(SharedPtr<Session> owner, const S2C_Chat& payload)
 {
     gLogger->Info(TEXT_8("Player[{}]: Chat message: {}"), payload.id(), payload.message());
 

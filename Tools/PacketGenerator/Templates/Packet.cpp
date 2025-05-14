@@ -1,8 +1,8 @@
-﻿/*    GameServer/Network/Protocol/Packet.cpp    */
+﻿/*    {{ project_name }}/Network/Protocol/Packet.cpp    */
 
-#include "GameServer/Pch.h"
-#include "GameServer/Network/Protocol/Packet.h"
-#include "GameServer/Network/Session.h"
+#include "{{ project_name }}/Pch.h"
+#include "{{ project_name }}/Network/Protocol/Packet.h"
+#include "{{ project_name }}/Network/Session.h"
 
 PacketHandlerMap::PacketHandlerMap()
 {

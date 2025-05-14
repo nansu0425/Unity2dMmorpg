@@ -28,6 +28,7 @@
     <Folder Include="Templates\" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Templates\Packet.cpp" />
     <Content Include="Templates\Packet.h" />
     <Content Include="Templates\PacketHandler.h" />
   </ItemGroup>

@@ -102,5 +102,5 @@ public:
         return sendBuf;
     }
 
-    static Int64                    ProcessPackets(PacketHandlerMap& handlers, SharedPtr<Session> session, const Byte* buffer, Int64 numBytes);
+    static Int64                    ProcessPackets(PacketHandlerMap& handlers, SharedPtr<Session> owner, const Byte* buffer, Int64 numBytes);
 };

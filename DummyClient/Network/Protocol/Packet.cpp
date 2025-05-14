@@ -20,7 +20,7 @@ Bool PacketHandlerMap::Handle_Invalid(const Packet& packet)
     return false;
 }
 
-Int64 PacketUtils::ProcessPackets(PacketHandlerMap& handlers, SharedPtr<Session> session, const Byte* buffer, Int64 numBytes)
+Int64 PacketUtils::ProcessPackets(PacketHandlerMap& handlers, SharedPtr<Session> owner, const Byte* buffer, Int64 numBytes)
 {
     Int64 processedSize = 0;
 
@@ -44,7 +44,7 @@ Int64 PacketUtils::ProcessPackets(PacketHandlerMap& handlers, SharedPtr<Session>
         }
 
         // 패킷 처리
-        handlers.HandlePacket(Packet(session, buffer + processedSize));
+        handlers.HandlePacket(Packet(owner, buffer + processedSize));
         processedSize += header->size;
     }
 
