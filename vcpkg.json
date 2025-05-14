@@ -1,6 +1,5 @@
 {
   "dependencies": [
-    "flatbuffers",
     "mimalloc",
     "spdlog",
     "protobuf"

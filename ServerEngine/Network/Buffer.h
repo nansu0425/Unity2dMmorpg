@@ -2,8 +2,6 @@
 
 #pragma once
 
-class SendMessageBuilder;
-
 class ReceiveBuffer
 {
 public:
@@ -32,23 +30,6 @@ private:
     Int64           mReadPos = 0;
     Int64           mWritePos = 0;
     Vector<Byte>    mBuffer;
-};
-
-class SendBuffers
-{
-public:
-    void        PushMessage(SharedPtr<SendMessageBuilder> message);
-    void        Clear();
-    void        Swap(SendBuffers& buffers) noexcept;
-
-public:
-    WSABUF*     GetWsaBuffers() { return mBuffers.data(); }
-    Int64       GetWsaBufferCount() const { return mBuffers.size(); }
-    Bool        IsEmpty() const { return mBuffers.empty(); }
-
-private:
-    Vector<WSABUF>                          mBuffers;
-    Vector<SharedPtr<SendMessageBuilder>>   mMessages;
 };
 
 class SendChunk;

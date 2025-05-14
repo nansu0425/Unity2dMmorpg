@@ -2,7 +2,6 @@
 
 #include "ServerEngine/Pch.h"
 #include "ServerEngine/Network/Buffer.h"
-#include "ServerEngine/Network/Message.h"
 
 ReceiveBuffer::ReceiveBuffer(Int64 size)
     : mSize(size)
@@ -62,34 +61,6 @@ Bool ReceiveBuffer::OnWritten(Int64 numBytes)
     mWritePos += numBytes;
 
     return true;
-}
-
-void SendBuffers::PushMessage(SharedPtr<SendMessageBuilder> message)
-{
-    ASSERT_CRASH(message->IsBuilt(), "MESSAGE_NOT_BUILT");
-    mMessages.push_back(std::move(message));
-    // 메시지 헤더
-    WSABUF header;
-    header.buf = reinterpret_cast<CHAR*>(&mMessages.back()->GetHeader());
-    header.len = SIZE_16(MessageHeader);
-    mBuffers.push_back(header);
-    // 메시지 데이터
-    WSABUF data;
-    data.buf = reinterpret_cast<CHAR*>(mMessages.back()->GetDataBuffer());
-    data.len = static_cast<ULONG>(mMessages.back()->GetDataSize());
-    mBuffers.push_back(data);
-}
-
-void SendBuffers::Clear()
-{
-    mBuffers.clear();
-    mMessages.clear();
-}
-
-void SendBuffers::Swap(SendBuffers& buffers) noexcept
-{
-    mBuffers.swap(buffers.mBuffers);
-    mMessages.swap(buffers.mMessages);
 }
 
 SendBuffer::SendBuffer(SharedPtr<SendChunk> owner, Byte* buffer, Int64 allocSize)
