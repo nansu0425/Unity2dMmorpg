@@ -20,15 +20,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{A58A2D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protocol", "Protocol", "{9EECD632-FD61-4240-AC8F-5AF959A00FA7}"
 	ProjectSection(SolutionItems) = preProject
-		Common\Protocol\Common.proto = Common\Protocol\Common.proto
 		Common\Protocol\C2S_Payload.proto = Common\Protocol\C2S_Payload.proto
+		Common\Protocol\Common.proto = Common\Protocol\Common.proto
 		Common\Protocol\S2C_Payload.proto = Common\Protocol\S2C_Payload.proto
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{B8766B3A-3438-407B-B746-30680F57A5A3}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\GenProto.bat = Tools\GenProto.bat
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameContent", "GameContent\GameContent.vcxproj", "{33033385-DBDC-4862-87F0-79FF8C49984A}"
 	ProjectSection(ProjectDependencies) = postProject

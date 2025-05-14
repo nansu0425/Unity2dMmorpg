@@ -8,7 +8,7 @@ REM 현재 스크립트 위치
 set SCRIPT_DIR=%~dp0
 
 REM 솔루션 디렉토리
-for %%I in ("%SCRIPT_DIR%..") do set SOLUTION_DIR=%%~fI
+for %%I in ("%SCRIPT_DIR%..\..") do set SOLUTION_DIR=%%~fI
 
 REM protoc.exe 경로
 set PROTOC=%SOLUTION_DIR%\vcpkg_installed\x64-windows-static\tools\protobuf\protoc.exe
@@ -59,6 +59,15 @@ REM 4) 임시 출력 폴더 정리
 echo [CLEAN] Removing temp dir %OUT_DIR%
 rd /s /q "%OUT_DIR%"
 
+REM 5) PacketGenerator.py 실행
 echo ============================================
+echo Generating packet code...
+echo ============================================
+python "%SCRIPT_DIR%PacketGenerator.py" --client_name "DummyClient" --client_pkt_prefix "C2S" --server_name "GameServer" --server_pkt_prefix "S2C"
+if errorlevel 1 (
+    echo [ERROR] Failed to run PacketGenerator.py
+    exit /b 1
+)
+
 echo All done!
 exit /b 0

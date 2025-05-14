@@ -1,14 +1,14 @@
-#    Tools/PacketGenerator/ProtoParser.py    #
+#    Tools/PacketGenerator/PayloadParser.py    #
 
 import os
 
-class ProtoParser:
+class PayloadParser:
     def __init__(self, start_id):
         self.payload_dict = {}
         self.start_id = start_id
         self.next_id = start_id
 
-    def parse_proto(self, payload_files):
+    def parse_payload_files(self, payload_files):
         for file in payload_files:
             # payload의 prefix를 구한다
             file_name = os.path.basename(file)
