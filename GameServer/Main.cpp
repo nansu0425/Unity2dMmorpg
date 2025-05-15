@@ -6,23 +6,6 @@
 #include "ServerEngine/Network/Service.h"
 #include "GameServer/Network/Session.h"
 
-void IoWorker(SharedPtr<Service> service)
-{
-    while (true)
-    {
-        Int64 result = service->GetIoEventDispatcher()->Dispatch();
-    }
-}
-
-void JobWorker()
-{
-    while (true)
-    {
-        gJobQueueManager->FlushQueues();
-
-    }
-}
-
 Service::Config gConfig =
 {
     NetAddress(TEXT_16("127.0.0.1"), 7777),
@@ -42,7 +25,10 @@ int main()
     {
         gThreadManager->Launch([service]
                                {
-                                   IoWorker(service);
+                                   while (true)
+                                   {
+                                       Int64 result = service->GetIoEventDispatcher()->Dispatch();
+                                   }
                                });
     }
 
@@ -51,7 +37,7 @@ int main()
     {
         gThreadManager->Launch([]
                                {
-                                   JobWorker();
+                                   gJobQueueManager->FlushQueues();
                                });
     }
 

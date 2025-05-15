@@ -64,7 +64,7 @@ Bool JobQueue::Flush(UInt64 timeoutMs)
         }
 
         // 타임아웃 시간을 초과하면 반복 종료
-        if (::GetTickCount64() < start + timeoutMs)
+        if (start + timeoutMs < ::GetTickCount64())
         {
             result = false;
             break;
@@ -103,7 +103,7 @@ void JobQueueManager::Register(SharedPtr<JobQueue> queue)
 void JobQueueManager::PostRegisterEvent(RegisterEvent* event)
 {
     // 등록 이벤트 포스팅
-    BOOL result = ::PostQueuedCompletionStatus(mIocp, 0, 0, static_cast<LPOVERLAPPED>(event));
+    BOOL result = ::PostQueuedCompletionStatus(mIocp, 0, 0, event);
     if (result == FALSE)
     {
         HandleError(::GetLastError());

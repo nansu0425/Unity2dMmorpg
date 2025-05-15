@@ -103,7 +103,7 @@ private:
     HANDLE      mIocp = nullptr;
     Bool        mRunning = false;
 
-    static constexpr Int64      kFlushTimeoutMs = 10;
+    static constexpr Int64      kFlushTimeoutMs = 100;
 };
 
 ///*
