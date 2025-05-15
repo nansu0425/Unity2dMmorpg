@@ -57,7 +57,7 @@ public:
 
     // void        Push(SharedPtr<Job> job, Bool canFlush = true);
     void        Push(SharedPtr<Job> job);
-    Bool        Flush(UInt64 timeoutMs);
+    Bool        TryFlush(UInt64 timeoutMs);
 
 private:
     enum Constants
@@ -100,8 +100,9 @@ private:
     void        PostRegisterEvent(RegisterEvent* event);
 
 private:
-    HANDLE      mIocp = nullptr;
-    Bool        mRunning = false;
+    HANDLE          mIocp = nullptr;
+    Bool            mRunning = false;
+    Atomic<Int64>   mEventCount = 0;
 
     static constexpr Int64      kFlushTimeoutMs = 100;
 };

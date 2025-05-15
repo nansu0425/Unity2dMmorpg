@@ -31,8 +31,6 @@ Bool C2S_PacketHandlerMap::Handle_C2S_EnterRoom(SharedPtr<Session> owner, const 
 
 Bool C2S_PacketHandlerMap::Handle_C2S_Chat(SharedPtr<Session> owner, const C2S_Chat& payload)
 {
-    gLogger->Info(TEXT_8("Player[{}]: Chat message: {}"), payload.id(), payload.message());
-
     gRoom->PushJob([owner, id = payload.id(), msg = payload.message()]()
                    {
                        // 룸의 모든 플레이어에게 메시지 전송
@@ -40,6 +38,7 @@ Bool C2S_PacketHandlerMap::Handle_C2S_Chat(SharedPtr<Session> owner, const C2S_C
                        payload.set_id(id);
                        payload.set_message(msg);
                        gRoom->Broadcast(PacketUtils::MakePacketBuffer(payload, PacketId::S2C_Chat));
+                       gLogger->Debug(TEXT_8("Player[{}]: Broadcast message: {}"), id, msg);
                    });
 
     return true;

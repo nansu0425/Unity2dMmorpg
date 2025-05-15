@@ -42,10 +42,10 @@ void JobQueue::Push(SharedPtr<Job> job)
     }
 }
 
-Bool JobQueue::Flush(UInt64 timeoutMs)
+Bool JobQueue::TryFlush(UInt64 timeoutMs)
 {
     const UInt64 start = ::GetTickCount64();
-    Bool result = true;
+    Bool ret = true;
 
     while (true)
     {
@@ -66,12 +66,12 @@ Bool JobQueue::Flush(UInt64 timeoutMs)
         // 타임아웃 시간을 초과하면 반복 종료
         if (start + timeoutMs < ::GetTickCount64())
         {
-            result = false;
+            ret = false;
             break;
         }
     }
 
-    return result;
+    return ret;
 }
 
 JobQueueManager::JobQueueManager()
@@ -93,10 +93,12 @@ JobQueueManager::~JobQueueManager()
 
 void JobQueueManager::Register(SharedPtr<JobQueue> queue)
 {
-    // 등록 이벤트 생성 후 포스팅
+    // 등록 이벤트
+    mEventCount.fetch_add(1);
     RegisterEvent* event = new RegisterEvent();
     event->Init();
     event->queue = std::move(queue);
+
     PostRegisterEvent(event);
 }
 
@@ -156,7 +158,7 @@ void JobQueueManager::FlushQueues(UInt32 timeoutMs)
         }
 
         // JobQueue 플러시 시도
-        Bool completed = event->queue->Flush(kFlushTimeoutMs);
+        Bool completed = event->queue->TryFlush(kFlushTimeoutMs);
         if (!completed)
         {
             // 모든 작업을 처리하지 못한 경우 다시 큐에 등록
@@ -167,6 +169,7 @@ void JobQueueManager::FlushQueues(UInt32 timeoutMs)
 
         // 이벤트 객체 메모리 해제
         delete event;
+        mEventCount.fetch_sub(1);
     }
 }
 
