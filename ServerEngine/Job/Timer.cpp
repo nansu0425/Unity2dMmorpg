@@ -18,64 +18,52 @@ JobTimer::~JobTimer()
     }
 }
 
-void JobTimer::Schedule(SharedPtr<Job> job, SharedPtr<JobQueue> owner, Int64 delayTick)
+void JobTimer::Schedule(SharedPtr<Job> job, WeakPtr<JobQueue> queue, Int64 delayMs)
 {
-    const Int64 executeTick = ::GetTickCount64() + delayTick;
+    const Int64 execTick = ::GetTickCount64() + delayMs;
 
     {
         WRITE_GUARD;
-        mItems.push(Item{executeTick, std::move(job), std::move(owner)});
+        mScheduledItems.push(Item{execTick, std::move(job), std::move(queue)});
     }
 
     // 타이머 스레드 깨우기
     ::SetEvent(mWakeEvent);
 }
 
-void JobTimer::Distribute()
+Int64 JobTimer::Distribute()
 {
     const Int64 nowTick = ::GetTickCount64();
-    Vector<Item> executeItems;
+    // 다음 실행 대기 시간
+    Int64 waitMs = kMaxWaitMs;
 
     {
         WRITE_GUARD;
+
         // 실행 가능한 틱에 도달한 Item을 모두 꺼낸다
-        while (!mItems.empty())
+        while (!mScheduledItems.empty())
         {
-            const Item& item = mItems.top();
-            if (nowTick < item.executeTick)
+            const Item& item = mScheduledItems.top();
+            // 실행 틱에 도달하지 못한 경우
+            if (nowTick < item.execTick)
             {
+                waitMs = item.execTick - nowTick;  
                 break;
             }
-            executeItems.push_back(item);
-            mItems.pop();
+
+            mExecItems.emplace_back(item);
+            mScheduledItems.pop();
         }
     }
 
     // 꺼낸 모든 아이템의 job을 큐에 넣는다
-    for (const Item& item : executeItems)
+    for (Item& item : mExecItems)
     {
-        item.owner->Push(item.job);
+        item.queue.lock()->Push(std::move(item.job));
     }
-}
+    mExecItems.clear();
 
-Int64 JobTimer::GetTimeUntilNextItem()
-{
-    WRITE_GUARD;
-
-    if (mItems.empty())
-    {
-        return kMaxWaitTime;
-    }
-
-    const Int64 nowTick = ::GetTickCount64();
-    const Int64 nextTick = mItems.top().executeTick;
-
-    if (nextTick <= nowTick)
-    {
-        return 0;  // 즉시 실행
-    }
-
-    return nextTick - nowTick;  // 다음 타이머까지 대기 시간
+    return waitMs; 
 }
 
 void JobTimer::Run()
@@ -86,14 +74,8 @@ void JobTimer::Run()
     while (mRunning)
     {
         // 타이머 설정 시간이 지난 잡을 큐에 분배
-        Distribute();
-
-        // 다음 타이머 실행 시간까지 대기
-        Int64 waitTime = GetTimeUntilNextItem();
-        if (waitTime > 0)
-        {
-            // 이벤트 대기 또는 타임아웃
-            ::WaitForSingleObject(mWakeEvent, static_cast<DWORD>(waitTime));
-        }
+        Int64 waitMs = Distribute();
+        // 이벤트 대기 또는 타임아웃
+        ::WaitForSingleObject(mWakeEvent, static_cast<DWORD>(waitMs));
     }
 }

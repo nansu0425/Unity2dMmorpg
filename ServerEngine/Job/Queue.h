@@ -20,16 +20,16 @@ public:
 
     // 특정 객체의 메서드를 호출하는 Job을 생성
     template<typename T, typename Ret, typename... Args>
-    Job(SharedPtr<T> obj, Ret(T::* method)(Args...), Args&&... args)
+    Job(SharedPtr<T> owner, Ret(T::* method)(Args...), Args&&... args)
     {
         auto tuple = std::make_tuple(std::forward<Args>(args)...);
 
-        mCallback = [obj = std::move(obj), method, tuple = std::move(tuple)]() mutable
+        mCallback = [owner = std::move(owner), method, tuple = std::move(tuple)]() mutable
             {
                 // tuple의 요소를 unpack하여 인자로 전달
-                std::apply([obj, method](auto&&... args)
+                std::apply([owner = std::move(owner), method](auto&&... args)
                            {
-                               (obj.get()->*method)(std::forward<decltype(args)>(args)...);
+                               (owner.get()->*method)(std::forward<decltype(args)>(args)...);
                            },
                            std::move(tuple));
             };
@@ -55,21 +55,33 @@ class JobQueue
 public:
     JobQueue();
 
-    // void        Push(SharedPtr<Job> job, Bool canFlush = true);
     void        Push(SharedPtr<Job> job);
-    Bool        TryFlush(UInt64 timeoutMs);
-
-private:
-    enum Constants
-    {
-        kQueueSize  = 128,
-    };
+    Bool        TryFlush(Int64 timeoutMs);
 
 private:
     moodycamel::ConcurrentQueue<SharedPtr<Job>>    mQueue;
     Atomic<Int64>                                  mJobCount;
+
+    static constexpr Int64      kInitQueueSize = 128;
 };
 
+/*
+ * JobQueueManager는 IOCP(I/O Completion Port)를 사용하여 비동기 작업 큐를 관리하는 클래스
+ *
+ * 주요 기능:
+ * - 작업 큐(JobQueue)를 관리하고 큐에 담긴 작업(Job)을 비동기적으로 실행
+ * - IOCP를 활용해 효율적인 멀티스레딩 작업 처리 구조 제공
+ * - 작업 큐가 비어있다가 새 작업이 추가될 때 자동 등록 기능
+ *
+ * 동작 방식:
+ * 1. JobQueue::Push()를 통해 큐에 첫 작업이 추가되면 JobQueueManager::Register()가 호출됨
+ * 2. Register()는 큐를 RegisterEvent로 래핑하여 IOCP에 등록
+ * 3. FlushQueues() 메서드는 IOCP에서 완료된 이벤트를 가져와 해당 큐의 작업을 처리
+ * 4. 큐의 모든 작업이 처리되면 이벤트 객체를 해제하고, 처리하지 못했으면 다시 IOCP에 등록
+ *
+ * 이 클래스는 여러 스레드가 작업을 등록하고, 별도의 스레드(들)에서 작업을 실행하는
+ * 생산자-소비자 패턴을 IOCP 기반으로 구현한 것입니다.
+ */
 class JobQueueManager
 {
 public:
@@ -92,12 +104,12 @@ public:
     JobQueueManager();
     ~JobQueueManager();
 
-    void        Register(SharedPtr<JobQueue> queue);
-    void        FlushQueues(UInt32 timeoutMs = INFINITE);
-    void        HandleError(Int64 errorCode);
+    void            Register(SharedPtr<JobQueue> queue);
+    void            FlushQueues(UInt32 timeoutMs = INFINITE);
+    void            HandleError(Int64 errorCode);
 
 private:
-    void        PostRegisterEvent(RegisterEvent* event);
+    void            PostRegisterEvent(RegisterEvent* event);
 
 private:
     HANDLE          mIocp = nullptr;
@@ -106,16 +118,3 @@ private:
 
     static constexpr Int64      kFlushTimeoutMs = 100;
 };
-
-///*
-// * JobQueue를 Flush하기 힘든 스레드는 JobQueue를 JobQueueManager에 등록한다.
-// */
-//class JobQueueManager
-//{
-//public:
-//    void        Register(SharedPtr<JobQueue> queue);
-//    void        FlushQueues();
-//
-//private:
-//    LockQueue<SharedPtr<JobQueue>>  mQueues;
-//};

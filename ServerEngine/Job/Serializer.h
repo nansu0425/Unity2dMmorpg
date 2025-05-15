@@ -21,22 +21,22 @@ public:
     template<typename T, typename Ret, typename... Args>
     void PushJob(Ret(T::* method)(Args...), Args... args)
     {
-        SharedPtr<T> obj = std::static_pointer_cast<T>(shared_from_this());
-        mQueue->Push(std::make_shared<Job>(std::move(obj), method, std::forward<Args>(args)...));
+        SharedPtr<T> owner = std::static_pointer_cast<T>(shared_from_this());
+        mQueue->Push(std::make_shared<Job>(std::move(owner), method, std::forward<Args>(args)...));
     }
 
-    void ScheduleJob(Int64 delayTick, Job::CallbackType&& callback)
+    void ScheduleJob(Int64 delayMs, Job::CallbackType&& callback)
     {
         SharedPtr<Job> job = std::make_shared<Job>(std::move(callback));
-        gJobTimer->Schedule(job, mQueue, delayTick);
+        gJobTimer->Schedule(std::move(job), mQueue, delayMs);
     }
 
     template<typename T, typename Ret, typename... Args>
-    void ScheduleJob(Int64 delayTick, Ret(T::* method)(Args...), Args... args)
+    void ScheduleJob(Int64 delayMs, Ret(T::* method)(Args...), Args... args)
     {
-        SharedPtr<T> obj = std::static_pointer_cast<T>(shared_from_this());
-        SharedPtr<Job> job = std::make_shared<Job>(std::move(obj), method, std::forward<Args>(args)...);
-        gJobTimer->Schedule(job, mQueue, delayTick);
+        SharedPtr<T> owner = std::static_pointer_cast<T>(shared_from_this());
+        SharedPtr<Job> job = std::make_shared<Job>(std::move(owner), method, std::forward<Args>(args)...);
+        gJobTimer->Schedule(std::move(job), mQueue, delayMs);
     }
 
 protected:

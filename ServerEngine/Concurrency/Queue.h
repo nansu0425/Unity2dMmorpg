@@ -12,23 +12,23 @@ public:
     void Push(const T& item)
     {
         WRITE_GUARD;
-        mItems.push(item);
+        mScheduledItems.push(item);
     }
 
     void Push(T&& item)
     {
         WRITE_GUARD;
-        mItems.push(std::move(item));
+        mScheduledItems.push(std::move(item));
     }
 
     // item을 가져왔다면 true, 비어있다면 false
     Bool Pop(T& item)
     {
         WRITE_GUARD;
-        if (false == mItems.empty())
+        if (false == mScheduledItems.empty())
         {
-            item = mItems.front();
-            mItems.pop();
+            item = mScheduledItems.front();
+            mScheduledItems.pop();
             return true;
         }
         return false;
@@ -38,13 +38,13 @@ public:
     Bool PopAll(Vector<T>& items)
     {
         WRITE_GUARD;
-        if (false == mItems.empty())
+        if (false == mScheduledItems.empty())
         {
-            items.reserve(mItems.size());
-            while (false == mItems.empty())
+            items.reserve(mScheduledItems.size());
+            while (false == mScheduledItems.empty())
             {
-                items.push_back(mItems.front());
-                mItems.pop();
+                items.push_back(mScheduledItems.front());
+                mScheduledItems.pop();
             }
             return true;
         }
@@ -54,10 +54,10 @@ public:
     void Clear()
     {
         WRITE_GUARD;
-        mItems = Queue<T>();
+        mScheduledItems = Queue<T>();
     }
 
 private:
     RW_LOCK;
-    Queue<T>    mItems;
+    Queue<T>    mScheduledItems;
 };

@@ -27,11 +27,11 @@ Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> owner, const 
                        // 방 입장
                        gRoom->Enter(player);
 
-                       // 1초마다 채팅 메시지 전송
+                       // 100ms마다 채팅 메시지 전송
                        C2S_Chat payload;
                        payload.set_id(id);
                        payload.set_message(TEXT_8("Hello, world!"));
-                       player->StartSendLoop(PacketUtils::MakePacketBuffer(payload, PacketId::C2S_Chat), 1000);
+                       player->StartSendLoop(PacketUtils::MakePacketBuffer(payload, PacketId::C2S_Chat), 100);
                    });
 
     return true;
@@ -39,7 +39,5 @@ Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> owner, const 
 
 Bool S2C_PacketHandlerMap::Handle_S2C_Chat(SharedPtr<Session> owner, const S2C_Chat& payload)
 {
-    gLogger->Info(TEXT_8("Player[{}]: Chat message: {}"), payload.id(), payload.message());
-
     return true;
 }

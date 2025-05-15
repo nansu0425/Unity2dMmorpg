@@ -21,7 +21,7 @@ int main()
     ASSERT_CRASH(SUCCESS == service->Run(), "SERVER_SERVICE_RUN_FAILED");
 
     // 입출력 워커 실행
-    for (Int64 i = 0; i < 2; ++i)
+    for (Int64 i = 0; i < 3; ++i)
     {
         gThreadManager->Launch([service]
                                {
@@ -33,7 +33,7 @@ int main()
     }
 
     // 잡 워커 실행
-    for (Int64 i = 0; i < 4; ++i)
+    for (Int64 i = 0; i < 3; ++i)
     {
         gThreadManager->Launch([]
                                {

@@ -13,7 +13,7 @@ void Player::SendAsync(SharedPtr<SendBuffer> buffer)
     mSession->SendAsync(std::move(buffer));
 }
 
-void Player::StartSendLoop(SharedPtr<SendBuffer> sendBuf, Int64 loopTick)
+void Player::StartSendLoop(SharedPtr<SendBuffer> sendBuf, Int64 loopMs)
 {
     // 매니저에 없으면 반복 종료
     if (PlayerManager::GetInstance().GetPlayer(mId) == nullptr)
@@ -24,7 +24,7 @@ void Player::StartSendLoop(SharedPtr<SendBuffer> sendBuf, Int64 loopTick)
     // 송신 버퍼 전송
     SendAsync(sendBuf);
     // 다음 루프 예약
-    ScheduleJob(loopTick, &Player::StartSendLoop, std::move(sendBuf), loopTick);
+    ScheduleJob(loopMs, &Player::StartSendLoop, std::move(sendBuf), loopMs);
 }
 
 void PlayerManager::AddPlayer(SharedPtr<Player> player)

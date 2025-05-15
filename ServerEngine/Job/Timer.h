@@ -11,27 +11,27 @@ class JobTimer
 public:
     struct Item
     {
-        Int64                   executeTick;
-        SharedPtr<Job>          job;
-        SharedPtr<JobQueue>     owner;
+        Int64               execTick;
+        SharedPtr<Job>      job;
+        WeakPtr<JobQueue>   queue;
 
-        bool    operator<(const Item& other) const { return (executeTick > other.executeTick); }
+        bool    operator<(const Item& other) const { return (execTick > other.execTick); }
     };
 
 public:
     JobTimer();
     ~JobTimer();
 
-    void        Schedule(SharedPtr<Job> job, SharedPtr<JobQueue> owner, Int64 delayTick);
-    void        Distribute();
-    Int64       GetTimeUntilNextItem();
+    void        Schedule(SharedPtr<Job> job, WeakPtr<JobQueue> queue, Int64 delayMs);
+    Int64       Distribute();
     void        Run();
 
 private:
     RW_LOCK;
-    PriorityQueue<Item>     mItems;
+    PriorityQueue<Item>     mScheduledItems;
     Bool                    mRunning = false;
     HANDLE                  mWakeEvent = NULL;
+    Vector<Item>            mExecItems;
 
-    static constexpr Int64  kMaxWaitTime = 100;
+    static constexpr Int64  kMaxWaitMs = 100;
 };
