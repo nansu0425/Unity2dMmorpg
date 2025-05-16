@@ -7,9 +7,6 @@
     <Filter Include="Network">
       <UniqueIdentifier>{3f1b2998-d8f4-4816-a21f-edd9bb6694de}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Io">
-      <UniqueIdentifier>{556c3f77-5b44-4ea3-bf3b-6e13c9baf12d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Log">
       <UniqueIdentifier>{52e8fbba-a7e2-4133-a9b9-3a6193849c7e}</UniqueIdentifier>
     </Filter>
@@ -39,12 +36,6 @@
     </ClInclude>
     <ClInclude Include="Network\Socket.h">
       <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="Io\Dispatcher.h">
-      <Filter>Io</Filter>
-    </ClInclude>
-    <ClInclude Include="Io\Event.h">
-      <Filter>Io</Filter>
     </ClInclude>
     <ClInclude Include="Network\Listener.h">
       <Filter>Network</Filter>
@@ -94,6 +85,12 @@
     <ClInclude Include="Job\Event.h">
       <Filter>Job</Filter>
     </ClInclude>
+    <ClInclude Include="Network\Dispatcher.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Event.h">
+      <Filter>Network</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -111,12 +108,6 @@
     </ClCompile>
     <ClCompile Include="Network\Socket.cpp">
       <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="Io\Dispatcher.cpp">
-      <Filter>Io</Filter>
-    </ClCompile>
-    <ClCompile Include="Io\Event.cpp">
-      <Filter>Io</Filter>
     </ClCompile>
     <ClCompile Include="Network\Listener.cpp">
       <Filter>Network</Filter>
@@ -153,6 +144,12 @@
     </ClCompile>
     <ClCompile Include="Job\Event.cpp">
       <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Dispatcher.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Event.cpp">
+      <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

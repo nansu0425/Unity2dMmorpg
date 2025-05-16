@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "ServerEngine/Io/Dispatcher.h"
-#include "ServerEngine/Io/Event.h"
+#include "ServerEngine/Network/Dispatcher.h"
+#include "ServerEngine/Network/Event.h"
 #include "ServerEngine/Network/Address.h"
 
 class ServerService;

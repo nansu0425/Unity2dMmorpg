@@ -1,8 +1,8 @@
-﻿/*    ServerEngine/Io/Dispatcher.cpp    */
+﻿/*    ServerEngine/Network/Dispatcher.cpp    */
 
 #include "ServerEngine/Pch.h"
-#include "ServerEngine/Io/Dispatcher.h"
-#include "ServerEngine/Io/Event.h"
+#include "ServerEngine/Network/Dispatcher.h"
+#include "ServerEngine/Network/Event.h"
 
 IoEventDispatcher::IoEventDispatcher()
 {
