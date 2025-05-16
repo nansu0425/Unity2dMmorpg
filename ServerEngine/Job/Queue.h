@@ -5,12 +5,18 @@
 #include <concurrentqueue/concurrentqueue.h>
 
 /*
- * 비동기 작업을 Job 형태로 만들 수 있다.
+ * Job 클래스는 비동기 작업을 실행 가능한 객체로 캡슐화합니다.
+ * 일반 함수, 람다 또는 클래스 메서드를 저장하고 나중에 실행할 수 있습니다.
+ *
+ * 주요 특징:
+ * - 일반 함수 또는 람다 표현식을 저장하는 생성자
+ * - 특정 객체의 메서드를 인자와 함께 호출할 수 있는 생성자 (템플릿 기반)
+ * - Execute() 메서드로 저장된 작업을 실행
  */
 class Job
 {
 public:
-    using CallbackType  = Function<void()>;
+    using CallbackType = Function<void()>;
 
 public:
     // 함수를 호출하는 Job을 생성
@@ -46,49 +52,23 @@ private:
 
 
 /*
- * Job을 직렬화하기 위해 사용하는 큐
- * 여러 스레드가 Job을 Push할 수 있지만, Flush하는 스레드는 유일해야 한다.
+ * JobQueue는 Job을 직렬화하여 순차적으로 실행하기 위한 큐입니다.
+ * 락프리 큐(moodycamel::ConcurrentQueue)를 사용하여 멀티스레드 환경에서 안전하게 동작합니다.
+ *
+ * 주요 특징:
+ * - 여러 스레드에서 동시에 Job을 Push 가능
+ * - TryFlush 메서드로 큐에 있는 작업을 지정된 시간 내에 실행
+ * - 첫 작업이 추가될 때 자동으로 JobQueueManager에 등록되어 작업 처리를 보장
+ * - PushEvent 구조체로 IOCP 기반의 비동기 처리를 지원
  */
 class JobQueue
     : public std::enable_shared_from_this<JobQueue>
 {
 public:
-    JobQueue();
-
-    void        Push(SharedPtr<Job> job);
-    Bool        TryFlush(Int64 timeoutMs);
-
-private:
-    moodycamel::ConcurrentQueue<SharedPtr<Job>>    mQueue;
-    Atomic<Int64>                                  mJobCount;
-
-    static constexpr Int64      kInitQueueSize = 128;
-};
-
-/*
- * JobQueueManager는 IOCP(I/O Completion Port)를 사용하여 비동기 작업 큐를 관리하는 클래스
- *
- * 주요 기능:
- * - 작업 큐(JobQueue)를 관리하고 큐에 담긴 작업(Job)을 비동기적으로 실행
- * - IOCP를 활용해 효율적인 멀티스레딩 작업 처리 구조 제공
- * - 작업 큐가 비어있다가 새 작업이 추가될 때 자동 등록 기능
- *
- * 동작 방식:
- * 1. JobQueue::Push()를 통해 큐에 첫 작업이 추가되면 JobQueueManager::Register()가 호출됨
- * 2. Register()는 큐를 RegisterEvent로 래핑하여 IOCP에 등록
- * 3. FlushQueues() 메서드는 IOCP에서 완료된 이벤트를 가져와 해당 큐의 작업을 처리
- * 4. 큐의 모든 작업이 처리되면 이벤트 객체를 해제하고, 처리하지 못했으면 다시 IOCP에 등록
- *
- * 이 클래스는 여러 스레드가 작업을 등록하고, 별도의 스레드(들)에서 작업을 실행하는
- * 생산자-소비자 패턴을 IOCP 기반으로 구현한 것입니다.
- */
-class JobQueueManager
-{
-public:
-    struct RegisterEvent
+    struct PushEvent
         : public OVERLAPPED
     {
-        SharedPtr<JobQueue> queue;
+        SharedPtr<JobQueue> owner;
 
         void Init()
         {
@@ -101,20 +81,54 @@ public:
     };
 
 public:
+    JobQueue();
+
+    void            Push(SharedPtr<Job> job);
+    Bool            TryFlush(Int64 timeoutMs);
+
+    PushEvent*      GetPushEvent() { return &mPushEvent; }
+
+private:
+    moodycamel::ConcurrentQueue<SharedPtr<Job>>    mQueue;
+    Atomic<Int64>                                  mJobCount;
+    PushEvent                                      mPushEvent;
+
+    static constexpr Int64      kInitQueueSize = 128;
+};
+
+/*
+ * JobQueueManager는 IOCP(I/O Completion Port)를 사용하여 여러 JobQueue의 작업 처리를 관리합니다.
+ * 효율적인 스레드 관리와 작업 분배를 통해 고성능 비동기 작업 처리를 제공합니다.
+ *
+ * 주요 기능:
+ * - IOCP 기반의 최적화된 스레드 관리 (커널 수준 스케줄링)
+ * - 여러 스레드가 동시에 작업을 등록하고, 별도의 처리 스레드에서 실행
+ * - 자동화된 큐 등록 및 작업 처리 메커니즘
+ * - 효율적인 문맥 전환과 스레드 재사용을 통한 성능 최적화
+ *
+ * 동작 방식:
+ * 1. JobQueue에 첫 작업이 추가되면 해당 큐가 RegisterQueue 메서드를 통해 등록됨
+ * 2. 큐의 PushEvent가 IOCP에 포스트돼어 작업 처리를 요청
+ * 3. FlushQueues 메서드에서 IOCP로부터 이벤트를 받아 해당 큐의 작업을 처리
+ * 4. 큐의 모든 작업 처리 완료 시 이벤트 소유권 해제(owner.reset()), 미완료 시 다시 포스트
+ */
+class JobQueueManager
+{
+public:
     JobQueueManager();
     ~JobQueueManager();
 
-    void            Register(SharedPtr<JobQueue> queue);
+    void            RegisterQueue(SharedPtr<JobQueue> queue);
     void            FlushQueues(UInt32 timeoutMs = INFINITE);
+
+private:
+    void            PostPushEvent(JobQueue::PushEvent* event);
     void            HandleError(Int64 errorCode);
 
 private:
-    void            PostRegisterEvent(RegisterEvent* event);
-
-private:
-    HANDLE          mIocp = nullptr;
-    Bool            mRunning = false;
-    Atomic<Int64>   mEventCount = 0;
+    HANDLE                      mIocp = nullptr;
+    Bool                        mRunning = false;
+    Atomic<Int64>               mEventCount = 0;
 
     static constexpr Int64      kFlushTimeoutMs = 100;
 };

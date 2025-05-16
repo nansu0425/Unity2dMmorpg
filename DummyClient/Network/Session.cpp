@@ -6,6 +6,11 @@
 #include "GameContent/Chat/Room.h"
 #include "GameContent/Common/Player.h"
 
+ServerSession::~ServerSession()
+{
+    gLogger->Info(TEXT_8("Session[{}]: Destroyed"), GetId());
+}
+
 void ServerSession::OnConnected()
 {
     gLogger->Info(TEXT_8("Session[{}]: Connected to server"), GetId());

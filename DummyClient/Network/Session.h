@@ -8,6 +8,8 @@ class ServerSession
     : public Session
 {
 public:
+    virtual ~ServerSession() override;
+
     void                SetPlayerId(Int64 id) { mPlayerId = id; }
     Int64               GetPlayerId() const { return mPlayerId; }
 

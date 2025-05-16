@@ -9,6 +9,8 @@ class ClientSession
     : public Session
 {
 public:
+    virtual ~ClientSession() override;
+
     void                SetPlayerId(Int64 id) { mPlayerId = id; }
     Int64               GetPlayerId() const { return mPlayerId; }
 

@@ -5,6 +5,11 @@
 #include "GameServer/Network/PacketHandler.h"
 #include "GameContent/Chat/Room.h"
 
+ClientSession::~ClientSession()
+{
+    gLogger->Info(TEXT_8("Session[{}]: Destroyed"), GetId());
+}
+
 void ClientSession::OnConnected()
 {
     gLogger->Info(TEXT_8("Session[{}]: Connected to client"), GetId());
