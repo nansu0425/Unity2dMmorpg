@@ -19,6 +19,7 @@ using Float64   = double;
 
 template<typename T>
 using Atomic        = std::atomic<T>;
+using Mutex         = std::mutex;
 using SharedMutex   = std::shared_mutex;
 using LockGuard     = std::lock_guard<SharedMutex>;
 using UniqueLock    = std::unique_lock<SharedMutex>;

@@ -31,7 +31,7 @@ Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> owner, const 
                        C2S_Chat payload;
                        payload.set_id(id);
                        payload.set_message(TEXT_8("Hello, world!"));
-                       player->StartSendLoop(PacketUtils::MakePacketBuffer(payload, PacketId::C2S_Chat), 100);
+                       player->StartSendLoop(PacketUtils::MakePacketBuffer(payload, PacketId::C2S_Chat), 1000);
                    });
 
     return true;
