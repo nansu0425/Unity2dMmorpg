@@ -3,10 +3,17 @@
 #pragma once
 
 /*
- * 락 비트 플래그 구조: [WRRRRRRR]
- * W: 쓰기 잠금 여부
- * RRRRRRR: 읽기 잠금 개수
- * 재귀 잠금 금지(정의되지 않은 동작 발생)
+ * RwSpinLock - 읽기-쓰기 스핀 락 구현
+ *
+ * 락 비트 플래그 구조: [WRRR'RRRR]
+ * W: 쓰기 잠금 플래그 (0xF000'0000)
+ * R: 읽기 잠금 카운트 (0x0FFF'FFFF)
+ *
+ * 특징:
+ * - 가벼운 읽기 작업이 많은 경우 최적화된 성능
+ * - 스핀 대기 방식으로 짧은 임계 구역에 적합
+ * - 재귀 잠금 금지(정의되지 않은 동작 발생)
+ * - 디버그 모드에서 데드락 감지 지원
  */
 class RwSpinLock
 {
@@ -32,9 +39,13 @@ public:
             mLock.UnlockWrite(mName);
         }
 
+        // 복사 금지
+        WriteGuard(const WriteGuard&) = delete;
+        WriteGuard& operator=(const WriteGuard&) = delete;
+
     private:
-        RwSpinLock&     mLock;
-        const Char8*    mName;
+        RwSpinLock& mLock;
+        const Char8* mName;
     };
 
     class ReadGuard
@@ -52,24 +63,24 @@ public:
             mLock.UnlockRead(mName);
         }
 
+        // 복사 금지
+        ReadGuard(const ReadGuard&) = delete;
+        ReadGuard& operator=(const ReadGuard&) = delete;
+
     private:
-        RwSpinLock&     mLock;
-        const Char8*    mName;
+        RwSpinLock& mLock;
+        const Char8* mName;
     };
 
 private:
-    enum Flag : Byte
-    {
-        kWriteState         = 0b1000'0000,
-        kReadCountMask      = 0b0111'1111,
-        kEmpty              = 0b0000'0000,
-    };
-
-    static constexpr Int32  kLockTimeoutTick = 10'000;
-    static constexpr Int32  kMaxBackoff = 1'024;
+    static constexpr UInt64     kWriteFlag = 0xF000'0000;
+    static constexpr UInt64     kEmptyFlag = 0x0000'0000;
+    static constexpr UInt64     kReadCountMask = 0x0FFF'FFFF;
+    static constexpr Int32      kLockTimeoutMs = 10'000;
+    static constexpr Int32      kMaxBackoff = 1'024;
 
 private:
-    Atomic<Byte>    mLockFlag = Flag::kEmpty;
+    Atomic<UInt64>              mLockFlag = kEmptyFlag;
 };
 
 class SrwLockWriteGuard
