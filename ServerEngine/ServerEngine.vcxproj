@@ -31,6 +31,7 @@
     <ClInclude Include="Database\Connection.h" />
     <ClInclude Include="Io\Event.h" />
     <ClInclude Include="Io\Dispatcher.h" />
+    <ClInclude Include="Job\Event.h" />
     <ClInclude Include="Job\Queue.h" />
     <ClInclude Include="Job\Serializer.h" />
     <ClInclude Include="Job\Timer.h" />
@@ -52,6 +53,7 @@
     <ClCompile Include="Database\Connection.cpp" />
     <ClCompile Include="Io\Event.cpp" />
     <ClCompile Include="Io\Dispatcher.cpp" />
+    <ClCompile Include="Job\Event.cpp" />
     <ClCompile Include="Job\Queue.cpp" />
     <ClCompile Include="Job\Serializer.cpp" />
     <ClCompile Include="Job\Timer.cpp" />

@@ -4,6 +4,8 @@
 
 #include <concurrentqueue/concurrentqueue.h>
 
+struct JobPushEvent;
+
 /*
  * Job 클래스는 비동기 작업을 실행 가능한 객체로 캡슐화합니다.
  * 일반 함수, 람다 또는 클래스 메서드를 저장하고 나중에 실행할 수 있습니다.
@@ -50,7 +52,6 @@ private:
     CallbackType    mCallback;
 };
 
-
 /*
  * JobQueue는 Job을 직렬화하여 순차적으로 실행하기 위한 큐입니다.
  * 락프리 큐(moodycamel::ConcurrentQueue)를 사용하여 멀티스레드 환경에서 안전하게 동작합니다.
@@ -59,39 +60,20 @@ private:
  * - 여러 스레드에서 동시에 Job을 Push 가능
  * - TryFlush 메서드로 큐에 있는 작업을 지정된 시간 내에 실행
  * - 첫 작업이 추가될 때 자동으로 JobQueueManager에 등록되어 작업 처리를 보장
- * - PushEvent 구조체로 IOCP 기반의 비동기 처리를 지원
+ * - 모든 이벤트는 전역 JobPushEventPool에서 관리
  */
 class JobQueue
     : public std::enable_shared_from_this<JobQueue>
 {
-public:
-    struct PushEvent
-        : public OVERLAPPED
-    {
-        SharedPtr<JobQueue> owner;
-
-        void Init()
-        {
-            Internal = 0;
-            InternalHigh = 0;
-            Offset = 0;
-            OffsetHigh = 0;
-            hEvent = NULL;
-        }
-    };
-
 public:
     JobQueue();
 
     void            Push(SharedPtr<Job> job);
     Bool            TryFlush(Int64 timeoutMs);
 
-    PushEvent*      GetPushEvent() { return &mPushEvent; }
-
 private:
     moodycamel::ConcurrentQueue<SharedPtr<Job>>    mQueue;
     Atomic<Int64>                                  mJobCount;
-    PushEvent                                      mPushEvent;
 
     static constexpr Int64      kInitQueueSize = 128;
 };
@@ -105,12 +87,6 @@ private:
  * - 여러 스레드가 동시에 작업을 등록하고, 별도의 처리 스레드에서 실행
  * - 자동화된 큐 등록 및 작업 처리 메커니즘
  * - 효율적인 문맥 전환과 스레드 재사용을 통한 성능 최적화
- *
- * 동작 방식:
- * 1. JobQueue에 첫 작업이 추가되면 해당 큐가 RegisterQueue 메서드를 통해 등록됨
- * 2. 큐의 PushEvent가 IOCP에 포스트돼어 작업 처리를 요청
- * 3. FlushQueues 메서드에서 IOCP로부터 이벤트를 받아 해당 큐의 작업을 처리
- * 4. 큐의 모든 작업 처리 완료 시 이벤트 소유권 해제(owner.reset()), 미완료 시 다시 포스트
  */
 class JobQueueManager
 {
@@ -122,13 +98,13 @@ public:
     void            FlushQueues(UInt32 timeoutMs = INFINITE);
 
 private:
-    void            PostPushEvent(JobQueue::PushEvent* event);
+    void            PostPushEvent(JobPushEvent* event);
     void            HandleError(Int64 errorCode);
 
 private:
     HANDLE                      mIocp = nullptr;
     Bool                        mRunning = false;
-    Atomic<Int64>               mEventCount = 0;
+    Atomic<Int64>               mQueueCount = 0;
 
     static constexpr Int64      kFlushTimeoutMs = 100;
 };

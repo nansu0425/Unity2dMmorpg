@@ -91,6 +91,9 @@
     <ClInclude Include="Database\Connection.h">
       <Filter>Database</Filter>
     </ClInclude>
+    <ClInclude Include="Job\Event.h">
+      <Filter>Job</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -147,6 +150,9 @@
     </ClCompile>
     <ClCompile Include="Database\Connection.cpp">
       <Filter>Database</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\Event.cpp">
+      <Filter>Job</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -5,13 +5,14 @@
 #include "ServerEngine/Concurrency/Thread.h"
 #include "ServerEngine/Concurrency/Deadlock.h"
 #include "ServerEngine/Network/Socket.h"
-#include "ServerEngine/Job/Timer.h"
+#include "ServerEngine/Job/Event.h"
 #include "ServerEngine/Database/Connection.h"
 
 Logger*                 gLogger = nullptr;
 ThreadManager*          gThreadManager = nullptr;
 DeadlockDetector*       gDeadlockDetector = nullptr;
 SendChunkPool*          gSendChunkPool = nullptr;
+JobPushEventPool*       gJobPushEventPool = nullptr;
 JobQueueManager*        gJobQueueManager = nullptr;
 JobTimer*               gJobTimer = nullptr;
 DbConnectionPool*       gDbConnectionPool = nullptr;
@@ -23,6 +24,7 @@ GlobalContext::GlobalContext()
     gDeadlockDetector = new DeadlockDetector();
     gSendChunkPool = new SendChunkPool();
     SocketUtils::Init();
+    gJobPushEventPool = new JobPushEventPool();
     gJobQueueManager = new JobQueueManager();
     gJobTimer = new JobTimer();
     gDbConnectionPool = new DbConnectionPool();
@@ -33,6 +35,7 @@ GlobalContext::~GlobalContext()
     delete gDbConnectionPool;
     delete gJobTimer;
     delete gJobQueueManager;
+    delete gJobPushEventPool;
     SocketUtils::Cleanup();
     delete gSendChunkPool;
     delete gDeadlockDetector;
