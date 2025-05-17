@@ -82,9 +82,6 @@
     <ClInclude Include="Database\Connection.h">
       <Filter>Database</Filter>
     </ClInclude>
-    <ClInclude Include="Job\Event.h">
-      <Filter>Job</Filter>
-    </ClInclude>
     <ClInclude Include="Network\Dispatcher.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -141,9 +138,6 @@
     </ClCompile>
     <ClCompile Include="Database\Connection.cpp">
       <Filter>Database</Filter>
-    </ClCompile>
-    <ClCompile Include="Job\Event.cpp">
-      <Filter>Job</Filter>
     </ClCompile>
     <ClCompile Include="Network\Dispatcher.cpp">
       <Filter>Network</Filter>
