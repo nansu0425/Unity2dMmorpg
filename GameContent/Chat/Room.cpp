@@ -46,17 +46,24 @@ void Room::Leave(Int64 playerId)
 
 void Room::Broadcast(SharedPtr<SendBuffer> buffer, Int64 playerId)
 {
+    Vector<SharedPtr<Player>> targets;
     {
         WRITE_GUARD;
-        // 자신을 제외한 모든 플레이어에게 전송
+        // 자신을 제외한 모든 플레이어 대상
         for (auto& [id, player] : mPlayers)
         {
             if (id == playerId)
             {
                 continue;
             }
-            player->SendAsync(buffer);
+            targets.push_back(player);
         }
+    }
+
+    // 메시지 전송
+    for (auto& player : targets)
+    {
+        player->SendAsync(buffer);
     }
 
     gLogger->Info(TEXT_8("Player[{}]: Broadcasted message"), playerId);
