@@ -3,9 +3,14 @@
 #include "GameContent/Pch.h"
 #include "GameContent/Common/Player.h"
 
-Player::Player(SharedPtr<Session> session, Int64 id)
+Player::Player(SharedPtr<Session> session)
     : mSession(std::move(session))
-    , mId(id)
+    , mId(sNextId.fetch_add(1))
+{}
+
+Player::Player(SharedPtr<Session> session, Int64 playerId)
+    : mSession(std::move(session))
+    , mId(playerId)
 {}
 
 void Player::SendAsync(SharedPtr<SendBuffer> buffer)
@@ -13,44 +18,63 @@ void Player::SendAsync(SharedPtr<SendBuffer> buffer)
     mSession->SendAsync(std::move(buffer));
 }
 
-void Player::StartSendLoop(SharedPtr<SendBuffer> sendBuf, Int64 loopMs)
+void Player::StartSendLoop(SharedPtr<SendBuffer> buffer, Int64 loopMs)
 {
     // 매니저에 없으면 반복 종료
-    if (PlayerManager::GetInstance().GetPlayer(mId) == nullptr)
+    if (PlayerManager::GetInstance().FindPlayer(mId) == nullptr)
     {
         return;
     }
 
     // 송신 버퍼 전송
-    SendAsync(sendBuf);
+    SendAsync(buffer);
     // 다음 루프 예약
-    ScheduleJob(loopMs, &Player::StartSendLoop, std::move(sendBuf), loopMs);
+    ScheduleJob(loopMs, &Player::StartSendLoop, std::move(buffer), loopMs);
 }
 
 void PlayerManager::AddPlayer(SharedPtr<Player> player)
 {
-    WRITE_GUARD;
+    Bool result = true;
+    {
+        WRITE_GUARD;
+        // 플레이어 추가
+        result = (mPlayers.insert({ player->GetId(), player }).second);
+    }
 
-    mPlayers.insert({player->GetId(), player});
-    gLogger->Info(TEXT_8("Player[{}]: Added to manager"), player->GetId());
+    if (result)
+    {
+        gLogger->Info(TEXT_8("Player[{}]: Added to manager"), player->GetId());
+    }
+    else
+    {
+        gLogger->Error(TEXT_8("Player[{}]: Already exists in manager"), player->GetId());
+    }
 }
 
 void PlayerManager::RemovePlayer(Int64 id)
 {
-    WRITE_GUARD;
-
-    auto it = mPlayers.find(id);
-    if (it != mPlayers.end())
+    Bool result = true;
     {
-        mPlayers.erase(it);
+        WRITE_GUARD;
+        // 플레이어 제거
+        result = (mPlayers.erase(id) > 0);
+    }
+
+    if (result)
+    {
         gLogger->Info(TEXT_8("Player[{}]: Removed from manager"), id);
+    }
+    else
+    {
+        gLogger->Error(TEXT_8("Player[{}]: Not found in manager"), id);
     }
 }
 
-SharedPtr<Player> PlayerManager::GetPlayer(Int64 id)
+SharedPtr<Player> PlayerManager::FindPlayer(Int64 id)
 {
     READ_GUARD;
 
+    // 플레이어 찾기
     auto it = mPlayers.find(id);
     if (it != mPlayers.end())
     {
@@ -59,3 +83,5 @@ SharedPtr<Player> PlayerManager::GetPlayer(Int64 id)
 
     return nullptr;
 }
+
+Atomic<Int64>   Player::sNextId = 1;

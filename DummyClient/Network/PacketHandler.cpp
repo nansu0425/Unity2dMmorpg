@@ -14,25 +14,28 @@ Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> owner, const 
         return false;
     }
 
-    gRoom->PushJob([owner, id = payload.id()]
-                   {
-                       // 플레이어 찾기
-                       auto player = PlayerManager::GetInstance().GetPlayer(id);
-                       if (player == nullptr)
-                       {
-                           gLogger->Error(TEXT_8("Session[{}]: Player[{}] not found"), owner->GetId(), id);
-                           return;
-                       }
+    if (std::static_pointer_cast<ServerSession>(owner)->GetPlayerId() != payload.id())
+    {
+        gLogger->Error(TEXT_8("Session[{}]: Player ID mismatch"), owner->GetId());
+        return false;
+    }
 
-                       // 방 입장
-                       gRoom->Enter(player);
+    // 플레이어 찾기
+    auto player = PlayerManager::GetInstance().FindPlayer(payload.id());
+    if (player == nullptr)
+    {
+        gLogger->Error(TEXT_8("Session[{}]: Player[{}] not found"), owner->GetId(), payload.id());
+        return false;
+    }
 
-                       // 100ms마다 채팅 메시지 전송
-                       C2S_Chat payload;
-                       payload.set_id(id);
-                       payload.set_message(TEXT_8("Hello, world!"));
-                       player->StartSendLoop(PacketUtils::MakePacketBuffer(payload, PacketId::C2S_Chat), 1000);
-                   });
+    // 방 입장
+    gRoom.Enter(player);
+
+    // 일정 주기마다 채팅 패킷 전송
+    C2S_Chat chat;
+    chat.set_id(payload.id());
+    chat.set_message(TEXT_8("Hello, world!"));
+    player->StartSendLoop(PacketUtils::MakePacketBuffer(chat, PacketId::C2S_Chat), 100);
 
     return true;
 }

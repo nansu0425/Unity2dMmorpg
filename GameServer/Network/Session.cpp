@@ -4,6 +4,7 @@
 #include "GameServer/Network/Session.h"
 #include "GameServer/Network/PacketHandler.h"
 #include "GameContent/Chat/Room.h"
+#include "GameContent/Common/Player.h"
 
 ClientSession::~ClientSession()
 {
@@ -19,14 +20,12 @@ void ClientSession::OnDisconnected(String8 cause)
 {
     gLogger->Warn(TEXT_8("Session[{}]: Disconnected from client: {}"), GetId(), cause);
 
-    gRoom->PushJob([session = std::static_pointer_cast<ClientSession>(GetSession())]
-                   {
-                       // 방에서 퇴장
-                       gRoom->Leave(session->GetPlayerId());
-                       // 플레이어 매니저에서 제거
-                       PlayerManager::GetInstance().RemovePlayer(session->GetPlayerId());
-                       session->SetPlayerId(0);
-                   });
+    // 방에서 퇴장
+    gRoom.Leave(GetPlayerId());
+
+    // 플레이어 매니저에서 제거
+    PlayerManager::GetInstance().RemovePlayer(GetPlayerId());
+    SetPlayerId(0);
 }
 
 Int64 ClientSession::OnReceived(const Byte* buffer, Int64 numBytes)
@@ -37,4 +36,4 @@ Int64 ClientSession::OnReceived(const Byte* buffer, Int64 numBytes)
 void ClientSession::OnSent(Int64 numBytes)
 {}
 
-SharedPtr<Room>  gRoom = std::make_shared<Room>();
+Room    gRoom;

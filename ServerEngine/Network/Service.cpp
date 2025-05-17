@@ -71,6 +71,20 @@ Int64 Service::RemoveSession(SharedPtr<Session> session)
     return SUCCESS;
 }
 
+SharedPtr<Session> Service::FindSession(Int64 sessionId)
+{
+    READ_GUARD;
+
+    // 세션 찾기
+    auto it = mSessions.find(sessionId);
+    if (it != mSessions.end())
+    {
+        return it->second;
+    }
+
+    return nullptr;
+}
+
 ClientService::ClientService(const Config& config)
     : Service(ServiceType::Client, config)
 {}

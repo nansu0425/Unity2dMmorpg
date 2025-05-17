@@ -39,6 +39,7 @@ public:     // 외부에서 호출하는 함수
     SharedPtr<Session>              CreateSession();
     Int64                           AddSession(SharedPtr<Session> session);
     Int64                           RemoveSession(SharedPtr<Session> session);
+    SharedPtr<Session>              FindSession(Int64 sessionId);
 
     Bool                            CanRun() const { return mConfig.sessionFactory != nullptr; }
     void                            SetSessionFactory(SessionFactory factory) { mConfig.sessionFactory = std::move(factory); }

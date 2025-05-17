@@ -6,13 +6,13 @@ class Player;
 class Session;
 
 class Room
-    : public JobSerializer
 {
 public:
     void    Enter(SharedPtr<Player> player);
     void    Leave(Int64 playerId);
-    void    Broadcast(SharedPtr<SendBuffer> buffer);
+    void    Broadcast(SharedPtr<SendBuffer> buffer, Int64 playerId = 0);
 
 private:
+    RW_LOCK;
     HashMap<Int64, SharedPtr<Player>>   mPlayers;
 };

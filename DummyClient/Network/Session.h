@@ -1,6 +1,7 @@
 ﻿/*    DummyClient/Network/Session.h    */
 
 #include "ServerEngine/Network/Session.h"
+#include "GameContent/Chat/Room.h"
 
 #pragma once
 
@@ -23,5 +24,4 @@ private:
     Int64               mPlayerId = 0;
 };
 
-class Room;
-extern SharedPtr<Room> gRoom;
+extern Room gRoom;

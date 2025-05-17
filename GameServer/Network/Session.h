@@ -3,7 +3,7 @@
 #pragma once
 
 #include "ServerEngine/Network/Session.h"
-#include "GameContent/Common/Player.h"
+#include "GameContent/Chat/Room.h"
 
 class ClientSession
     : public Session
@@ -24,5 +24,4 @@ private:
     Int64               mPlayerId = 0;
 };
 
-class Room;
-extern SharedPtr<Room>  gRoom;
+extern Room     gRoom;
