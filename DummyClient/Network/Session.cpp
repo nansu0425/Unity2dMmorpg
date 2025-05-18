@@ -32,7 +32,7 @@ void ServerSession::OnDisconnected(String8 cause)
     gLogger->Warn(TEXT_8("Session[{}]: Disconnected from server: {}"), GetId(), cause);
 
     // 방에서 퇴장
-    gRoom.Leave(GetPlayerId());
+    gRoom->Leave(GetPlayerId());
 
     // 플레이어 매니저에서 제거
     PlayerManager::GetInstance().RemovePlayer(GetPlayerId());
@@ -49,4 +49,4 @@ void ServerSession::OnSent(Int64 numBytes)
     gLogger->Debug(TEXT_8("Session[{}]: Sent {} bytes"), GetId(), numBytes);
 }
 
-Room gRoom;
+SharedPtr<Room>     gRoom = std::make_shared<Room>();

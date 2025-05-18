@@ -29,7 +29,7 @@ Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> owner, const 
     }
 
     // 방 입장
-    gRoom.Enter(player);
+    gRoom->Enter(player);
 
     // 일정 주기마다 채팅 패킷 전송
     C2S_Chat chat;

@@ -21,7 +21,7 @@ void ClientSession::OnDisconnected(String8 cause)
     gLogger->Warn(TEXT_8("Session[{}]: Disconnected from client: {}"), GetId(), cause);
 
     // 방에서 퇴장
-    gRoom.Leave(GetPlayerId());
+    gRoom->Leave(GetPlayerId());
 
     // 플레이어 매니저에서 제거
     PlayerManager::GetInstance().RemovePlayer(GetPlayerId());
@@ -36,4 +36,4 @@ Int64 ClientSession::OnReceived(const Byte* buffer, Int64 numBytes)
 void ClientSession::OnSent(Int64 numBytes)
 {}
 
-Room    gRoom;
+SharedPtr<Room>     gRoom = std::make_shared<Room>();

@@ -14,7 +14,7 @@ Bool C2S_PacketHandlerMap::Handle_C2S_EnterRoom(SharedPtr<Session> owner, const 
     PlayerManager::GetInstance().AddPlayer(player);
 
     // 방 입장
-    gRoom.Enter(std::move(player));
+    gRoom->Enter(std::move(player));
 
     // 방 입장 처리 패킷 전송
     S2C_EnterRoom enterRoom;
@@ -31,7 +31,7 @@ Bool C2S_PacketHandlerMap::Handle_C2S_Chat(SharedPtr<Session> owner, const C2S_C
     S2C_Chat chat;
     chat.set_id(payload.id());
     chat.set_message(payload.message());
-    gRoom.Broadcast(PacketUtils::MakePacketBuffer(chat, PacketId::S2C_Chat), payload.id());
+    gRoom->Broadcast(PacketUtils::MakePacketBuffer(chat, PacketId::S2C_Chat), payload.id());
 
     return true;
 }

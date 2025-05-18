@@ -68,3 +68,30 @@ void Room::Broadcast(SharedPtr<SendBuffer> buffer, Int64 playerId)
 
     gLogger->Info(TEXT_8("Player[{}]: Broadcasted message"), playerId);
 }
+
+void Room::StartBroadcastLoop(SharedPtr<SendBuffer> buffer, Int64 loopMs)
+{
+    Vector<SharedPtr<Player>> targets;
+    {
+        WRITE_GUARD;
+        // 모든 플레이어 대상
+        for (auto& [id, player] : mPlayers)
+        {
+            targets.push_back(player);
+        }
+    }
+
+    // 메시지 전송
+    for (auto& player : targets)
+    {
+        player->SendAsync(buffer);
+    }
+
+    gLogger->Info(TEXT_8("Room: Broadcasted message to all players"));
+
+    // 다음 루프 예약
+    ScheduleJob(loopMs, [self = std::static_pointer_cast<Room>(shared_from_this()), buffer, loopMs]()
+                {
+                    self->StartBroadcastLoop(buffer, loopMs);
+                });
+}
