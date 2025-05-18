@@ -70,7 +70,6 @@ void JobTimer::Schedule(SharedPtr<Job> job, WeakPtr<JobQueue> queue, Int64 delay
  */
 Int64 JobTimer::Distribute()
 {
-    const Int64 nowTick = ::GetTickCount64();
     Int64 waitMs = kMaxWaitMs;
 
     {
@@ -81,6 +80,7 @@ Int64 JobTimer::Distribute()
         while (!mScheduledItems.empty())
         {
             const Item& item = mScheduledItems.top();
+            const Int64 nowTick = ::GetTickCount64();
             if (nowTick < item.execTick)
             {
                 waitMs = item.execTick - nowTick;
