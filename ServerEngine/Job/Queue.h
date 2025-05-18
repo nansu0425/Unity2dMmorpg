@@ -2,8 +2,6 @@
 
 #pragma once
 
-#include <concurrentqueue/concurrentqueue.h>
-
 /*
  * Job 클래스는 비동기 작업을 실행 가능한 객체로 캡슐화합니다.
  * 일반 함수, 람다 또는 클래스 메서드를 저장하고 나중에 실행할 수 있습니다.
@@ -51,34 +49,6 @@ private:
     CallbackType    mCallback;
 };
 
-class JobQueue;
-
-/*
- * JobPushEvent는 IOCP(I/O Completion Port)와 함께 사용되는 이벤트 구조체입니다.
- * OVERLAPPED 구조체를 상속하여 Windows IOCP 시스템에 등록 가능합니다.
- *
- * 주요 특징:
- * - JobQueue에 대한 shared_ptr 참조를 안전하게 소유
- * - IOCP 이벤트를 위한 OVERLAPPED 멤버 변수들 초기화
- * - 비동기 작업 완료 후 원본 JobQueue로 라우팅하는 메커니즘 제공
- * - 각 JobQueue는 자체 JobPushEvent 인스턴스를 가짐
- */
-struct JobPushEvent
-    : public OVERLAPPED
-{
-    SharedPtr<JobQueue> owner;
-
-    void Init(SharedPtr<JobQueue> queue)
-    {
-        Internal = 0;
-        InternalHigh = 0;
-        Offset = 0;
-        OffsetHigh = 0;
-        hEvent = NULL;
-        owner = std::move(queue);
-    }
-};
-
 /*
  * JobQueue는 Job을 직렬화하여 순차적으로 실행하기 위한 큐입니다.
  * 락프리 큐(moodycamel::ConcurrentQueue)를 사용하여 멀티스레드 환경에서 안전하게 동작합니다.
@@ -98,44 +68,40 @@ public:
 
     void                        Push(SharedPtr<Job> job);
     Bool                        TryFlush(Int64 timeoutMs);
-    JobPushEvent*               GetPushEvent() { return &mPushEvent; }
 
 private:
-    moodycamel::ConcurrentQueue<SharedPtr<Job>>    mQueue;
-    Atomic<Int64>                                  mJobCount;
-    JobPushEvent                                   mPushEvent;
+    ConcurrentQueue<SharedPtr<Job>>     mQueue;
+    Atomic<Int64>                       mJobCount;
 
-    static constexpr Int64      kInitQueueSize = 128;
+    static constexpr Int64      kInitQueueSize = 64;
 };
 
 /*
- * JobQueueManager는 IOCP(I/O Completion Port)를 사용하여 여러 JobQueue의 작업 처리를 관리합니다.
- * 효율적인 스레드 관리와 작업 분배를 통해 고성능 비동기 작업 처리를 제공합니다.
+ * JobQueueManager는 작업 큐를 관리하고 작업을 효율적으로 처리합니다.
+ * 락프리 큐와 Windows 네이티브 동기화 객체를 사용하여 고성능 비동기 작업 처리를 제공합니다.
  *
  * 주요 기능:
- * - IOCP 기반의 최적화된 비동기 이벤트 처리 메커니즘
- * - 여러 큐의 동시 등록 지원 및 원자적 큐 카운트 관리
+ * - 락프리 큐를 통한 효율적인 작업 큐 관리
+ * - SRWLOCK과 CONDITION_VARIABLE을 활용한 최적화된 동기화
+ * - 여러 스레드 간의 작업 분배 및 효율적인
  * - 미완료 작업이 있는 큐의 자동 재등록으로 모든 작업 완료 보장
- * - 오류 상황 자동 감지 및 로깅을 통한 안정성 향상
- * - 설정 가능한 타임아웃으로 리소스 사용 제어 및 최적화
+ * - 대기 중인 스레드의 효율적인 깨우기를 통한 성능 최적화
  */
 class JobQueueManager
 {
 public:
     JobQueueManager();
-    ~JobQueueManager();
 
     void                        RegisterQueue(SharedPtr<JobQueue> queue);
-    void                        FlushQueues(UInt32 timeoutMs = INFINITE);
+    void                        FlushQueues();
 
 private:
-    void                        PostPushEvent(SharedPtr<JobQueue> queue);
-    void                        HandleError(Int64 errorCode);
-
-private:
-    HANDLE                      mIocp = nullptr;
-    Bool                        mRunning = false;
-    Atomic<Int64>               mQueueCount = 0;
+    SRWLOCK                                 mLock;
+    CONDITION_VARIABLE                      mCondVar;
+    Bool                                    mWaked = false;
+    ConcurrentQueue<SharedPtr<JobQueue>>    mQueues;
+    Bool                                    mRunning = true;
 
     static constexpr Int64      kFlushTimeoutMs = 100;
+    static constexpr Int64      kInitQueueSize = 128;
 };

@@ -60,6 +60,9 @@ using Stack         = std::stack<T, Container>;
 template<typename T, typename Container = Vector<T>, typename Pr = std::less<typename Container::value_type>>
 using PriorityQueue = std::priority_queue<T, Container, Pr>;
 
+template<typename T>
+using ConcurrentQueue   = moodycamel::ConcurrentQueue<T>;
+
 using String8       = std::basic_string<Char8, std::char_traits<Char8>>;
 using String16      = std::basic_string<Char16, std::char_traits<Char16>>;
 using String8View   = std::basic_string_view<Char8>;

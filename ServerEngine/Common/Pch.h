@@ -29,6 +29,9 @@
 #include <string>
 #include <string_view>
 
+// moodycamel
+#include <concurrentqueue/concurrentqueue.h>
+
 // ServerEngine
 #include "ServerEngine/Common/Macro.h"
 #include "ServerEngine/Common/Types.h"

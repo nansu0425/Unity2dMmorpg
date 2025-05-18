@@ -12,10 +12,10 @@
  * - 알림 상태 플래그(mNotified) 초기값 설정
  */
 JobTimer::JobTimer()
-    : mNotified(false)
+    : mWaked(false)
 {
-    InitializeSRWLock(&mLock);
-    InitializeConditionVariable(&mWakeCV);
+    ::InitializeSRWLock(&mLock);
+    ::InitializeConditionVariable(&mCondVar);
 }
 
 /**
@@ -37,7 +37,7 @@ JobTimer::~JobTimer()
  * 1. 현재 시간에 지연 시간을 더해 실행 시간을 계산합니다.
  * 2. SRWLOCK을 사용한 배타적 락을 획득하여 스레드 안전성을 보장합니다.
  * 3. 계산된 실행 시간과 함께 작업과 큐를 우선순위 큐에 추가합니다.
- * 4. mNotified 플래그를 true로 설정하여 새 작업이 추가되었음을 표시합니다.
+ * 4. mWaked 플래그를 true로 설정하여 새 작업이 추가되었음을 표시합니다.
  * 5. 락을 해제한 후 WakeConditionVariable을 호출하여 타이머 스레드를 깨웁니다.
  */
 void JobTimer::Schedule(SharedPtr<Job> job, WeakPtr<JobQueue> queue, Int64 delayMs)
@@ -50,9 +50,9 @@ void JobTimer::Schedule(SharedPtr<Job> job, WeakPtr<JobQueue> queue, Int64 delay
         mScheduledItems.push(Item{execTick, std::move(job), std::move(queue)});
 
         // 알림 플래그 설정
-        mNotified = true;
+        mWaked = true;
     }
-    ::WakeConditionVariable(&mWakeCV);
+    ::WakeConditionVariable(&mCondVar);
 }
 
 /**
@@ -111,8 +111,8 @@ Int64 JobTimer::Distribute()
  * 1. 이미 실행 중인지 확인하고, 실행 상태(mRunning)로 설정합니다.
  * 2. 지속적으로 Distribute()를 호출하여 실행 시간이 된 작업들을 분배합니다.
  * 3. SRWLOCK을 사용한 배타적 락을 획득하여 신호 상태를 확인합니다.
- * 4. 신호가 없으면(mNotified가 false) SleepConditionVariableSRW로 대기합니다.
- * 5. 신호 도착 또는 타임아웃으로 깨어나면 mNotified를 false로 리셋합니다.
+ * 4. 신호가 없으면(mWaked가 false) SleepConditionVariableSRW로 대기합니다.
+ * 5. 신호 도착 또는 타임아웃으로 깨어나면 mWaked를 false로 리셋합니다.
  * 6. mRunning이 false가 될 때까지 이 과정을 반복합니다.
  */
 void JobTimer::Run()
@@ -129,17 +129,17 @@ void JobTimer::Run()
         SrwLockWriteGuard guard(mLock);
 
         // 이미 신호를 처리했거나 신호가 아직 없는 경우
-        if (!mNotified)
+        if (!mWaked)
         {
             // 신호 도착 또는 타임아웃까지 대기
             BOOL result = ::SleepConditionVariableSRW(
-                &mWakeCV,                       // 조건 변수 구조체 주소
+                &mCondVar,                      // 조건 변수 구조체 주소
                 &mLock,                         // 단일 SRWLOCK 사용
                 static_cast<DWORD>(waitMs),     // 대기 시간(밀리초)
                 0                               // 플래그(0은 독점 모드)
             );
         }
         // 신호를 처리했으므로 플래그 리셋
-        mNotified = false;
+        mWaked = false;
     }
 }

@@ -36,8 +36,8 @@ public:
 
 private:
     SRWLOCK                 mLock;
-    CONDITION_VARIABLE      mWakeCV;
-    bool                    mNotified = false;
+    CONDITION_VARIABLE      mCondVar;
+    Bool                    mWaked = false;
 
     PriorityQueue<Item>     mScheduledItems;
     Bool                    mRunning = false;
