@@ -31,16 +31,12 @@ Bool S2C_PacketHandlerMap::Handle_S2C_EnterRoom(SharedPtr<Session> owner, const 
     // 방 입장
     gRoom->Enter(player);
 
-    // 일정 주기마다 채팅 패킷 전송
-    C2S_Chat chat;
-    chat.set_id(payload.id());
-    chat.set_message(TEXT_8("Hello, world!"));
-    player->StartSendLoop(PacketUtils::MakePacketBuffer(chat, PacketId::C2S_Chat), 100);
-
     return true;
 }
 
 Bool S2C_PacketHandlerMap::Handle_S2C_Chat(SharedPtr<Session> owner, const S2C_Chat& payload)
 {
+    gLogger->Debug(TEXT_8("Player[{}]: {}"), std::static_pointer_cast<ServerSession>(owner)->GetPlayerId(), payload.message());
+
     return true;
 }

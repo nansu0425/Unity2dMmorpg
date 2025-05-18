@@ -337,6 +337,9 @@ void Session::HandleError(Int64 errorCode)
     case WSAENETRESET:
         DisconnectAsync(TEXT_8("WSAENETRESET"));
         break;
+    case WSAENOTCONN:
+        DisconnectAsync(TEXT_8("WSAENOTCONN"));
+        break;
     default:
         gLogger->Error(TEXT_8("Error code: {}"), errorCode);
         break;

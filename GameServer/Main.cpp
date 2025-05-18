@@ -5,6 +5,8 @@
 #include "ServerEngine/Network/Dispatcher.h"
 #include "ServerEngine/Network/Service.h"
 #include "GameServer/Network/Session.h"
+#include "GameContent/Chat/Room.h"
+#include "GameServer/Network/PacketHandler.h"
 
 Service::Config gConfig =
 {
@@ -46,6 +48,12 @@ int main()
                            {
                                gJobTimer->Run();
                            });
+
+    // 룸 브로드캐스트 루프 실행
+    S2C_Chat chat;
+    chat.set_id(0);
+    chat.set_message(TEXT_8("Hello World!"));
+    gRoom->StartBroadcastLoop(PacketUtils::MakePacketBuffer(chat, PacketId::S2C_Chat), 100);
 
     gThreadManager->Join();
 
