@@ -28,6 +28,12 @@ public:
     void ScheduleJob(Int64 delayMs, Job::CallbackType&& callback)
     {
         SharedPtr<Job> job = std::make_shared<Job>(std::move(callback));
+        if (delayMs <= 0)
+        {
+            mQueue->Push(std::move(job));
+            return;
+        }
+
         gJobTimer->Schedule(std::move(job), mQueue, delayMs);
     }
 
@@ -36,6 +42,12 @@ public:
     {
         SharedPtr<T> owner = std::static_pointer_cast<T>(shared_from_this());
         SharedPtr<Job> job = std::make_shared<Job>(std::move(owner), method, std::forward<Args>(args)...);
+        if (delayMs <= 0)
+        {
+            mQueue->Push(std::move(job));
+            return;
+        }
+
         gJobTimer->Schedule(std::move(job), mQueue, delayMs);
     }
 

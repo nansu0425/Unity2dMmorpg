@@ -71,6 +71,8 @@ void Room::Broadcast(SharedPtr<SendBuffer> buffer, Int64 playerId)
 
 void Room::StartBroadcastLoop(SharedPtr<SendBuffer> buffer, Int64 loopMs)
 {
+    const Int64 nextTick = ::GetTickCount64() + loopMs;
+
     Vector<SharedPtr<Player>> targets;
     {
         WRITE_GUARD;
@@ -89,9 +91,11 @@ void Room::StartBroadcastLoop(SharedPtr<SendBuffer> buffer, Int64 loopMs)
 
     gLogger->Info(TEXT_8("Room: Broadcasted message to all players"));
 
+    const Int64 delayMs = nextTick - ::GetTickCount64();
+
     // 다음 루프 예약
-    ScheduleJob(loopMs, [self = std::static_pointer_cast<Room>(shared_from_this()), buffer, loopMs]()
+    ScheduleJob(delayMs, [self = shared_from_this(), buffer, loopMs]()
                 {
-                    self->StartBroadcastLoop(buffer, loopMs);
+                    std::static_pointer_cast<Room>(self)->StartBroadcastLoop(buffer, loopMs);
                 });
 }
