@@ -32,7 +32,7 @@ public:
     explicit Packet(SharedPtr<Session> owner, const Byte* buffer)
         : mOwner(std::move(owner))
         , mHeader(reinterpret_cast<const PacketHeader*>(buffer))
-        , mPayload(buffer + SIZE_16(PacketHeader))
+        , mPayload(buffer + sizeof_16(PacketHeader))
     {}
 
     SharedPtr<Session>      GetOwner() const { return mOwner; }
@@ -50,7 +50,7 @@ private:
 class PacketHandlerMap
 {
 public:
-    using Handler       = Function<Bool(const Packet&)>;
+    using PacketHandler     = Function<Bool(const Packet&)>;
 
 public:
     Bool                HandlePacket(const Packet& packet) { return mIdToHandler[packet.GetId()](packet); }
@@ -58,14 +58,14 @@ public:
 protected:
     PacketHandlerMap();
 
-    void                RegisterHandler(Handler handler, PacketId id) { mIdToHandler[static_cast<Int16>(id)] = std::move(handler); }
+    void                RegisterHandler(PacketHandler handler, PacketId id) { mIdToHandler[static_cast<Int16>(id)] = std::move(handler); }
     virtual void        RegisterAllHandlers() = 0;
 
-    template<typename TPayload, typename THandler>
-    Bool                HandlePayload(THandler handler, const Packet& packet)
+    template<typename TPayload, typename TPayloadHandler>
+    Bool                HandlePayload(TPayloadHandler handler, const Packet& packet)
     {
         TPayload payload;
-        if (!payload.ParseFromArray(packet.GetPayload(), packet.GetSize() - SIZE_16(PacketHeader)))
+        if (!payload.ParseFromArray(packet.GetPayload(), packet.GetSize() - sizeof_16(PacketHeader)))
         {
             return false;
         }
@@ -77,7 +77,7 @@ protected:
     static Bool         Handle_Invalid(const Packet& packet);
 
 private:
-    Handler             mIdToHandler[std::numeric_limits<Int16>::max() + 1];
+    PacketHandler       mIdToHandler[std::numeric_limits<Int16>::max() + 1];
 };
 
 class PacketUtils
@@ -87,7 +87,7 @@ public:
     static SharedPtr<SendBuffer>    MakePacketBuffer(const TPayload& payload, PacketId packetId)
     {
         const Int16 payloadSize = static_cast<Int16>(payload.ByteSizeLong());
-        const Int16 packetSize = SIZE_16(PacketHeader) + payloadSize;
+        const Int16 packetSize = sizeof_16(PacketHeader) + payloadSize;
         SharedPtr<SendBuffer> sendBuf = gSendChunkPool->Alloc(packetSize);
 
         // 헤더 설정

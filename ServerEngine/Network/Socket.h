@@ -50,7 +50,7 @@ private:
 template<typename T>
 static Int64 SetSocketOpt(SOCKET socket, Int32 level, Int32 optName, const T& optVal)
 {
-    if (SOCKET_ERROR == ::setsockopt(socket, level, optName, reinterpret_cast<const char*>(&optVal), SIZE_32(optVal)))
+    if (SOCKET_ERROR == ::setsockopt(socket, level, optName, reinterpret_cast<const char*>(&optVal), sizeof_32(optVal)))
     {
         return ::WSAGetLastError();
     }

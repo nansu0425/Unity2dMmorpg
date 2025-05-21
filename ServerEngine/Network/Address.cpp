@@ -18,7 +18,7 @@ NetAddress::NetAddress(String16View ip, UInt16 port)
 String16 NetAddress::GetIp() const
 {
     Char16 buffer[100] = {};
-    ::InetNtop(AF_INET, &mAddress.sin_addr, OUT buffer, NUM_ELEM_64(buffer));
+    ::InetNtop(AF_INET, &mAddress.sin_addr, OUT buffer, countof_64(buffer));
 
     return String16(buffer);
 }

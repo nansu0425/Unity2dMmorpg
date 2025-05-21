@@ -28,7 +28,7 @@ Int64 PacketUtils::ProcessPackets(PacketHandlerMap& handlers, SharedPtr<Session>
     while (processedSize < numBytes)
     {
         // 패킷 헤더 크기만큼 수신했는지 확인
-        if (numBytes - processedSize < SIZE_64(PacketHeader))
+        if (numBytes - processedSize < sizeof_64(PacketHeader))
         {
             break;
         }

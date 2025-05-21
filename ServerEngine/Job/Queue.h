@@ -51,7 +51,7 @@ private:
 
 /*
  * JobQueue는 Job을 직렬화하여 순차적으로 실행하기 위한 큐입니다.
- * 락프리 큐(moodycamel::ConcurrentQueue)를 사용하여 멀티스레드 환경에서 안전하게 동작합니다.
+ * 락프리 큐를 사용하여 멀티스레드 환경에서 안전하게 동작합니다.
  *
  * 주요 특징:
  * - 원자적 카운터를 통한 작업 수 추적으로 경합 상태 방지
@@ -70,7 +70,7 @@ public:
     Bool                        TryFlush(Int64 timeoutMs);
 
 private:
-    ConcurrentQueue<SharedPtr<Job>>     mQueue;
+    LockfreeQueue<SharedPtr<Job>>       mQueue;
     Atomic<Int64>                       mJobCount;
 
     static constexpr Int64      kInitQueueSize = 64;
@@ -83,7 +83,7 @@ private:
  * 주요 기능:
  * - 락프리 큐를 통한 효율적인 작업 큐 관리
  * - SRWLOCK과 CONDITION_VARIABLE을 활용한 최적화된 동기화
- * - 여러 스레드 간의 작업 분배 및 효율적인
+ * - 여러 스레드 간의 작업 분배
  * - 미완료 작업이 있는 큐의 자동 재등록으로 모든 작업 완료 보장
  * - 대기 중인 스레드의 효율적인 깨우기를 통한 성능 최적화
  */
@@ -99,7 +99,7 @@ private:
     SRWLOCK                                 mLock;
     CONDITION_VARIABLE                      mCondVar;
     Bool                                    mWaked = false;
-    ConcurrentQueue<SharedPtr<JobQueue>>    mQueues;
+    LockfreeQueue<SharedPtr<JobQueue>>      mQueues;
     Bool                                    mRunning = true;
 
     static constexpr Int64      kFlushTimeoutMs = 100;

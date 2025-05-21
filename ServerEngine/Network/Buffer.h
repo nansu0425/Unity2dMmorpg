@@ -121,18 +121,18 @@ public:
 
     Bool    Peek(Byte* dest, Int64 size);
     template<typename T>
-    Bool    Peek(T* dest) { return Peek(reinterpret_cast<Byte*>(dest), SIZE_64(T)); }
+    Bool    Peek(T* dest) { return Peek(reinterpret_cast<Byte*>(dest), sizeof_64(T)); }
 
     Bool    Read(Byte* dest, Int64 size);
     template<typename T>
-    Bool    Read(T* dest) { return Read(reinterpret_cast<Byte*>(dest), SIZE_64(T)); }
+    Bool    Read(T* dest) { return Read(reinterpret_cast<Byte*>(dest), sizeof_64(T)); }
 
     template<typename T>
     BufferReader& operator>>(T& dest)
     {
-        ASSERT_CRASH(mPos + SIZE_64(T) <= mSize, "BUFFER_OVERFLOW");
+        ASSERT_CRASH(mPos + sizeof_64(T) <= mSize, "BUFFER_OVERFLOW");
         dest = *reinterpret_cast<T*>(mBuffer + mPos);
-        mPos += SIZE_64(T);
+        mPos += sizeof_64(T);
 
         return *this;
     }
@@ -158,7 +158,7 @@ public:
 
     Bool    Write(const Byte* src, Int64 size);
     template<typename T>
-    Bool    Write(const T* src) { return Write(reinterpret_cast<const Byte*>(src), SIZE_64(T)); }
+    Bool    Write(const T* src) { return Write(reinterpret_cast<const Byte*>(src), sizeof_64(T)); }
 
     template<typename T>
     T* Reserve()
@@ -168,7 +168,7 @@ public:
             return nullptr;
         }
         T* reserved = reinterpret_cast<T*>(mBuffer + mPos);
-        mPos += SIZE_64(T);
+        mPos += sizeof_64(T);
 
         return reserved;
     }
@@ -176,10 +176,10 @@ public:
     template<typename T>
     BufferWriter& operator<<(T&& src)
     {
-        ASSERT_CRASH(mPos + SIZE_64(T) <= mSize, "BUFFER_OVERFLOW");
+        ASSERT_CRASH(mPos + sizeof_64(T) <= mSize, "BUFFER_OVERFLOW");
         using SrcType = std::remove_reference_t<T>;
         *reinterpret_cast<SrcType*>(mBuffer + mPos) = std::forward<SrcType>(src);
-        mPos += SIZE_64(T);
+        mPos += sizeof_64(T);
 
         return *this;
     }

@@ -123,7 +123,7 @@ void Listener::ProcessAccept(AcceptEvent* event, Int64 numBytes)
     }
 
     SOCKADDR_IN sockAddress = {};
-    Int32 sockAddressLength = SIZE_32(SOCKADDR_IN);
+    Int32 sockAddressLength = sizeof_32(SOCKADDR_IN);
     // peer 소켓 주소를 가져온다
     result = ::getpeername(session->GetSocket(), OUT reinterpret_cast<SOCKADDR*>(&sockAddress), &sockAddressLength);
     if (result != SUCCESS)

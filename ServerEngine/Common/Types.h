@@ -61,7 +61,7 @@ template<typename T, typename Container = Vector<T>, typename Pr = std::less<typ
 using PriorityQueue = std::priority_queue<T, Container, Pr>;
 
 template<typename T>
-using ConcurrentQueue   = moodycamel::ConcurrentQueue<T>;
+using LockfreeQueue = moodycamel::ConcurrentQueue<T>;
 
 using String8       = std::basic_string<Char8, std::char_traits<Char8>>;
 using String16      = std::basic_string<Char16, std::char_traits<Char16>>;
