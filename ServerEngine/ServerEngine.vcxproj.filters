@@ -16,9 +16,6 @@
     <Filter Include="Common">
       <UniqueIdentifier>{67ee8be2-fcf5-4df2-9b83-abf31462876e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Database">
-      <UniqueIdentifier>{ededf0ad-4c42-4a1c-8b7d-049f641bb260}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
@@ -79,9 +76,6 @@
     <ClInclude Include="Job\Timer.h">
       <Filter>Job</Filter>
     </ClInclude>
-    <ClInclude Include="Database\Connection.h">
-      <Filter>Database</Filter>
-    </ClInclude>
     <ClInclude Include="Network\Dispatcher.h">
       <Filter>Network</Filter>
     </ClInclude>
@@ -135,9 +129,6 @@
     </ClCompile>
     <ClCompile Include="Job\Timer.cpp">
       <Filter>Job</Filter>
-    </ClCompile>
-    <ClCompile Include="Database\Connection.cpp">
-      <Filter>Database</Filter>
     </ClCompile>
     <ClCompile Include="Network\Dispatcher.cpp">
       <Filter>Network</Filter>

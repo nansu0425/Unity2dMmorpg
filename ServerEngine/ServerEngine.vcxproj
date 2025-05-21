@@ -28,7 +28,6 @@
     <ClInclude Include="Concurrency\Lock.h" />
     <ClInclude Include="Concurrency\Queue.h" />
     <ClInclude Include="Concurrency\Thread.h" />
-    <ClInclude Include="Database\Connection.h" />
     <ClInclude Include="Job\Queue.h" />
     <ClInclude Include="Job\Serializer.h" />
     <ClInclude Include="Job\Timer.h" />
@@ -49,7 +48,6 @@
     <ClCompile Include="Concurrency\Deadlock.cpp" />
     <ClCompile Include="Concurrency\Lock.cpp" />
     <ClCompile Include="Concurrency\Thread.cpp" />
-    <ClCompile Include="Database\Connection.cpp" />
     <ClCompile Include="Job\Queue.cpp" />
     <ClCompile Include="Job\Serializer.cpp" />
     <ClCompile Include="Job\Timer.cpp" />
