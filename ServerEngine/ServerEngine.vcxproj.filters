@@ -55,9 +55,6 @@
     <ClInclude Include="Job\Serializer.h">
       <Filter>Job</Filter>
     </ClInclude>
-    <ClInclude Include="Concurrency\Queue.h">
-      <Filter>Concurrency</Filter>
-    </ClInclude>
     <ClInclude Include="Common\Global.h">
       <Filter>Common</Filter>
     </ClInclude>

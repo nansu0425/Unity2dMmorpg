@@ -83,6 +83,21 @@ private:
     Atomic<UInt64>              mLockFlag = kEmptyFlag;
 };
 
+/*
+ * SrwLockWriteGuard - Windows SRWLOCK의 독점 잠금(쓰기 잠금)을 위한 RAII 래퍼
+ *
+ * 특징:
+ * - RAII 패턴을 통해 스코프 기반 자동 락 관리
+ * - 생성자에서 독점 락 획득, 소멸자에서 자동 해제
+ * - Windows의 기본 SRW 락 API 사용 (AcquireSRWLockExclusive/ReleaseSRWLockExclusive)
+ * - 복사 생성자와 대입 연산자 명시적으로 삭제 (락의 소유권 복제 방지)
+ *
+ * 사용 예시:
+ * {
+ *     SrwLockWriteGuard guard(srwLock);
+ *     // 보호된 코드 실행
+ * } // 스코프 종료 시 자동으로 락 해제
+ */
 class SrwLockWriteGuard
 {
 public:
@@ -97,10 +112,30 @@ public:
         ::ReleaseSRWLockExclusive(&mLock);
     }
 
+    // 복사 금지
+    SrwLockWriteGuard(const SrwLockWriteGuard&) = delete;
+    SrwLockWriteGuard& operator=(const SrwLockWriteGuard&) = delete;
+
 private:
-    SRWLOCK&    mLock;
+    SRWLOCK& mLock;
 };
 
+/*
+ * SrwLockReadGuard - Windows SRWLOCK의 공유 잠금(읽기 잠금)을 위한 RAII 래퍼
+ *
+ * 특징:
+ * - RAII 패턴을 통해 스코프 기반 자동 락 관리
+ * - 생성자에서 공유 락 획득, 소멶자에서 자동 해제
+ * - Windows의 기본 SRW 락 API 사용 (AcquireSRWLockShared/ReleaseSRWLockShared)
+ * - 복사 생성자와 대입 연산자 명시적으로 삭제 (락의 소유권 복제 방지)
+ * - 여러 스레드가 동시에 읽기 락을 획득할 수 있음
+ *
+ * 사용 예시:
+ * {
+ *     SrwLockReadGuard guard(srwLock);
+ *     // 읽기 전용 작업 수행
+ * } // 스코프 종료 시 자동으로 락 해제
+ */
 class SrwLockReadGuard
 {
 public:
@@ -115,6 +150,10 @@ public:
         ::ReleaseSRWLockShared(&mLock);
     }
 
+    // 복사 금지
+    SrwLockReadGuard(const SrwLockReadGuard&) = delete;
+    SrwLockReadGuard& operator=(const SrwLockReadGuard&) = delete;
+
 private:
-    SRWLOCK&    mLock;
+    SRWLOCK& mLock;
 };

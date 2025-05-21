@@ -26,7 +26,6 @@
     <ClInclude Include="Common\Types.h" />
     <ClInclude Include="Concurrency\Deadlock.h" />
     <ClInclude Include="Concurrency\Lock.h" />
-    <ClInclude Include="Concurrency\Queue.h" />
     <ClInclude Include="Concurrency\Thread.h" />
     <ClInclude Include="Job\Queue.h" />
     <ClInclude Include="Job\Serializer.h" />
