@@ -7,6 +7,20 @@
 
 #include <spdlog/spdlog.h>
 
+/**
+ * Logger - 서버 엔진의 로깅 시스템
+ *
+ * spdlog 라이브러리를 기반으로 하는 비동기 로깅 클래스입니다.
+ * 다양한 로그 레벨(Trace, Debug, Info, Warn, Error, Critical)을 지원하며
+ * UTF-8 및 UTF-16 문자열 모두 처리할 수 있습니다.
+ *
+ * 주요 기능:
+ * - 비동기 로깅으로 성능 오버헤드 최소화
+ * - 다양한 로그 레벨 지원
+ * - 서식화된 문자열(fmt 라이브러리 사용)
+ * - UTF-8 및 UTF-16 문자열 지원
+ * - 디버그/릴리스 모드에 따른 자동 로그 레벨 조정
+ */
 class Logger
 {
 public:
@@ -63,11 +77,8 @@ private:
     void Shutdown();
 
 private:
-    enum Constants : Int64
-    {
-        kQueueSize      = 8192,
-        kThreadCount    = 1,
-    };
+    static constexpr Int64      kQueueSize = 8192;
+    static constexpr Int64      kThreadCount = 1;
 
 private:
     SharedPtr<spdlog::logger>   mLogger;
