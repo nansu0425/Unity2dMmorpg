@@ -81,6 +81,7 @@ Int64 JobTimer::Distribute()
         {
             const Item& item = mScheduledItems.top();
             const Int64 nowTick = ::GetTickCount64();
+            // 실행 시간에 도달하지 않은 경우
             if (nowTick < item.execTick)
             {
                 waitMs = item.execTick - nowTick;
@@ -92,12 +93,18 @@ Int64 JobTimer::Distribute()
         }
     }
 
+    const Int64 startTick = ::GetTickCount64();
+
     // 꺼낸 모든 아이템의 job을 큐에 넣음
     for (Item& item : mExecItems)
     {
         item.queue.lock()->Push(std::move(item.job));
     }
     mExecItems.clear();
+
+    const Int64 endTick = ::GetTickCount64();
+    // 대기 시간 갱신
+    waitMs -= endTick - startTick;
 
     return waitMs;
 }
