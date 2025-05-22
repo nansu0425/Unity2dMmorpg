@@ -16,6 +16,9 @@
     <Filter Include="Common">
       <UniqueIdentifier>{67ee8be2-fcf5-4df2-9b83-abf31462876e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Io">
+      <UniqueIdentifier>{a7d01aa2-bcc1-4006-85ec-82c92cbebaf1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
@@ -73,11 +76,11 @@
     <ClInclude Include="Job\Timer.h">
       <Filter>Job</Filter>
     </ClInclude>
-    <ClInclude Include="Network\Dispatcher.h">
-      <Filter>Network</Filter>
+    <ClInclude Include="Io\Dispatcher.h">
+      <Filter>Io</Filter>
     </ClInclude>
-    <ClInclude Include="Network\Event.h">
-      <Filter>Network</Filter>
+    <ClInclude Include="Io\Event.h">
+      <Filter>Io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -127,11 +130,11 @@
     <ClCompile Include="Job\Timer.cpp">
       <Filter>Job</Filter>
     </ClCompile>
-    <ClCompile Include="Network\Dispatcher.cpp">
-      <Filter>Network</Filter>
+    <ClCompile Include="Io\Dispatcher.cpp">
+      <Filter>Io</Filter>
     </ClCompile>
-    <ClCompile Include="Network\Event.cpp">
-      <Filter>Network</Filter>
+    <ClCompile Include="Io\Event.cpp">
+      <Filter>Io</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
