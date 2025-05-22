@@ -4,6 +4,13 @@
 
 #include "GameServer/Network/Protocol/Packet.h"
 
+/**
+ * @class C2S_PacketHandlerMap
+ * @brief C2S 패킷을 위한 특수 패킷 핸들러 맵입니다.
+ * 
+ * 각 특정 패킷 유형에 대한 핸들러를 등록하고 패킷 ID를 기반으로 
+ * 적절한 핸들러에 패킷 처리를 위임합니다.
+ */
 class C2S_PacketHandlerMap
     : public PacketHandlerMap
 {

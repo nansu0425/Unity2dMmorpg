@@ -4,6 +4,13 @@
 
 #include "DummyClient/Network/Protocol/Packet.h"
 
+/**
+ * @class S2C_PacketHandlerMap
+ * @brief S2C 패킷을 위한 특수 패킷 핸들러 맵입니다.
+ * 
+ * 각 특정 패킷 유형에 대한 핸들러를 등록하고 패킷 ID를 기반으로 
+ * 적절한 핸들러에 패킷 처리를 위임합니다.
+ */
 class S2C_PacketHandlerMap
     : public PacketHandlerMap
 {
