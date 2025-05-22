@@ -20,6 +20,8 @@ void Player::SendAsync(SharedPtr<SendBuffer> buffer)
 
 void Player::StartSendLoop(SharedPtr<SendBuffer> buffer, Int64 loopMs)
 {
+    const Int64 nextTick = ::GetTickCount64() + loopMs;
+
     // 매니저에 없으면 반복 종료
     if (PlayerManager::GetInstance().FindPlayer(mId) == nullptr)
     {
@@ -28,8 +30,17 @@ void Player::StartSendLoop(SharedPtr<SendBuffer> buffer, Int64 loopMs)
 
     // 송신 버퍼 전송
     SendAsync(buffer);
+
+    // 지연 시간 계산
+    Int64 delayMs = nextTick - ::GetTickCount64();
+    if (delayMs < 0)
+    {
+        gLogger->Warn(TEXT_8("Player[{}]: Send loop delay is negative"), mId);
+        delayMs = 0;
+    }
+
     // 다음 루프 예약
-    ScheduleJob(loopMs, &Player::StartSendLoop, std::move(buffer), loopMs);
+    ScheduleJob(delayMs, &Player::StartSendLoop, std::move(buffer), loopMs);
 }
 
 void PlayerManager::AddPlayer(SharedPtr<Player> player)
@@ -72,7 +83,7 @@ void PlayerManager::RemovePlayer(Int64 id)
 
 SharedPtr<Player> PlayerManager::FindPlayer(Int64 id)
 {
-    READ_GUARD;
+    WRITE_GUARD;
 
     // 플레이어 찾기
     auto it = mPlayers.find(id);
