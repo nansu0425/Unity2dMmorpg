@@ -1,6 +1,8 @@
 # MmorpgServer
 
-![project-logo](docs/images/project-logo.png)
+<div align="center">
+    <img src="docs/images/project-logo.png" alt="project-logo">
+</div>
 
 ## 🧩 프로젝트 개요
 
