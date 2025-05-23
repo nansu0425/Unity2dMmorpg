@@ -1,5 +1,7 @@
 # MmorpgServer
 
+![project-logo](docs/images/project-logo.png)
+
 ## 🧩 프로젝트 개요
 
 MmorpgServer는 C++17 기반의 MMORPG 서버 구현 프로젝트입니다. Windows 환경에서 IOCP 기반 고성능 네트워크 서버를 설계하고, Job Queue 시스템과 멀티스레드 기반의 작업 분리를 통해 실제 온라인 게임 환경과 유사한 서버 구조를 구현하는 것을 목표로 합니다.
