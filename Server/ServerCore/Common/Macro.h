@@ -66,11 +66,11 @@
  *     } // 스코프 종료 시 자동으로 락 해제
  * };
  */
-#define RW_LOCK_ARRAY(count)    RwSpinLock mLocks[count];
+#define RW_LOCK_ARRAY(count)    core::RwSpinLock mLocks[count];
 #define RW_LOCK                 RW_LOCK_ARRAY(1)
-#define READ_GUARD_IDX(idx)     RwSpinLock::ReadGuard readGuard_##idx(mLocks[idx], typeid(*this).name());
+#define READ_GUARD_IDX(idx)     core::RwSpinLock::ReadGuard readGuard_##idx(mLocks[idx], typeid(*this).name());
 #define READ_GUARD              READ_GUARD_IDX(0)
-#define WRITE_GUARD_IDX(idx)    RwSpinLock::WriteGuard writeGuard_##idx(mLocks[idx], typeid(*this).name());
+#define WRITE_GUARD_IDX(idx)    core::RwSpinLock::WriteGuard writeGuard_##idx(mLocks[idx], typeid(*this).name());
 #define WRITE_GUARD             WRITE_GUARD_IDX(0)
 
 /*

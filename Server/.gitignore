@@ -365,9 +365,9 @@ FodyWeavers.xsd
 # Vcpkg
 vcpkg_installed
 
-# ServerEngine/Log
-!ServerEngine/Log/
-!ServerEngine/Log/**
+# ServerCore/Log
+!ServerCore/Log/
+!ServerCore/Log/**
 
 # vscode
 .vscode
