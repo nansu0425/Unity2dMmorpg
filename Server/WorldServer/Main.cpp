@@ -8,6 +8,10 @@
 #include "GameContent/Chat/Room.h"
 #include "WorldServer/Network/PacketHandler.h"
 
+using namespace core;
+using namespace proto;
+using namespace world;
+
 Service::Config gConfig =
 {
     NetAddress(TEXT_16("127.0.0.1"), 7777),

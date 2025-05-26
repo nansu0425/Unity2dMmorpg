@@ -4,25 +4,31 @@
 
 #include "ServerCore/Network/Session.h"
 
-class Room;
-
-class ClientSession
-    : public Session
+namespace game
 {
-public:
-    virtual ~ClientSession() override;
+    class Room;
+} // namespace game
 
-    void                SetPlayerId(Int64 id) { mPlayerId = id; }
-    Int64               GetPlayerId() const { return mPlayerId; }
+namespace world
+{
+    class ClientSession
+        : public core::Session
+    {
+    public:
+        virtual ~ClientSession() override;
 
-protected:
-    virtual void        OnConnected() override;
-    virtual void        OnDisconnected(String8 cause) override;
-    virtual Int64       OnReceived(const Byte* buffer, Int64 numBytes) override;
-    virtual void        OnSent(Int64 numBytes) override;
+        void                SetPlayerId(Int64 id) { mPlayerId = id; }
+        Int64               GetPlayerId() const { return mPlayerId; }
 
-private:
-    Int64               mPlayerId = 0;
-};
+    protected:
+        virtual void        OnConnected() override;
+        virtual void        OnDisconnected(String8 cause) override;
+        virtual Int64       OnReceived(const Byte* buffer, Int64 numBytes) override;
+        virtual void        OnSent(Int64 numBytes) override;
 
-extern SharedPtr<Room>  gRoom;
+    private:
+        Int64               mPlayerId = 0;
+    };
+
+    extern SharedPtr<game::Room>    gRoom;
+} // namespace world
