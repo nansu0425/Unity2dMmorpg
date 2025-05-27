@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "ServerCore/Network/Session.h"
+#include "Core/Network/Session.h"
 
 namespace game
 {

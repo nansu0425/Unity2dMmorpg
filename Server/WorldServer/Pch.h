@@ -3,13 +3,13 @@
 #pragma once
 
 #ifdef _DEBUG
-#pragma comment(lib, "Debug//ServerCore.lib")
-#pragma comment(lib, "Debug//ServerProtocol.lib")
-#pragma comment(lib, "Debug//GameContent.lib")
+#pragma comment(lib, "Debug//Core.lib")
+#pragma comment(lib, "Debug//SharedProtocol.lib")
+#pragma comment(lib, "Debug//GameLogic.lib")
 #else
-#pragma comment(lib, "Release//ServerCore.lib")
-#pragma comment(lib, "Release//ServerProtocol.lib")
-#pragma comment(lib, "Release//GameContent.lib")
+#pragma comment(lib, "Release//Core.lib")
+#pragma comment(lib, "Release//SharedProtocol.lib")
+#pragma comment(lib, "Release//GameLogic.lib")
 #endif // _DEBUG
 
-#include "ServerCore/Common/Pch.h"
+#include "Core/Common/Pch.h"

@@ -1,8 +1,8 @@
-﻿/*    WorldServer/Network/PacketHandler.h    */
+﻿/*    WorldServer/PacketHandler.h    */
 
 #pragma once
 
-#include "ServerProtocol/Network/Packet.h"
+#include "SharedProtocol/Packet.h"
 
 namespace world
 {

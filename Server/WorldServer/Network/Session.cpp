@@ -3,8 +3,8 @@
 #include "WorldServer/Pch.h"
 #include "WorldServer/Network/Session.h"
 #include "WorldServer/Network/PacketHandler.h"
-#include "GameContent/Chat/Room.h"
-#include "GameContent/Common/Player.h"
+#include "GameLogic/Chat/Room.h"
+#include "GameLogic/Common/Player.h"
 
 using namespace core;
 using namespace game;

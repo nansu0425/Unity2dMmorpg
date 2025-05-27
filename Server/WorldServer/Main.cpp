@@ -1,11 +1,11 @@
 ﻿/*    WorldServer/Main.cpp    */
 
 #include "WorldServer/Pch.h"
-#include "ServerCore/Concurrency/Thread.h"
-#include "ServerCore/Io/Dispatcher.h"
-#include "ServerCore/Network/Service.h"
+#include "Core/Concurrency/Thread.h"
+#include "Core/Io/Dispatcher.h"
+#include "Core/Network/Service.h"
 #include "WorldServer/Network/Session.h"
-#include "GameContent/Chat/Room.h"
+#include "GameLogic/Chat/Room.h"
 #include "WorldServer/Network/PacketHandler.h"
 
 using namespace core;
