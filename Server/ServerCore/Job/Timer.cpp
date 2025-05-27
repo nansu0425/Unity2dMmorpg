@@ -107,6 +107,10 @@ namespace core
         const Int64 endTick = ::GetTickCount64();
         // 대기 시간 갱신
         waitMs -= endTick - startTick;
+        if (waitMs < 0)
+        {
+            waitMs = 0;
+        }
 
         return waitMs;
     }

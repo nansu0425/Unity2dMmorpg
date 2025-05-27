@@ -51,7 +51,7 @@ namespace core
         SharedPtr<Service>  GetService() const { return mService.lock(); }
         void                SetService(SharedPtr<Service> service) { mService = std::move(service); }
         SOCKET              GetSocket() const { return mSocket; }
-        const NetAddress& GetNetAddress() const { return mAddress; }
+        const NetAddress&   GetNetAddress() const { return mAddress; }
         void                SetNetAddress(const NetAddress& address) { mAddress = address; }
         Int64               GetId() const { return mId; }
         void                SetId(Int64 id) { mId = id; }
