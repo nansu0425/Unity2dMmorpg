@@ -6,12 +6,13 @@
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"
 
+using namespace core;
 using namespace proto;
 using namespace game;
 
 namespace world
 {
-    Bool C2S_PacketHandlerMap::Handle_C2S_EnterRoom(SharedPtr<core::Session> owner, const C2S_EnterRoom& payload)
+    Bool C2S_PacketHandlerMap::Handle_C2S_EnterRoom(SharedPtr<Session> owner, const C2S_EnterRoom& payload)
     {
         // 플레이어 생성 및 매니저에 추가
         auto player = std::make_shared<Player>(owner, payload.id());
@@ -30,7 +31,7 @@ namespace world
         return true;
     }
 
-    Bool C2S_PacketHandlerMap::Handle_C2S_Chat(SharedPtr<core::Session> owner, const C2S_Chat& payload)
+    Bool C2S_PacketHandlerMap::Handle_C2S_Chat(SharedPtr<Session> owner, const C2S_Chat& payload)
     {
         // 룸의 모든 플레이어에게 메시지 전송
         S2C_Chat chat;
@@ -40,4 +41,4 @@ namespace world
 
         return true;
     }
-}
+} // namespace world

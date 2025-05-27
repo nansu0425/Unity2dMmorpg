@@ -1,4 +1,4 @@
-﻿/*    WorldServer/Network/Session.h    */
+﻿/*    DummyClient/Network/Session.h    */
 
 #pragma once
 
@@ -9,13 +9,13 @@ namespace game
     class Room;
 } // namespace game
 
-namespace world
+namespace dummy
 {
-    class ClientSession
+    class ServerSession
         : public core::Session
     {
     public:
-        virtual             ~ClientSession() override;
+        virtual             ~ServerSession() override;
 
         void                SetPlayerId(Int64 id) { mPlayerId = id; }
         Int64               GetPlayerId() const { return mPlayerId; }
@@ -31,4 +31,4 @@ namespace world
     };
 
     extern SharedPtr<game::Room>    gRoom;
-} // namespace world
+} // namespace dummy

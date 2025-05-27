@@ -1,10 +1,13 @@
 ﻿/*    DummyClient/Main.cpp    */
 
 #include "DummyClient/Pch.h"
-#include "ServerEngine/Concurrency/Thread.h"
-#include "ServerEngine/Io/Dispatcher.h"
-#include "ServerEngine/Network/Service.h"
+#include "Core/Concurrency/Thread.h"
+#include "Core/Io/Dispatcher.h"
+#include "Core/Network/Service.h"
 #include "DummyClient/Network/Session.h"
+
+using namespace core;
+using namespace dummy;
 
 Service::Config gConfig =
 {
