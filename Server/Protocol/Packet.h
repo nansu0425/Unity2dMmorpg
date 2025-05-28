@@ -1,8 +1,8 @@
-﻿/*    SharedProtocol/Packet.h    */
+﻿/*    Protocol/Packet.h    */
 
 #pragma once
-#include "SharedProtocol/C2S_Payload.pb.h"
-#include "SharedProtocol/S2C_Payload.pb.h"
+#include "Protocol/C2S_Payload.pb.h"
+#include "Protocol/S2C_Payload.pb.h"
 
 namespace core
 {

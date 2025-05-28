@@ -4,11 +4,11 @@
 
 #ifdef _DEBUG
 #pragma comment(lib, "Debug//Core.lib")
-#pragma comment(lib, "Debug//SharedProtocol.lib")
+#pragma comment(lib, "Debug//Protocol.lib")
 #pragma comment(lib, "Debug//GameLogic.lib")
 #else
 #pragma comment(lib, "Release//Core.lib")
-#pragma comment(lib, "Release//SharedProtocol.lib")
+#pragma comment(lib, "Release//Protocol.lib")
 #pragma comment(lib, "Release//GameLogic.lib")
 #endif // _DEBUG
 

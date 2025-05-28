@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "SharedProtocol/Packet.h"
+#include "Protocol/Packet.h"
 
 namespace world
 {

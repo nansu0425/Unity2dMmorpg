@@ -1,7 +1,7 @@
-﻿/*    SharedProtocol/Packet.cpp    */
+﻿/*    Protocol/Packet.cpp    */
 
-#include "SharedProtocol/Pch.h"
-#include "SharedProtocol/Packet.h"
+#include "Protocol/Pch.h"
+#include "Protocol/Packet.h"
 #include "Core/Network/Session.h"
 
 using namespace core;
