@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Protocol/Packet.h"
+#include "Protocol/Packet/Packet.h"
 
 namespace dummy
 {
