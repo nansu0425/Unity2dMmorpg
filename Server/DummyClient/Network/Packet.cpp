@@ -1,7 +1,7 @@
-﻿/*    DummyClient/Network/PacketHandler.cpp    */
+﻿/*    DummyClient/Network/Packet.cpp    */
 
 #include "DummyClient/Pch.h"
-#include "DummyClient/Network/PacketHandler.h"
+#include "DummyClient/Network/Packet.h"
 #include "DummyClient/Network/Session.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"

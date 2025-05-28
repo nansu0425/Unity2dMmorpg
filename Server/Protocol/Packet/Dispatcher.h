@@ -2,7 +2,8 @@
 
 #pragma once
 
-#include "Protocol/Packet/World.pb.h"
+#include "Protocol/Payload/Client.pb.h"
+#include "Protocol/Payload/World.pb.h"
 
 namespace core
 {
@@ -90,8 +91,8 @@ namespace proto
         static Bool         Handle_Invalid(const PacketView& packet);
 
     private:
-        using PacketHandler     = Function<Bool(const PacketView&)>;
+        using Packet     = Function<Bool(const PacketView&)>;
 
-        PacketHandler       mIdToHandler[std::numeric_limits<Int16>::max() + 1];
+        Packet       mIdToHandler[std::numeric_limits<Int16>::max() + 1];
     };
 } // namespace protocol

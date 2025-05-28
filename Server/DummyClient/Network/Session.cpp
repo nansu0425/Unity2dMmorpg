@@ -2,7 +2,7 @@
 
 #include "DummyClient/Pch.h"
 #include "DummyClient/Network/Session.h"
-#include "DummyClient/Network/PacketHandler.h"
+#include "DummyClient/Network/Packet.h"
 #include "Protocol/Packet/Util.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"

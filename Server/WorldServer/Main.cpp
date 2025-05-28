@@ -6,7 +6,7 @@
 #include "Core/Network/Service.h"
 #include "WorldServer/Network/Session.h"
 #include "GameLogic/Chat/Room.h"
-#include "WorldServer/Network/PacketHandler.h"
+#include "WorldServer/Network/Packet.h"
 #include "Protocol/Packet/Util.h"
 
 using namespace core;

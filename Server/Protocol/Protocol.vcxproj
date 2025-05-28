@@ -19,20 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Packet\Common.pb.h" />
     <ClInclude Include="Packet\Dispatcher.h" />
     <ClInclude Include="Packet\Util.h" />
-    <ClInclude Include="Packet\World.pb.h" />
+    <ClInclude Include="Payload\Client.pb.h" />
+    <ClInclude Include="Payload\Common.pb.h" />
+    <ClInclude Include="Payload\World.pb.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Packet\Common.pb.cc">
+    <ClCompile Include="Packet\Dispatcher.cpp" />
+    <ClCompile Include="Packet\Util.cpp" />
+    <ClCompile Include="Payload\Client.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Packet\Dispatcher.cpp" />
-    <ClCompile Include="Packet\Util.cpp" />
-    <ClCompile Include="Packet\World.pb.cc">
+    <ClCompile Include="Payload\Common.pb.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Payload\World.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

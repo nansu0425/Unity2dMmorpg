@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+import "Common.proto";
+
+package proto;
+
+message Client2World_EnterRoom
+{
+    int64   id = 1;
+    string  password = 2;
+}
+
+message Client2World_Chat
+{
+    int64   id = 1;
+    string  message = 2;
+}

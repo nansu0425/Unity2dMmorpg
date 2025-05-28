@@ -1,4 +1,4 @@
-﻿/*    DummyClient/Network/PacketHandler.h    */
+﻿/*    DummyClient/Network/Packet.h    */
 
 #pragma once
 
