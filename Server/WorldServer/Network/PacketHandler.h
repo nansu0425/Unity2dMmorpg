@@ -21,12 +21,14 @@ namespace world
 
         virtual void    RegisterAllHandlers() override
         {
-            RegisterHandler<C2S_EnterRoom>(&Handle_Client2World_EnterRoom, proto::PacketId::C2S_EnterRoom);
-            RegisterHandler<C2S_Chat>(&Handle_Client2World_Chat, proto::PacketId::C2S_Chat);
+            using namespace proto;
+
+            RegisterHandler<Client2World_EnterRoom>(&Handle_Client2World_EnterRoom, PacketId::Client2World_EnterRoom);
+            RegisterHandler<Client2World_Chat>(&Handle_Client2World_Chat, PacketId::Client2World_Chat);
         }
 
     private:    // 모든 페이로드 핸들러
-        static Bool     Handle_Client2World_EnterRoom(SharedPtr<core::Session> owner, const C2S_EnterRoom& payload);
-        static Bool     Handle_Client2World_Chat(SharedPtr<core::Session> owner, const C2S_Chat& payload);
+        static Bool     Handle_Client2World_EnterRoom(SharedPtr<core::Session> owner, const proto::Client2World_EnterRoom& payload);
+        static Bool     Handle_Client2World_Chat(SharedPtr<core::Session> owner, const proto::Client2World_Chat& payload);
     };
 } // namespace world

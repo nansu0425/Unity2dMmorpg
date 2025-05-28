@@ -24,6 +24,8 @@ PROTOBUF_PRAGMA_INIT_SEG
 namespace _pb = ::google::protobuf;
 namespace _pbi = ::google::protobuf::internal;
 namespace _fl = ::google::protobuf::internal::field_layout;
+namespace proto {
+}  // namespace proto
 static constexpr const ::_pb::EnumDescriptor**
     file_level_enum_descriptors_Common_2eproto = nullptr;
 static constexpr const ::_pb::ServiceDescriptor**
@@ -33,13 +35,13 @@ static constexpr ::_pbi::MigrationSchema* schemas = nullptr;
 static constexpr ::_pb::Message* const* file_default_instances = nullptr;
 const char descriptor_table_protodef_Common_2eproto[] ABSL_ATTRIBUTE_SECTION_VARIABLE(
     protodesc_cold) = {
-    "\n\014Common.protob\006proto3"
+    "\n\014Common.proto\022\005protob\006proto3"
 };
 static ::absl::once_flag descriptor_table_Common_2eproto_once;
 PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_Common_2eproto = {
     false,
     false,
-    22,
+    29,
     descriptor_table_protodef_Common_2eproto,
     "Common.proto",
     &descriptor_table_Common_2eproto_once,
@@ -52,7 +54,9 @@ PROTOBUF_CONSTINIT const ::_pbi::DescriptorTable descriptor_table_Common_2eproto
     file_level_enum_descriptors_Common_2eproto,
     file_level_service_descriptors_Common_2eproto,
 };
+namespace proto {
 // @@protoc_insertion_point(namespace_scope)
+}  // namespace proto
 namespace google {
 namespace protobuf {
 }  // namespace protobuf

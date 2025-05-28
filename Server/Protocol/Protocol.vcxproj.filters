@@ -2,37 +2,31 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="Pch.h" />
-    <ClInclude Include="Packet\C2S_Payload.pb.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
     <ClInclude Include="Packet\Common.pb.h">
       <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="Packet\Dispatcher.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="Packet\S2C_Payload.pb.h">
+    <ClInclude Include="Packet\Util.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="Packet\Util.h">
+    <ClInclude Include="Packet\World.pb.h">
       <Filter>Packet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Packet\C2S_Payload.pb.cc">
-      <Filter>Packet</Filter>
-    </ClCompile>
     <ClCompile Include="Packet\Common.pb.cc">
       <Filter>Packet</Filter>
     </ClCompile>
     <ClCompile Include="Packet\Dispatcher.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
-    <ClCompile Include="Packet\S2C_Payload.pb.cc">
+    <ClCompile Include="Packet\Util.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
-    <ClCompile Include="Packet\Util.cpp">
+    <ClCompile Include="Packet\World.pb.cc">
       <Filter>Packet</Filter>
     </ClCompile>
   </ItemGroup>

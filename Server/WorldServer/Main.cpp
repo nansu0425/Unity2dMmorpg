@@ -55,10 +55,10 @@ int main()
                            });
 
     // 룸 브로드캐스트 루프 실행
-    S2C_Chat chat;
+    World2Client_Chat chat;
     chat.set_id(0);
     chat.set_message(TEXT_8("Hello World!"));
-    gRoom->StartBroadcastLoop(util::MakeSendPacketBuffer(chat, PacketId::S2C_Chat), 100);
+    gRoom->StartBroadcastLoop(util::MakePacketSendBuffer(chat, PacketId::World2Client_Chat), 100);
 
     gThreadManager->Join();
 

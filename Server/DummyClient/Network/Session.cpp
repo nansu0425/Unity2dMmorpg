@@ -28,10 +28,10 @@ namespace dummy
         PlayerManager::GetInstance().AddPlayer(std::move(player));
 
         // 방 입장 요청 전송
-        C2S_EnterRoom payload;
+        Client2World_EnterRoom payload;
         payload.set_id(GetPlayerId());
         payload.set_password(TEXT_8("1234"));
-        SendAsync(util::MakeSendPacketBuffer(payload, PacketId::C2S_EnterRoom));
+        SendAsync(util::MakePacketSendBuffer(payload, PacketId::Client2World_EnterRoom));
     }
 
     void ServerSession::OnDisconnected(String8 cause)

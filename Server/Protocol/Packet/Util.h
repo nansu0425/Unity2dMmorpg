@@ -7,7 +7,7 @@
 namespace proto::util
 {
     template<typename TPayload>
-    SharedPtr<core::SendBuffer>  MakeSendPacketBuffer(const TPayload& payload, PacketId packetId)
+    SharedPtr<core::SendBuffer> MakePacketSendBuffer(const TPayload& payload, PacketId packetId)
     {
         using namespace core;
 
@@ -26,6 +26,4 @@ namespace proto::util
 
         return buffer;
     }
-
-    Int64    ProcessReceivedPackets(PacketDispatcher& dispatcher, SharedPtr<core::Session> owner, const Byte* buffer, Int64 numBytes);
 } // namespace proto::util

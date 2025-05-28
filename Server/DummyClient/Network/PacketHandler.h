@@ -21,12 +21,14 @@ namespace dummy
 
         virtual void    RegisterAllHandlers() override
         {
-            RegisterHandler<S2C_EnterRoom>(&Handle_S2C_EnterRoom, proto::PacketId::S2C_EnterRoom);
-            RegisterHandler<S2C_Chat>(&Handle_S2C_Chat, proto::PacketId::S2C_Chat);
+            using namespace proto;
+
+            RegisterHandler<World2Client_EnterRoom>(&Handle_World2Client_EnterRoom, PacketId::World2Client_EnterRoom);
+            RegisterHandler<World2Client_Chat>(&Handle_World2Client_Chat, PacketId::World2Client_Chat);
         }
 
     private:    // 모든 페이로드 핸들러
-        static Bool     Handle_S2C_EnterRoom(SharedPtr<core::Session> owner, const S2C_EnterRoom& payload);
-        static Bool     Handle_S2C_Chat(SharedPtr<core::Session> owner, const S2C_Chat& payload);
+        static Bool     Handle_World2Client_EnterRoom(SharedPtr<core::Session> owner, const proto::World2Client_EnterRoom& payload);
+        static Bool     Handle_World2Client_Chat(SharedPtr<core::Session> owner, const proto::World2Client_Chat& payload);
     };
 } // namespace dummy

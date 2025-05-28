@@ -1,8 +1,8 @@
 ﻿/*    Protocol/Packet/Dispatcher.h    */
 
 #pragma once
-#include "Protocol/Packet/C2S_Payload.pb.h"
-#include "Protocol/Packet/S2C_Payload.pb.h"
+
+#include "Protocol/Packet/World.pb.h"
 
 namespace core
 {
@@ -14,10 +14,10 @@ namespace proto
     enum class PacketId : Int16
     {
         Invalid = 0,
-        C2S_EnterRoom = 1000,
-        C2S_Chat = 1001,
-        S2C_EnterRoom = 1002,
-        S2C_Chat = 1003,
+        Client2World_EnterRoom = 1000,
+        World2Client_EnterRoom = 1001,
+        Client2World_Chat = 1002,
+        World2Client_Chat = 1003,
     };
 
 #pragma pack(push, 1)

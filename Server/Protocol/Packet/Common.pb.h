@@ -53,6 +53,7 @@ namespace protobuf {
 }  // namespace protobuf
 }  // namespace google
 
+namespace proto {
 
 // ===================================================================
 
@@ -75,6 +76,7 @@ namespace protobuf {
 #endif  // __GNUC__
 
 // @@protoc_insertion_point(namespace_scope)
+}  // namespace proto
 
 
 // @@protoc_insertion_point(global_scope)
