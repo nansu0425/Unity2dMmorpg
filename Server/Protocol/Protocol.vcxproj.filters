@@ -8,10 +8,13 @@
     <ClInclude Include="Packet\Common.pb.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="Packet\Packet.h">
+    <ClInclude Include="Packet\Dispatcher.h">
       <Filter>Packet</Filter>
     </ClInclude>
     <ClInclude Include="Packet\S2C_Payload.pb.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\Util.h">
       <Filter>Packet</Filter>
     </ClInclude>
   </ItemGroup>
@@ -23,10 +26,13 @@
     <ClCompile Include="Packet\Common.pb.cc">
       <Filter>Packet</Filter>
     </ClCompile>
-    <ClCompile Include="Packet\Packet.cpp">
+    <ClCompile Include="Packet\Dispatcher.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
     <ClCompile Include="Packet\S2C_Payload.pb.cc">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet\Util.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
   </ItemGroup>

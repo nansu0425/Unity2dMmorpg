@@ -63,7 +63,7 @@ namespace core
         Int64                           GetCurrentSessionCount() const { return mSessionCount; }
         Int64                           GetMaxSessionCount() const { return mConfig.maxSessionCount; }
         ServiceType                     GetType() const { return mType; }
-        const NetAddress& GetAddress() const { return mConfig.address; }
+        const NetAddress&               GetAddress() const { return mConfig.address; }
         SharedPtr<IoEventDispatcher>    GetIoEventDispatcher() const { return mConfig.ioEventDispatcher; }
 
     protected:

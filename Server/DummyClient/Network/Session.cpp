@@ -3,6 +3,7 @@
 #include "DummyClient/Pch.h"
 #include "DummyClient/Network/Session.h"
 #include "DummyClient/Network/PacketHandler.h"
+#include "Protocol/Packet/Util.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"
 
@@ -30,7 +31,7 @@ namespace dummy
         C2S_EnterRoom payload;
         payload.set_id(GetPlayerId());
         payload.set_password(TEXT_8("1234"));
-        SendAsync(PacketUtils::MakePacketBuffer(payload, PacketId::C2S_EnterRoom));
+        SendAsync(util::MakeSendPacketBuffer(payload, PacketId::C2S_EnterRoom));
     }
 
     void ServerSession::OnDisconnected(String8 cause)
@@ -47,7 +48,7 @@ namespace dummy
 
     Int64 ServerSession::OnReceived(const Byte* buffer, Int64 numBytes)
     {
-        return PacketUtils::ProcessPackets(S2C_PacketHandlerMap::GetInstance(), GetSession(), buffer, numBytes);
+        return World2Client_PacketDispatcher::GetInstance().DispatchReceivedPackets(GetSession(), buffer, numBytes);
     }
 
     void ServerSession::OnSent(Int64 numBytes)

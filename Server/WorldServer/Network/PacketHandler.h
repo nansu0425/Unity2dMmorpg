@@ -2,51 +2,31 @@
 
 #pragma once
 
-#include "Protocol/Packet/Packet.h"
+#include "Protocol/Packet/Dispatcher.h"
 
 namespace world
 {
-    /**
-     * @class C2S_PacketHandlerMap
-     * @brief C2S 패킷을 위한 특수 패킷 핸들러 맵입니다.
-     *
-     * 각 특정 패킷 유형에 대한 핸들러를 등록하고 패킷 ID를 기반으로
-     * 적절한 핸들러에 패킷 처리를 위임합니다.
-     */
-    class C2S_PacketHandlerMap
-        : public proto::PacketHandlerMap
+    class Client2World_PacketDispatcher
+        : public proto::PacketDispatcher
     {
     public:
-        static C2S_PacketHandlerMap& GetInstance()
+        static Client2World_PacketDispatcher& GetInstance()
         {
-            static C2S_PacketHandlerMap sInstance;
+            static Client2World_PacketDispatcher sInstance;
             return sInstance;
         }
 
     protected:  // 모든 패킷 핸들러 등록
-        C2S_PacketHandlerMap() { RegisterAllHandlers(); }
+                        Client2World_PacketDispatcher() { RegisterAllHandlers(); }
 
         virtual void    RegisterAllHandlers() override
         {
-
-            RegisterHandler(
-                [this](const proto::Packet& packet)
-                {
-                    return HandlePayload<C2S_EnterRoom>(C2S_PacketHandlerMap::Handle_C2S_EnterRoom, packet);
-                },
-                proto::PacketId::C2S_EnterRoom);
-
-            RegisterHandler(
-                [this](const proto::Packet& packet)
-                {
-                    return HandlePayload<C2S_Chat>(C2S_PacketHandlerMap::Handle_C2S_Chat, packet);
-                },
-                proto::PacketId::C2S_Chat);
-
+            RegisterHandler<C2S_EnterRoom>(&Handle_Client2World_EnterRoom, proto::PacketId::C2S_EnterRoom);
+            RegisterHandler<C2S_Chat>(&Handle_Client2World_Chat, proto::PacketId::C2S_Chat);
         }
 
     private:    // 모든 페이로드 핸들러
-        static Bool     Handle_C2S_EnterRoom(SharedPtr<core::Session> owner, const C2S_EnterRoom& payload);
-        static Bool     Handle_C2S_Chat(SharedPtr<core::Session> owner, const C2S_Chat& payload);
+        static Bool     Handle_Client2World_EnterRoom(SharedPtr<core::Session> owner, const C2S_EnterRoom& payload);
+        static Bool     Handle_Client2World_Chat(SharedPtr<core::Session> owner, const C2S_Chat& payload);
     };
-}  // namespace world
+} // namespace world

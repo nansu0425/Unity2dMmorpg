@@ -7,6 +7,7 @@
 #include "WorldServer/Network/Session.h"
 #include "GameLogic/Chat/Room.h"
 #include "WorldServer/Network/PacketHandler.h"
+#include "Protocol/Packet/Util.h"
 
 using namespace core;
 using namespace proto;
@@ -57,7 +58,7 @@ int main()
     S2C_Chat chat;
     chat.set_id(0);
     chat.set_message(TEXT_8("Hello World!"));
-    gRoom->StartBroadcastLoop(PacketUtils::MakePacketBuffer(chat, PacketId::S2C_Chat), 100);
+    gRoom->StartBroadcastLoop(util::MakeSendPacketBuffer(chat, PacketId::S2C_Chat), 100);
 
     gThreadManager->Join();
 

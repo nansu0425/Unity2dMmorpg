@@ -2,47 +2,27 @@
 
 #pragma once
 
-#include "Protocol/Packet/Packet.h"
+#include "Protocol/Packet/Dispatcher.h"
 
 namespace dummy
 {
-    /**
-     * @class S2C_PacketHandlerMap
-     * @brief S2C 패킷을 위한 특수 패킷 핸들러 맵입니다.
-     *
-     * 각 특정 패킷 유형에 대한 핸들러를 등록하고 패킷 ID를 기반으로
-     * 적절한 핸들러에 패킷 처리를 위임합니다.
-     */
-    class S2C_PacketHandlerMap
-        : public proto::PacketHandlerMap
+    class World2Client_PacketDispatcher
+        : public proto::PacketDispatcher
     {
     public:
-        static S2C_PacketHandlerMap& GetInstance()
+        static World2Client_PacketDispatcher& GetInstance()
         {
-            static S2C_PacketHandlerMap sInstance;
+            static World2Client_PacketDispatcher sInstance;
             return sInstance;
         }
 
     protected:  // 모든 패킷 핸들러 등록
-        S2C_PacketHandlerMap() { RegisterAllHandlers(); }
+                        World2Client_PacketDispatcher() { RegisterAllHandlers(); }
 
         virtual void    RegisterAllHandlers() override
         {
-
-            RegisterHandler(
-                [this](const proto::Packet& packet)
-                {
-                    return HandlePayload<S2C_EnterRoom>(S2C_PacketHandlerMap::Handle_S2C_EnterRoom, packet);
-                },
-                proto::PacketId::S2C_EnterRoom);
-
-            RegisterHandler(
-                [this](const proto::Packet& packet)
-                {
-                    return HandlePayload<S2C_Chat>(S2C_PacketHandlerMap::Handle_S2C_Chat, packet);
-                },
-                proto::PacketId::S2C_Chat);
-
+            RegisterHandler<S2C_EnterRoom>(&Handle_S2C_EnterRoom, proto::PacketId::S2C_EnterRoom);
+            RegisterHandler<S2C_Chat>(&Handle_S2C_Chat, proto::PacketId::S2C_Chat);
         }
 
     private:    // 모든 페이로드 핸들러
