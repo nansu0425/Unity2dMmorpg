@@ -2,8 +2,8 @@
 
 #pragma once
 
-#include "Protocol/Payload/Client.pb.h"
-#include "Protocol/Payload/World.pb.h"
+#include "Protocol/Payload/ToClient.pb.h"
+#include "Protocol/Payload/ToWorld.pb.h"
 
 namespace core
 {

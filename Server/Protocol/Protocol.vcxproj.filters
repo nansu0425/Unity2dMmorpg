@@ -8,13 +8,13 @@
     <ClInclude Include="Packet\Dispatcher.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="Payload\World.pb.h">
-      <Filter>Payload</Filter>
-    </ClInclude>
-    <ClInclude Include="Payload\Client.pb.h">
-      <Filter>Payload</Filter>
-    </ClInclude>
     <ClInclude Include="Payload\Common.pb.h">
+      <Filter>Payload</Filter>
+    </ClInclude>
+    <ClInclude Include="Payload\ToClient.pb.h">
+      <Filter>Payload</Filter>
+    </ClInclude>
+    <ClInclude Include="Payload\ToWorld.pb.h">
       <Filter>Payload</Filter>
     </ClInclude>
   </ItemGroup>
@@ -26,13 +26,13 @@
     <ClCompile Include="Packet\Dispatcher.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
-    <ClCompile Include="Payload\Client.pb.cc">
-      <Filter>Payload</Filter>
-    </ClCompile>
     <ClCompile Include="Payload\Common.pb.cc">
       <Filter>Payload</Filter>
     </ClCompile>
-    <ClCompile Include="Payload\World.pb.cc">
+    <ClCompile Include="Payload\ToClient.pb.cc">
+      <Filter>Payload</Filter>
+    </ClCompile>
+    <ClCompile Include="Payload\ToWorld.pb.cc">
       <Filter>Payload</Filter>
     </ClCompile>
   </ItemGroup>
