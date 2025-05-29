@@ -23,16 +23,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="PacketGenerator.py" />
-    <Compile Include="PayloadParser.py" />
+    <Compile Include="ProtoParser.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Templates\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="GenPacket.bat" />
-    <Content Include="Templates\Packet.cpp" />
+    <Content Include="Templates\Dispatcher.h" />
     <Content Include="Templates\Packet.h" />
-    <Content Include="Templates\PacketHandler.h" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
