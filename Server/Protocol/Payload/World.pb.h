@@ -53,12 +53,12 @@ struct TableStruct_World_2eproto {
 extern const ::google::protobuf::internal::DescriptorTable
     descriptor_table_World_2eproto;
 namespace proto {
-class World2Client_Chat;
-struct World2Client_ChatDefaultTypeInternal;
-extern World2Client_ChatDefaultTypeInternal _World2Client_Chat_default_instance_;
-class World2Client_EnterRoom;
-struct World2Client_EnterRoomDefaultTypeInternal;
-extern World2Client_EnterRoomDefaultTypeInternal _World2Client_EnterRoom_default_instance_;
+class WorldToClient_Chat;
+struct WorldToClient_ChatDefaultTypeInternal;
+extern WorldToClient_ChatDefaultTypeInternal _WorldToClient_Chat_default_instance_;
+class WorldToClient_EnterRoom;
+struct WorldToClient_EnterRoomDefaultTypeInternal;
+extern WorldToClient_EnterRoomDefaultTypeInternal _WorldToClient_EnterRoom_default_instance_;
 }  // namespace proto
 namespace google {
 namespace protobuf {
@@ -72,32 +72,32 @@ namespace proto {
 
 // -------------------------------------------------------------------
 
-class World2Client_EnterRoom final
+class WorldToClient_EnterRoom final
     : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:proto.World2Client_EnterRoom) */ {
+/* @@protoc_insertion_point(class_definition:proto.WorldToClient_EnterRoom) */ {
  public:
-  inline World2Client_EnterRoom() : World2Client_EnterRoom(nullptr) {}
-  ~World2Client_EnterRoom() PROTOBUF_FINAL;
+  inline WorldToClient_EnterRoom() : WorldToClient_EnterRoom(nullptr) {}
+  ~WorldToClient_EnterRoom() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(World2Client_EnterRoom* msg, std::destroying_delete_t) {
+  void operator delete(WorldToClient_EnterRoom* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(World2Client_EnterRoom));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(WorldToClient_EnterRoom));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR World2Client_EnterRoom(
+  explicit PROTOBUF_CONSTEXPR WorldToClient_EnterRoom(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline World2Client_EnterRoom(const World2Client_EnterRoom& from) : World2Client_EnterRoom(nullptr, from) {}
-  inline World2Client_EnterRoom(World2Client_EnterRoom&& from) noexcept
-      : World2Client_EnterRoom(nullptr, std::move(from)) {}
-  inline World2Client_EnterRoom& operator=(const World2Client_EnterRoom& from) {
+  inline WorldToClient_EnterRoom(const WorldToClient_EnterRoom& from) : WorldToClient_EnterRoom(nullptr, from) {}
+  inline WorldToClient_EnterRoom(WorldToClient_EnterRoom&& from) noexcept
+      : WorldToClient_EnterRoom(nullptr, std::move(from)) {}
+  inline WorldToClient_EnterRoom& operator=(const WorldToClient_EnterRoom& from) {
     CopyFrom(from);
     return *this;
   }
-  inline World2Client_EnterRoom& operator=(World2Client_EnterRoom&& from) noexcept {
+  inline WorldToClient_EnterRoom& operator=(WorldToClient_EnterRoom&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -125,16 +125,16 @@ class World2Client_EnterRoom final
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const World2Client_EnterRoom& default_instance() {
+  static const WorldToClient_EnterRoom& default_instance() {
     return *internal_default_instance();
   }
-  static inline const World2Client_EnterRoom* internal_default_instance() {
-    return reinterpret_cast<const World2Client_EnterRoom*>(
-        &_World2Client_EnterRoom_default_instance_);
+  static inline const WorldToClient_EnterRoom* internal_default_instance() {
+    return reinterpret_cast<const WorldToClient_EnterRoom*>(
+        &_WorldToClient_EnterRoom_default_instance_);
   }
   static constexpr int kIndexInFileMessages = 0;
-  friend void swap(World2Client_EnterRoom& a, World2Client_EnterRoom& b) { a.Swap(&b); }
-  inline void Swap(World2Client_EnterRoom* other) {
+  friend void swap(WorldToClient_EnterRoom& a, WorldToClient_EnterRoom& b) { a.Swap(&b); }
+  inline void Swap(WorldToClient_EnterRoom* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -142,7 +142,7 @@ class World2Client_EnterRoom final
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(World2Client_EnterRoom* other) {
+  void UnsafeArenaSwap(WorldToClient_EnterRoom* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -150,13 +150,13 @@ class World2Client_EnterRoom final
 
   // implements Message ----------------------------------------------
 
-  World2Client_EnterRoom* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<World2Client_EnterRoom>(arena);
+  WorldToClient_EnterRoom* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<WorldToClient_EnterRoom>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const World2Client_EnterRoom& from);
+  void CopyFrom(const WorldToClient_EnterRoom& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const World2Client_EnterRoom& from) { World2Client_EnterRoom::MergeImpl(*this, from); }
+  void MergeFrom(const WorldToClient_EnterRoom& from) { WorldToClient_EnterRoom::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -193,18 +193,18 @@ class World2Client_EnterRoom final
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(World2Client_EnterRoom* other);
+  void InternalSwap(WorldToClient_EnterRoom* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "proto.World2Client_EnterRoom"; }
+  static ::absl::string_view FullMessageName() { return "proto.WorldToClient_EnterRoom"; }
 
  protected:
-  explicit World2Client_EnterRoom(::google::protobuf::Arena* arena);
-  World2Client_EnterRoom(::google::protobuf::Arena* arena, const World2Client_EnterRoom& from);
-  World2Client_EnterRoom(::google::protobuf::Arena* arena, World2Client_EnterRoom&& from) noexcept
-      : World2Client_EnterRoom(arena) {
+  explicit WorldToClient_EnterRoom(::google::protobuf::Arena* arena);
+  WorldToClient_EnterRoom(::google::protobuf::Arena* arena, const WorldToClient_EnterRoom& from);
+  WorldToClient_EnterRoom(::google::protobuf::Arena* arena, WorldToClient_EnterRoom&& from) noexcept
+      : WorldToClient_EnterRoom(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -242,7 +242,7 @@ class World2Client_EnterRoom final
   void _internal_set_success(bool value);
 
   public:
-  // @@protoc_insertion_point(class_scope:proto.World2Client_EnterRoom)
+  // @@protoc_insertion_point(class_scope:proto.WorldToClient_EnterRoom)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
@@ -264,7 +264,7 @@ class World2Client_EnterRoom final
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const World2Client_EnterRoom& from_msg);
+                          const WorldToClient_EnterRoom& from_msg);
     ::int64_t id_;
     bool success_;
     ::google::protobuf::internal::CachedSize _cached_size_;
@@ -275,32 +275,32 @@ class World2Client_EnterRoom final
 };
 // -------------------------------------------------------------------
 
-class World2Client_Chat final
+class WorldToClient_Chat final
     : public ::google::protobuf::Message
-/* @@protoc_insertion_point(class_definition:proto.World2Client_Chat) */ {
+/* @@protoc_insertion_point(class_definition:proto.WorldToClient_Chat) */ {
  public:
-  inline World2Client_Chat() : World2Client_Chat(nullptr) {}
-  ~World2Client_Chat() PROTOBUF_FINAL;
+  inline WorldToClient_Chat() : WorldToClient_Chat(nullptr) {}
+  ~WorldToClient_Chat() PROTOBUF_FINAL;
 
 #if defined(PROTOBUF_CUSTOM_VTABLE)
-  void operator delete(World2Client_Chat* msg, std::destroying_delete_t) {
+  void operator delete(WorldToClient_Chat* msg, std::destroying_delete_t) {
     SharedDtor(*msg);
-    ::google::protobuf::internal::SizedDelete(msg, sizeof(World2Client_Chat));
+    ::google::protobuf::internal::SizedDelete(msg, sizeof(WorldToClient_Chat));
   }
 #endif
 
   template <typename = void>
-  explicit PROTOBUF_CONSTEXPR World2Client_Chat(
+  explicit PROTOBUF_CONSTEXPR WorldToClient_Chat(
       ::google::protobuf::internal::ConstantInitialized);
 
-  inline World2Client_Chat(const World2Client_Chat& from) : World2Client_Chat(nullptr, from) {}
-  inline World2Client_Chat(World2Client_Chat&& from) noexcept
-      : World2Client_Chat(nullptr, std::move(from)) {}
-  inline World2Client_Chat& operator=(const World2Client_Chat& from) {
+  inline WorldToClient_Chat(const WorldToClient_Chat& from) : WorldToClient_Chat(nullptr, from) {}
+  inline WorldToClient_Chat(WorldToClient_Chat&& from) noexcept
+      : WorldToClient_Chat(nullptr, std::move(from)) {}
+  inline WorldToClient_Chat& operator=(const WorldToClient_Chat& from) {
     CopyFrom(from);
     return *this;
   }
-  inline World2Client_Chat& operator=(World2Client_Chat&& from) noexcept {
+  inline WorldToClient_Chat& operator=(WorldToClient_Chat&& from) noexcept {
     if (this == &from) return *this;
     if (::google::protobuf::internal::CanMoveWithInternalSwap(GetArena(), from.GetArena())) {
       InternalSwap(&from);
@@ -328,16 +328,16 @@ class World2Client_Chat final
   static const ::google::protobuf::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const World2Client_Chat& default_instance() {
+  static const WorldToClient_Chat& default_instance() {
     return *internal_default_instance();
   }
-  static inline const World2Client_Chat* internal_default_instance() {
-    return reinterpret_cast<const World2Client_Chat*>(
-        &_World2Client_Chat_default_instance_);
+  static inline const WorldToClient_Chat* internal_default_instance() {
+    return reinterpret_cast<const WorldToClient_Chat*>(
+        &_WorldToClient_Chat_default_instance_);
   }
   static constexpr int kIndexInFileMessages = 1;
-  friend void swap(World2Client_Chat& a, World2Client_Chat& b) { a.Swap(&b); }
-  inline void Swap(World2Client_Chat* other) {
+  friend void swap(WorldToClient_Chat& a, WorldToClient_Chat& b) { a.Swap(&b); }
+  inline void Swap(WorldToClient_Chat* other) {
     if (other == this) return;
     if (::google::protobuf::internal::CanUseInternalSwap(GetArena(), other->GetArena())) {
       InternalSwap(other);
@@ -345,7 +345,7 @@ class World2Client_Chat final
       ::google::protobuf::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(World2Client_Chat* other) {
+  void UnsafeArenaSwap(WorldToClient_Chat* other) {
     if (other == this) return;
     ABSL_DCHECK(GetArena() == other->GetArena());
     InternalSwap(other);
@@ -353,13 +353,13 @@ class World2Client_Chat final
 
   // implements Message ----------------------------------------------
 
-  World2Client_Chat* New(::google::protobuf::Arena* arena = nullptr) const {
-    return ::google::protobuf::Message::DefaultConstruct<World2Client_Chat>(arena);
+  WorldToClient_Chat* New(::google::protobuf::Arena* arena = nullptr) const {
+    return ::google::protobuf::Message::DefaultConstruct<WorldToClient_Chat>(arena);
   }
   using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const World2Client_Chat& from);
+  void CopyFrom(const WorldToClient_Chat& from);
   using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom(const World2Client_Chat& from) { World2Client_Chat::MergeImpl(*this, from); }
+  void MergeFrom(const WorldToClient_Chat& from) { WorldToClient_Chat::MergeImpl(*this, from); }
 
   private:
   static void MergeImpl(
@@ -396,18 +396,18 @@ class World2Client_Chat final
   private:
   void SharedCtor(::google::protobuf::Arena* arena);
   static void SharedDtor(MessageLite& self);
-  void InternalSwap(World2Client_Chat* other);
+  void InternalSwap(WorldToClient_Chat* other);
  private:
   template <typename T>
   friend ::absl::string_view(
       ::google::protobuf::internal::GetAnyMessageName)();
-  static ::absl::string_view FullMessageName() { return "proto.World2Client_Chat"; }
+  static ::absl::string_view FullMessageName() { return "proto.WorldToClient_Chat"; }
 
  protected:
-  explicit World2Client_Chat(::google::protobuf::Arena* arena);
-  World2Client_Chat(::google::protobuf::Arena* arena, const World2Client_Chat& from);
-  World2Client_Chat(::google::protobuf::Arena* arena, World2Client_Chat&& from) noexcept
-      : World2Client_Chat(arena) {
+  explicit WorldToClient_Chat(::google::protobuf::Arena* arena);
+  WorldToClient_Chat(::google::protobuf::Arena* arena, const WorldToClient_Chat& from);
+  WorldToClient_Chat(::google::protobuf::Arena* arena, WorldToClient_Chat&& from) noexcept
+      : WorldToClient_Chat(arena) {
     *this = ::std::move(from);
   }
   const ::google::protobuf::internal::ClassData* GetClassData() const PROTOBUF_FINAL;
@@ -451,13 +451,13 @@ class World2Client_Chat final
   void _internal_set_id(::int64_t value);
 
   public:
-  // @@protoc_insertion_point(class_scope:proto.World2Client_Chat)
+  // @@protoc_insertion_point(class_scope:proto.WorldToClient_Chat)
  private:
   class _Internal;
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
       1, 2, 0,
-      39, 2>
+      40, 2>
       _table_;
 
   friend class ::google::protobuf::MessageLite;
@@ -473,7 +473,7 @@ class World2Client_Chat final
                           ::google::protobuf::Arena* arena);
     inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                           ::google::protobuf::Arena* arena, const Impl_& from,
-                          const World2Client_Chat& from_msg);
+                          const WorldToClient_Chat& from_msg);
     ::google::protobuf::internal::ArenaStringPtr message_;
     ::int64_t id_;
     ::google::protobuf::internal::CachedSize _cached_size_;
@@ -497,124 +497,124 @@ class World2Client_Chat final
 #endif  // __GNUC__
 // -------------------------------------------------------------------
 
-// World2Client_EnterRoom
+// WorldToClient_EnterRoom
 
 // int64 id = 1;
-inline void World2Client_EnterRoom::clear_id() {
+inline void WorldToClient_EnterRoom::clear_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.id_ = ::int64_t{0};
 }
-inline ::int64_t World2Client_EnterRoom::id() const {
-  // @@protoc_insertion_point(field_get:proto.World2Client_EnterRoom.id)
+inline ::int64_t WorldToClient_EnterRoom::id() const {
+  // @@protoc_insertion_point(field_get:proto.WorldToClient_EnterRoom.id)
   return _internal_id();
 }
-inline void World2Client_EnterRoom::set_id(::int64_t value) {
+inline void WorldToClient_EnterRoom::set_id(::int64_t value) {
   _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:proto.World2Client_EnterRoom.id)
+  // @@protoc_insertion_point(field_set:proto.WorldToClient_EnterRoom.id)
 }
-inline ::int64_t World2Client_EnterRoom::_internal_id() const {
+inline ::int64_t WorldToClient_EnterRoom::_internal_id() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.id_;
 }
-inline void World2Client_EnterRoom::_internal_set_id(::int64_t value) {
+inline void WorldToClient_EnterRoom::_internal_set_id(::int64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.id_ = value;
 }
 
 // bool success = 2;
-inline void World2Client_EnterRoom::clear_success() {
+inline void WorldToClient_EnterRoom::clear_success() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.success_ = false;
 }
-inline bool World2Client_EnterRoom::success() const {
-  // @@protoc_insertion_point(field_get:proto.World2Client_EnterRoom.success)
+inline bool WorldToClient_EnterRoom::success() const {
+  // @@protoc_insertion_point(field_get:proto.WorldToClient_EnterRoom.success)
   return _internal_success();
 }
-inline void World2Client_EnterRoom::set_success(bool value) {
+inline void WorldToClient_EnterRoom::set_success(bool value) {
   _internal_set_success(value);
-  // @@protoc_insertion_point(field_set:proto.World2Client_EnterRoom.success)
+  // @@protoc_insertion_point(field_set:proto.WorldToClient_EnterRoom.success)
 }
-inline bool World2Client_EnterRoom::_internal_success() const {
+inline bool WorldToClient_EnterRoom::_internal_success() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.success_;
 }
-inline void World2Client_EnterRoom::_internal_set_success(bool value) {
+inline void WorldToClient_EnterRoom::_internal_set_success(bool value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.success_ = value;
 }
 
 // -------------------------------------------------------------------
 
-// World2Client_Chat
+// WorldToClient_Chat
 
 // int64 id = 1;
-inline void World2Client_Chat::clear_id() {
+inline void WorldToClient_Chat::clear_id() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.id_ = ::int64_t{0};
 }
-inline ::int64_t World2Client_Chat::id() const {
-  // @@protoc_insertion_point(field_get:proto.World2Client_Chat.id)
+inline ::int64_t WorldToClient_Chat::id() const {
+  // @@protoc_insertion_point(field_get:proto.WorldToClient_Chat.id)
   return _internal_id();
 }
-inline void World2Client_Chat::set_id(::int64_t value) {
+inline void WorldToClient_Chat::set_id(::int64_t value) {
   _internal_set_id(value);
-  // @@protoc_insertion_point(field_set:proto.World2Client_Chat.id)
+  // @@protoc_insertion_point(field_set:proto.WorldToClient_Chat.id)
 }
-inline ::int64_t World2Client_Chat::_internal_id() const {
+inline ::int64_t WorldToClient_Chat::_internal_id() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.id_;
 }
-inline void World2Client_Chat::_internal_set_id(::int64_t value) {
+inline void WorldToClient_Chat::_internal_set_id(::int64_t value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.id_ = value;
 }
 
 // string message = 2;
-inline void World2Client_Chat::clear_message() {
+inline void WorldToClient_Chat::clear_message() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_.ClearToEmpty();
 }
-inline const std::string& World2Client_Chat::message() const
+inline const std::string& WorldToClient_Chat::message() const
     ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:proto.World2Client_Chat.message)
+  // @@protoc_insertion_point(field_get:proto.WorldToClient_Chat.message)
   return _internal_message();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void World2Client_Chat::set_message(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void WorldToClient_Chat::set_message(Arg_&& arg,
                                                      Args_... args) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:proto.World2Client_Chat.message)
+  // @@protoc_insertion_point(field_set:proto.WorldToClient_Chat.message)
 }
-inline std::string* World2Client_Chat::mutable_message() ABSL_ATTRIBUTE_LIFETIME_BOUND {
+inline std::string* WorldToClient_Chat::mutable_message() ABSL_ATTRIBUTE_LIFETIME_BOUND {
   std::string* _s = _internal_mutable_message();
-  // @@protoc_insertion_point(field_mutable:proto.World2Client_Chat.message)
+  // @@protoc_insertion_point(field_mutable:proto.WorldToClient_Chat.message)
   return _s;
 }
-inline const std::string& World2Client_Chat::_internal_message() const {
+inline const std::string& WorldToClient_Chat::_internal_message() const {
   ::google::protobuf::internal::TSanRead(&_impl_);
   return _impl_.message_.Get();
 }
-inline void World2Client_Chat::_internal_set_message(const std::string& value) {
+inline void WorldToClient_Chat::_internal_set_message(const std::string& value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_.Set(value, GetArena());
 }
-inline std::string* World2Client_Chat::_internal_mutable_message() {
+inline std::string* WorldToClient_Chat::_internal_mutable_message() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   return _impl_.message_.Mutable( GetArena());
 }
-inline std::string* World2Client_Chat::release_message() {
+inline std::string* WorldToClient_Chat::release_message() {
   ::google::protobuf::internal::TSanWrite(&_impl_);
-  // @@protoc_insertion_point(field_release:proto.World2Client_Chat.message)
+  // @@protoc_insertion_point(field_release:proto.WorldToClient_Chat.message)
   return _impl_.message_.Release();
 }
-inline void World2Client_Chat::set_allocated_message(std::string* value) {
+inline void WorldToClient_Chat::set_allocated_message(std::string* value) {
   ::google::protobuf::internal::TSanWrite(&_impl_);
   _impl_.message_.SetAllocated(value, GetArena());
   if (::google::protobuf::internal::DebugHardenForceCopyDefaultString() && _impl_.message_.IsDefault()) {
     _impl_.message_.Set("", GetArena());
   }
-  // @@protoc_insertion_point(field_set_allocated:proto.World2Client_Chat.message)
+  // @@protoc_insertion_point(field_set_allocated:proto.WorldToClient_Chat.message)
 }
 
 #ifdef __GNUC__

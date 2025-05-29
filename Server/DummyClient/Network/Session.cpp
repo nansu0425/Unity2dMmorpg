@@ -28,10 +28,10 @@ namespace dummy
         PlayerManager::GetInstance().AddPlayer(std::move(player));
 
         // 방 입장 요청 전송
-        Client2World_EnterRoom payload;
+        ClientToWorld_EnterRoom payload;
         payload.set_id(GetPlayerId());
         payload.set_password(TEXT_8("1234"));
-        SendAsync(util::MakePacketSendBuffer(payload, PacketId::Client2World_EnterRoom));
+        SendAsync(util::MakePacketSendBuffer(payload, PacketId::ClientToWorld_EnterRoom));
     }
 
     void ServerSession::OnDisconnected(String8 cause)
@@ -48,7 +48,7 @@ namespace dummy
 
     Int64 ServerSession::OnReceived(const Byte* buffer, Int64 numBytes)
     {
-        return World2Client_PacketDispatcher::GetInstance().DispatchReceivedPackets(GetSession(), buffer, numBytes);
+        return ToClient_PacketDispatcher::GetInstance().DispatchReceivedPackets(GetSession(), buffer, numBytes);
     }
 
     void ServerSession::OnSent(Int64 numBytes)

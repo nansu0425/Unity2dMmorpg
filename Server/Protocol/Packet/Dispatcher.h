@@ -15,10 +15,10 @@ namespace proto
     enum class PacketId : Int16
     {
         Invalid = 0,
-        Client2World_EnterRoom = 1000,
-        World2Client_EnterRoom = 1001,
-        Client2World_Chat = 1002,
-        World2Client_Chat = 1003,
+        ClientToWorld_EnterRoom = 1000,
+        WorldToClient_EnterRoom = 1001,
+        ClientToWorld_Chat = 1002,
+        WorldToClient_Chat = 1003,
     };
 
 #pragma pack(push, 1)
@@ -91,8 +91,8 @@ namespace proto
         static Bool         Handle_Invalid(const PacketView& packet);
 
     private:
-        using Packet     = Function<Bool(const PacketView&)>;
+        using PacketHandler     = Function<Bool(const PacketView&)>;
 
-        Packet       mIdToHandler[std::numeric_limits<Int16>::max() + 1];
+        PacketHandler           mIdToHandler[std::numeric_limits<Int16>::max() + 1];
     };
 } // namespace protocol

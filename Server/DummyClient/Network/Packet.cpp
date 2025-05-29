@@ -12,7 +12,7 @@ using namespace game;
 
 namespace dummy
 {
-    Bool World2Client_PacketDispatcher::Handle_World2Client_EnterRoom(SharedPtr<Session> owner, const World2Client_EnterRoom& payload)
+    Bool ToClient_PacketDispatcher::Handle_WorldToClient_EnterRoom(SharedPtr<Session> owner, const WorldToClient_EnterRoom& payload)
     {
         if (!payload.success())
         {
@@ -40,7 +40,7 @@ namespace dummy
         return true;
     }
 
-    Bool World2Client_PacketDispatcher::Handle_World2Client_Chat(SharedPtr<Session> owner, const World2Client_Chat& payload)
+    Bool ToClient_PacketDispatcher::Handle_WorldToClient_Chat(SharedPtr<Session> owner, const WorldToClient_Chat& payload)
     {
         gLogger->Debug(TEXT_8("Player[{}]: {}"), std::static_pointer_cast<ServerSession>(owner)->GetPlayerId(), payload.message());
 
