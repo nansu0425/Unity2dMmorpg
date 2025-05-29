@@ -1,7 +1,7 @@
-﻿/*    DummyClient/Network/Handler.cpp    */
+﻿/*    DummyClient/Packet/Handler.cpp    */
 
 #include "DummyClient/Pch.h"
-#include "DummyClient/Network/Handler.h"
+#include "DummyClient/Packet/Handler.h"
 #include "DummyClient/Network/Session.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"
@@ -12,7 +12,7 @@ using namespace game;
 
 namespace dummy
 {
-    Bool ToClient_PacketDispatcher::Handle_WorldToClient_EnterRoom(SharedPtr<Session> owner, const WorldToClient_EnterRoom& payload)
+    Bool ToClient_PacketHandler::Handle_WorldToClient_EnterRoom(const SharedPtr<core::Session>& owner, const WorldToClient_EnterRoom& payload)
     {
         if (!payload.success())
         {
@@ -40,7 +40,7 @@ namespace dummy
         return true;
     }
 
-    Bool ToClient_PacketDispatcher::Handle_WorldToClient_Chat(SharedPtr<Session> owner, const WorldToClient_Chat& payload)
+    Bool ToClient_PacketHandler::Handle_WorldToClient_Chat(const SharedPtr<core::Session>& owner, const WorldToClient_Chat& payload)
     {
         return true;
     }

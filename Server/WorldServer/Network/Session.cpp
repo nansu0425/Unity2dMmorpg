@@ -2,7 +2,7 @@
 
 #include "WorldServer/Pch.h"
 #include "WorldServer/Network/Session.h"
-#include "WorldServer/Network/Handler.h"
+#include "WorldServer/Packet/Handler.h"
 #include "Protocol/Packet/Util.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"
@@ -37,7 +37,7 @@ namespace world
 
     Int64 ClientSession::OnReceived(const Byte* buffer, Int64 numBytes)
     {
-        return ToWorld_PacketDispatcher::GetInstance().DispatchReceivedPackets(GetSession(), buffer, numBytes);
+        return ToWorld_PacketHandler::GetInstance().DispatchPackets(GetSession(), buffer, numBytes);
     }
 
     void ClientSession::OnSent(Int64 numBytes)

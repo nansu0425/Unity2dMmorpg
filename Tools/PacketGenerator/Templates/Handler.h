@@ -1,4 +1,4 @@
-﻿/*    {{ project_name }}/Network/Handler.h    */
+/*    {{ project_name }}/Packet/Handler.h    */
 
 #pragma once
 
@@ -6,18 +6,18 @@
 
 namespace {{ project_namespace }}
 {
-    class {{ proto_file }}_PacketDispatcher
+    class {{ proto_file }}_PacketHandler
         : public proto::PacketDispatcher
     {
     public:
-        static {{ proto_file }}_PacketDispatcher& GetInstance()
+        static {{ proto_file }}_PacketHandler& GetInstance()
         {
-            static {{ proto_file }}_PacketDispatcher sInstance;
+            static {{ proto_file }}_PacketHandler sInstance;
             return sInstance;
         }
 
     protected:  // 모든 패킷 핸들러 등록
-                        {{ proto_file }}_PacketDispatcher() { RegisterAllHandlers(); }
+                        {{ proto_file }}_PacketHandler() { RegisterAllHandlers(); }
 
         virtual void    RegisterAllHandlers() override
         {
@@ -29,7 +29,7 @@ namespace {{ project_namespace }}
 
     private:    // 모든 페이로드 핸들러
         {%- for packet in proto_parser.packet_dict[proto_file] %}
-        static Bool     Handle_{{ packet.payload_type }}(SharedPtr<core::Session> owner, const proto::{{ packet.payload_type }}& payload);
+        static Bool     Handle_{{ packet.payload_type }}(const SharedPtr<core::Session>& owner, const proto::{{ packet.payload_type }}& payload);
         {%- endfor %}
     };
 } // namespace {{ project_namespace }}

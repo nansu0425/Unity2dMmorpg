@@ -1,4 +1,4 @@
-﻿/*    DummyClient/Network/Handler.h    */
+/*    DummyClient/Packet/Handler.h    */
 
 #pragma once
 
@@ -6,18 +6,18 @@
 
 namespace dummy
 {
-    class ToClient_PacketDispatcher
+    class ToClient_PacketHandler
         : public proto::PacketDispatcher
     {
     public:
-        static ToClient_PacketDispatcher& GetInstance()
+        static ToClient_PacketHandler& GetInstance()
         {
-            static ToClient_PacketDispatcher sInstance;
+            static ToClient_PacketHandler sInstance;
             return sInstance;
         }
 
     protected:  // 모든 패킷 핸들러 등록
-                        ToClient_PacketDispatcher() { RegisterAllHandlers(); }
+                        ToClient_PacketHandler() { RegisterAllHandlers(); }
 
         virtual void    RegisterAllHandlers() override
         {
@@ -28,7 +28,7 @@ namespace dummy
         }
 
     private:    // 모든 페이로드 핸들러
-        static Bool     Handle_WorldToClient_EnterRoom(SharedPtr<core::Session> owner, const proto::WorldToClient_EnterRoom& payload);
-        static Bool     Handle_WorldToClient_Chat(SharedPtr<core::Session> owner, const proto::WorldToClient_Chat& payload);
+        static Bool     Handle_WorldToClient_EnterRoom(const SharedPtr<core::Session>& owner, const proto::WorldToClient_EnterRoom& payload);
+        static Bool     Handle_WorldToClient_Chat(const SharedPtr<core::Session>& owner, const proto::WorldToClient_Chat& payload);
     };
 } // namespace dummy

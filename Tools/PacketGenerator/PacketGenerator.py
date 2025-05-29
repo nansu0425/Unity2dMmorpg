@@ -25,9 +25,20 @@ def main():
     # jinja2 설정
     file_loader = jinja2.FileSystemLoader("Templates")
     env = jinja2.Environment(loader=file_loader)
+    id_template = env.get_template("Id.h")
     dispatcher_template = env.get_template("Dispatcher.h")
     handler_template = env.get_template("Handler.h")
     sender_template = env.get_template("Sender.h")
+
+    # Id.h 렌더링
+    id_rendered = id_template.render(proto_parser=proto_parser)
+
+    # Id.h 출력
+    id_out_dir = os.path.join(root_dir, "Server", "Protocol", "Packet")
+    os.makedirs(id_out_dir, exist_ok=True)
+    id_out = os.path.join(id_out_dir, "Id.h")
+    with open(id_out, 'w', encoding="utf-8") as f:
+        f.write(id_rendered)
 
     # Dispatcher.h 렌더링
     dispatcher_rendered = dispatcher_template.render(
@@ -65,7 +76,7 @@ def main():
             proto_file=project_args["proto_file"])
 
         # Handler.h 출력
-        handler_out_dir = os.path.join(root_dir, "Server", project_name, "Network")
+        handler_out_dir = os.path.join(root_dir, "Server", project_name, "Packet")
         os.makedirs(handler_out_dir, exist_ok=True)
         handler_out = os.path.join(handler_out_dir, "Handler.h")
         with open(handler_out, 'w', encoding="utf-8") as f:

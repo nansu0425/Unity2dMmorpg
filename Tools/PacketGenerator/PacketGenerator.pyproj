@@ -31,6 +31,7 @@
   <ItemGroup>
     <Content Include="Templates\Dispatcher.h" />
     <Content Include="Templates\Handler.h" />
+    <Content Include="Templates\Id.h" />
     <Content Include="Templates\Sender.h" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

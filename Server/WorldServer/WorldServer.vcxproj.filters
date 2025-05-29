@@ -6,8 +6,8 @@
     <ClCompile Include="Network\Session.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Network\Handler.cpp">
-      <Filter>Network</Filter>
+    <ClCompile Include="Packet\Handler.cpp">
+      <Filter>Packet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -15,13 +15,16 @@
     <ClInclude Include="Network\Session.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Network\Handler.h">
-      <Filter>Network</Filter>
+    <ClInclude Include="Packet\Handler.h">
+      <Filter>Packet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Network">
       <UniqueIdentifier>{c4d61db3-d7c0-47b5-b9f7-a39f60073311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Packet">
+      <UniqueIdentifier>{83b23a0a-9474-4064-a45e-891f5896de39}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

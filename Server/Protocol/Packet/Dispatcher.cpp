@@ -8,7 +8,7 @@ using namespace core;
 
 namespace proto
 {
-    Int64 PacketDispatcher::DispatchReceivedPackets(SharedPtr<Session> owner, const Byte* buffer, Int64 numBytes)
+    Int64 PacketDispatcher::DispatchPackets(const SharedPtr<core::Session>& owner, const Byte* buffer, Int64 numBytes)
     {
         Int64 packetOffset = 0;
 

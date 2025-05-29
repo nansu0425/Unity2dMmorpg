@@ -2,7 +2,7 @@
 
 #include "DummyClient/Pch.h"
 #include "DummyClient/Network/Session.h"
-#include "DummyClient/Network/Handler.h"
+#include "DummyClient/Packet/Handler.h"
 #include "Protocol/Packet/Sender.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"
@@ -48,7 +48,7 @@ namespace dummy
 
     Int64 ServerSession::OnReceived(const Byte* buffer, Int64 numBytes)
     {
-        return ToClient_PacketDispatcher::GetInstance().DispatchReceivedPackets(GetSession(), buffer, numBytes);
+        return ToClient_PacketHandler::GetInstance().DispatchPackets(GetSession(), buffer, numBytes);
     }
 
     void ServerSession::OnSent(Int64 numBytes)

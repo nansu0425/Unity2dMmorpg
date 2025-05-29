@@ -1,7 +1,8 @@
-﻿/*    Protocol/Packet/Dispatcher.h    */
+/*    Protocol/Packet/Dispatcher.h    */
 
 #pragma once
 
+#include "Protocol/Packet/Id.h"
 #include "Protocol/Payload/ToClient.pb.h"
 #include "Protocol/Payload/ToWorld.pb.h"
 
@@ -12,15 +13,6 @@ namespace core
 
 namespace proto
 {
-    enum class PacketId : Int16
-    {
-        Invalid = 0,
-        WorldToClient_EnterRoom = 1000,
-        WorldToClient_Chat = 1001,
-        ClientToWorld_EnterRoom = 1002,
-        ClientToWorld_Chat = 1003,
-    };
-
 #pragma pack(push, 1)
     struct PacketHeader
     {
@@ -33,20 +25,20 @@ namespace proto
     class PacketView
     {
     public:
-        explicit PacketView(SharedPtr<core::Session> owner, const Byte* buffer)
-            : mOwner(std::move(owner))
+        explicit PacketView(const SharedPtr<core::Session>& owner, const Byte* buffer)
+            : mOwner(owner)
             , mHeader(reinterpret_cast<const PacketHeader*>(buffer))
             , mPayload(buffer + sizeof_16(PacketHeader))
         {}
 
-        SharedPtr<core::Session>        GetOwner() const { return mOwner; }
+        const SharedPtr<core::Session>& GetOwner() const { return mOwner; }
         const PacketHeader*             GetHeader() const { return mHeader; }
         Int16                           GetSize() const { return mHeader->size; }
         Int16                           GetId() const { return static_cast_16(mHeader->id); }
         const Byte*                     GetPayload() const { return mPayload; }
 
     private:
-        SharedPtr<core::Session>        mOwner;
+        const SharedPtr<core::Session>& mOwner;
         const PacketHeader*             mHeader;
         const Byte*                     mPayload;
     };
@@ -55,7 +47,7 @@ namespace proto
     class PacketDispatcher
     {
     public:
-        Int64               DispatchReceivedPackets(SharedPtr<core::Session> owner, const Byte* buffer, Int64 numBytes);
+        Int64               DispatchPackets(const SharedPtr<core::Session>& owner, const Byte* buffer, Int64 numBytes);
 
     protected:
                             PacketDispatcher();

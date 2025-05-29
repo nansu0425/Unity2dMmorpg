@@ -10,38 +10,24 @@ namespace proto
     class PacketSender
     {
     public:
-        static void Send(SharedPtr<core::Session> target, const WorldToClient_EnterRoom& payload)
-        {
-            Send(std::move(target), payload, PacketId::WorldToClient_EnterRoom);
-        }
-        
-        static void Send(SharedPtr<core::Session> target, const WorldToClient_Chat& payload)
-        {
-            Send(std::move(target), payload, PacketId::WorldToClient_Chat);
-        }
-        
-        static void Send(SharedPtr<core::Session> target, const ClientToWorld_EnterRoom& payload)
-        {
-            Send(std::move(target), payload, PacketId::ClientToWorld_EnterRoom);
-        }
-        
-        static void Send(SharedPtr<core::Session> target, const ClientToWorld_Chat& payload)
-        {
-            Send(std::move(target), payload, PacketId::ClientToWorld_Chat);
-        }
-        
+        // payload 타입별로 Send 함수를 오버로딩
+        static void Send(const SharedPtr<core::Session>& target, const WorldToClient_EnterRoom& payload) { Send(target, payload, PacketId::WorldToClient_EnterRoom); }
+        static void Send(const SharedPtr<core::Session>& target, const WorldToClient_Chat& payload) { Send(target, payload, PacketId::WorldToClient_Chat); }
+        static void Send(const SharedPtr<core::Session>& target, const ClientToWorld_EnterRoom& payload) { Send(target, payload, PacketId::ClientToWorld_EnterRoom); }
+        static void Send(const SharedPtr<core::Session>& target, const ClientToWorld_Chat& payload) { Send(target, payload, PacketId::ClientToWorld_Chat); }
+
         template<typename TPayload>
-        static void Broadcast(Vector<SharedPtr<core::Session>>& targets, const TPayload& payload)
+        static void Broadcast(const Vector<SharedPtr<core::Session>>& targets, const TPayload& payload)
         {
-            for (auto& target : targets)
+            for (const auto& target : targets)
             {
-                Send(std::move(target), payload);
+                Send(target, payload);
             }
         }
 
     private:
         template<typename TPayload>
-        static void Send(SharedPtr<core::Session> target, const TPayload& payload, PacketId id)
+        static void Send(const SharedPtr<core::Session>& target, const TPayload& payload, PacketId id)
         {
             using namespace core;
 

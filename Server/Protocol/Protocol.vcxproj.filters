@@ -20,6 +20,9 @@
     <ClInclude Include="Packet\Sender.h">
       <Filter>Packet</Filter>
     </ClInclude>
+    <ClInclude Include="Packet\Id.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -37,9 +40,6 @@
     </ClCompile>
     <ClCompile Include="Payload\ToWorld.pb.cc">
       <Filter>Payload</Filter>
-    </ClCompile>
-    <ClCompile Include="Packet\Sender.cpp">
-      <Filter>Packet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

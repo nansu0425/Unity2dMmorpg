@@ -10,26 +10,25 @@ namespace proto
     class PacketSender
     {
     public:
+        // payload 타입별로 Send 함수를 오버로딩
         {%- for proto_file, packets in proto_parser.packet_dict.items() %}
         {%- for packet in packets %}
-        static void Send(SharedPtr<core::Session> target, const {{ packet.payload_type }}& payload)
-        {
-            Send(std::move(target), payload, PacketId::{{ packet.payload_type }});
-        }
-        {% endfor %}
+        static void Send(const SharedPtr<core::Session>& target, const {{ packet.payload_type }}& payload) { Send(target, payload, PacketId::{{ packet.payload_type }}); }
         {%- endfor %}
+        {%- endfor %}
+
         template<typename TPayload>
-        static void Broadcast(Vector<SharedPtr<core::Session>>& targets, const TPayload& payload)
+        static void Broadcast(const Vector<SharedPtr<core::Session>>& targets, const TPayload& payload)
         {
-            for (auto& target : targets)
+            for (const auto& target : targets)
             {
-                Send(std::move(target), payload);
+                Send(target, payload);
             }
         }
 
     private:
         template<typename TPayload>
-        static void Send(SharedPtr<core::Session> target, const TPayload& payload, PacketId id)
+        static void Send(const SharedPtr<core::Session>& target, const TPayload& payload, PacketId id)
         {
             using namespace core;
 
