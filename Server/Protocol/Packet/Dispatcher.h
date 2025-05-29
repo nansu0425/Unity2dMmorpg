@@ -15,10 +15,10 @@ namespace proto
     enum class PacketId : Int16
     {
         Invalid = 0,
-        ClientToWorld_EnterRoom = 1000,
-        WorldToClient_EnterRoom = 1001,
-        ClientToWorld_Chat = 1002,
-        WorldToClient_Chat = 1003,
+        WorldToClient_EnterRoom = 1000,
+        WorldToClient_Chat = 1001,
+        ClientToWorld_EnterRoom = 1002,
+        ClientToWorld_Chat = 1003,
     };
 
 #pragma pack(push, 1)

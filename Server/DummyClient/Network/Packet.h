@@ -22,7 +22,7 @@ namespace dummy
         virtual void    RegisterAllHandlers() override
         {
             using namespace proto;
-
+            
             RegisterHandler<WorldToClient_EnterRoom>(&Handle_WorldToClient_EnterRoom, PacketId::WorldToClient_EnterRoom);
             RegisterHandler<WorldToClient_Chat>(&Handle_WorldToClient_Chat, PacketId::WorldToClient_Chat);
         }
