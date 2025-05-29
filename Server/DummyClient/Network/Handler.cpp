@@ -1,7 +1,7 @@
-﻿/*    DummyClient/Network/Packet.cpp    */
+﻿/*    DummyClient/Network/Handler.cpp    */
 
 #include "DummyClient/Pch.h"
-#include "DummyClient/Network/Packet.h"
+#include "DummyClient/Network/Handler.h"
 #include "DummyClient/Network/Session.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"
@@ -42,8 +42,6 @@ namespace dummy
 
     Bool ToClient_PacketDispatcher::Handle_WorldToClient_Chat(SharedPtr<Session> owner, const WorldToClient_Chat& payload)
     {
-        gLogger->Debug(TEXT_8("Player[{}]: {}"), std::static_pointer_cast<ServerSession>(owner)->GetPlayerId(), payload.message());
-
         return true;
     }
 } // namespace dummy

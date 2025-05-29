@@ -20,7 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="Network\Packet.cpp" />
+    <ClCompile Include="Network\Handler.cpp" />
     <ClCompile Include="Network\Session.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -30,7 +30,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Network\Packet.h" />
+    <ClInclude Include="Network\Handler.h" />
     <ClInclude Include="Network\Session.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>

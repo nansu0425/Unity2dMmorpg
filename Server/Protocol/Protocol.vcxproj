@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Packet\Dispatcher.h" />
+    <ClInclude Include="Packet\Sender.h" />
     <ClInclude Include="Packet\Util.h" />
     <ClInclude Include="Payload\Common.pb.h" />
     <ClInclude Include="Payload\ToClient.pb.h" />
@@ -28,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Packet\Dispatcher.cpp" />
+    <ClCompile Include="Packet\Sender.cpp" />
     <ClCompile Include="Packet\Util.cpp" />
     <ClCompile Include="Payload\Common.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

@@ -1,4 +1,4 @@
-﻿/*    WorldServer/Network/Packet.h    */
+﻿/*    WorldServer/Network/Handler.h    */
 
 #pragma once
 

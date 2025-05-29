@@ -6,7 +6,7 @@
     <ClCompile Include="Network\Session.cpp">
       <Filter>Network</Filter>
     </ClCompile>
-    <ClCompile Include="Network\Packet.cpp">
+    <ClCompile Include="Network\Handler.cpp">
       <Filter>Network</Filter>
     </ClCompile>
   </ItemGroup>
@@ -15,7 +15,7 @@
     <ClInclude Include="Network\Session.h">
       <Filter>Network</Filter>
     </ClInclude>
-    <ClInclude Include="Network\Packet.h">
+    <ClInclude Include="Network\Handler.h">
       <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>

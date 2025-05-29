@@ -1,4 +1,4 @@
-﻿/*    {{ project_name }}/Network/Packet.h    */
+﻿/*    {{ project_name }}/Network/Handler.h    */
 
 #pragma once
 

@@ -26,7 +26,8 @@ def main():
     file_loader = jinja2.FileSystemLoader("Templates")
     env = jinja2.Environment(loader=file_loader)
     dispatcher_template = env.get_template("Dispatcher.h")
-    packet_template = env.get_template("Packet.h")
+    handler_template = env.get_template("Handler.h")
+    sender_template = env.get_template("Sender.h")
 
     # Dispatcher.h 렌더링
     dispatcher_rendered = dispatcher_template.render(
@@ -39,25 +40,36 @@ def main():
     with open(dispatcher_out, 'w', encoding="utf-8") as f:
         f.write(dispatcher_rendered)
 
+    # Sender.h 렌더링
+    sender_rendered = sender_template.render(
+        proto_parser=proto_parser)
+
+    # Sender.h 출력
+    sender_out_dir = os.path.join(root_dir, "Server", "Protocol", "Packet")
+    os.makedirs(sender_out_dir, exist_ok=True)
+    sender_out = os.path.join(sender_out_dir, "Sender.h")
+    with open(sender_out, 'w', encoding="utf-8") as f:
+        f.write(sender_rendered)
+
     # 패킷 코드를 생성할 project 관련 인자
     project_name_to_args = {
         "DummyClient": {"namespace": "dummy", "proto_file": "ToClient"},
         "WorldServer": {"namespace": "world", "proto_file": "ToWorld"}}
 
     for project_name, project_args in project_name_to_args.items():
-        # Packet.h 렌더링
-        packet_rendered = packet_template.render(
+        # Handler.h 렌더링
+        handler_rendered = handler_template.render(
             proto_parser=proto_parser,
             project_name=project_name,
             project_namespace=project_args["namespace"],
             proto_file=project_args["proto_file"])
 
-        # Pachket.h 출력
-        packet_out_dir = os.path.join(root_dir, "Server", project_name, "Network")
-        os.makedirs(packet_out_dir, exist_ok=True)
-        packet_out = os.path.join(packet_out_dir, "Packet.h")
-        with open(packet_out, 'w', encoding="utf-8") as f:
-            f.write(packet_rendered)
+        # Handler.h 출력
+        handler_out_dir = os.path.join(root_dir, "Server", project_name, "Network")
+        os.makedirs(handler_out_dir, exist_ok=True)
+        handler_out = os.path.join(handler_out_dir, "Handler.h")
+        with open(handler_out, 'w', encoding="utf-8") as f:
+            f.write(handler_rendered)
 
     return
 

@@ -30,7 +30,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Templates\Dispatcher.h" />
-    <Content Include="Templates\Packet.h" />
+    <Content Include="Templates\Handler.h" />
+    <Content Include="Templates\Sender.h" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

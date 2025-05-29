@@ -1,7 +1,7 @@
-﻿/*    WorldServer/Network/Packet.cpp    */
+﻿/*    WorldServer/Network/Handler.cpp    */
 
 #include "WorldServer/Pch.h"
-#include "WorldServer/Network/Packet.h"
+#include "WorldServer/Network/Handler.h"
 #include "WorldServer/Network/Session.h"
 #include "Protocol/Packet/Util.h"
 #include "GameLogic/Chat/Room.h"
