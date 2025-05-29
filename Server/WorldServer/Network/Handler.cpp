@@ -3,6 +3,7 @@
 #include "WorldServer/Pch.h"
 #include "WorldServer/Network/Handler.h"
 #include "WorldServer/Network/Session.h"
+#include "Protocol/Packet/Sender.h"
 #include "Protocol/Packet/Util.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"
@@ -27,7 +28,7 @@ namespace world
         WorldToClient_EnterRoom enterRoom;
         enterRoom.set_id(payload.id());
         enterRoom.set_success(true);
-        owner->SendAsync(util::MakePacketSendBuffer(enterRoom, PacketId::WorldToClient_EnterRoom));
+        PacketSender::Send(std::move(owner), enterRoom);
 
         return true;
     }

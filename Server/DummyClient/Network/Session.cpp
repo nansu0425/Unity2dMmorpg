@@ -3,7 +3,7 @@
 #include "DummyClient/Pch.h"
 #include "DummyClient/Network/Session.h"
 #include "DummyClient/Network/Handler.h"
-#include "Protocol/Packet/Util.h"
+#include "Protocol/Packet/Sender.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"
 
@@ -31,7 +31,7 @@ namespace dummy
         ClientToWorld_EnterRoom payload;
         payload.set_id(GetPlayerId());
         payload.set_password(TEXT_8("1234"));
-        SendAsync(util::MakePacketSendBuffer(payload, PacketId::ClientToWorld_EnterRoom));
+        PacketSender::Send(GetSession(), payload);
     }
 
     void ServerSession::OnDisconnected(String8 cause)
