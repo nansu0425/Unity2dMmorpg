@@ -31,7 +31,8 @@ def main():
     sender_template = env.get_template("Sender.h")
 
     # Id.h 렌더링
-    id_rendered = id_template.render(proto_parser=proto_parser)
+    id_rendered = id_template.render(
+        proto_parser=proto_parser)
 
     # Id.h 출력
     id_out_dir = os.path.join(root_dir, "Server", "Protocol", "Packet")
@@ -62,7 +63,7 @@ def main():
     with open(sender_out, 'w', encoding="utf-8") as f:
         f.write(sender_rendered)
 
-    # 패킷 코드를 생성할 project 관련 인자
+    # 패킷 핸들러 코드를 생성할 project 관련 인자
     project_name_to_args = {
         "DummyClient": {"namespace": "dummy", "proto_file": "ToClient"},
         "WorldServer": {"namespace": "world", "proto_file": "ToWorld"}}
