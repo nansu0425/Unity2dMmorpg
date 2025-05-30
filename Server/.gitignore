@@ -365,12 +365,9 @@ FodyWeavers.xsd
 # Vcpkg
 vcpkg_installed
 
-# ServerCore/Log
-!ServerCore/Log/
-!ServerCore/Log/**
+# Core/Log
+!Core/Log/
+!Core/Log/**
 
 # vscode
 .vscode
-
-# python venv
-venv
