@@ -26,9 +26,8 @@ def main():
     file_loader = jinja2.FileSystemLoader("Templates")
     env = jinja2.Environment(loader=file_loader)
     id_template = env.get_template("Id.h")
-    dispatcher_template = env.get_template("Dispatcher.h")
+    utils_template = env.get_template("Utils.h")
     handler_template = env.get_template("Handler.h")
-    sender_template = env.get_template("Sender.h")
 
     # Id.h 렌더링
     id_rendered = id_template.render(
@@ -41,27 +40,16 @@ def main():
     with open(id_out, 'w', encoding="utf-8") as f:
         f.write(id_rendered)
 
-    # Dispatcher.h 렌더링
-    dispatcher_rendered = dispatcher_template.render(
+    # Utils.h 렌더링
+    utils_rendered = utils_template.render(
         proto_parser=proto_parser)
 
-    # Dispatcher.h 출력
-    dispatcher_out_dir = os.path.join(root_dir, "Server", "Protocol", "Packet")
-    os.makedirs(dispatcher_out_dir, exist_ok=True)
-    dispatcher_out = os.path.join(dispatcher_out_dir, "Dispatcher.h")
-    with open(dispatcher_out, 'w', encoding="utf-8") as f:
-        f.write(dispatcher_rendered)
-
-    # Sender.h 렌더링
-    sender_rendered = sender_template.render(
-        proto_parser=proto_parser)
-
-    # Sender.h 출력
-    sender_out_dir = os.path.join(root_dir, "Server", "Protocol", "Packet")
-    os.makedirs(sender_out_dir, exist_ok=True)
-    sender_out = os.path.join(sender_out_dir, "Sender.h")
-    with open(sender_out, 'w', encoding="utf-8") as f:
-        f.write(sender_rendered)
+    # Utils.h 출력
+    utils_out_dir = os.path.join(root_dir, "Server", "Protocol", "Packet")
+    os.makedirs(utils_out_dir, exist_ok=True)
+    utils_out = os.path.join(utils_out_dir, "Utils.h")
+    with open(utils_out, 'w', encoding="utf-8") as f:
+        f.write(utils_rendered)
 
     # 패킷 핸들러 코드를 생성할 project 관련 인자
     project_name_to_args = {

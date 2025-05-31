@@ -1,6 +1,9 @@
 /*    Protocol/Packet/Id.h    */
 
 #pragma once
+{% for proto_file, packets in proto_parser.packet_dict.items() %}
+#include "Protocol/Payload/{{ proto_file }}.pb.h"
+{%- endfor %}
 
 namespace proto
 {

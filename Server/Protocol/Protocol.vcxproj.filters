@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="Pch.h" />
-    <ClInclude Include="Packet\Util.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
     <ClInclude Include="Packet\Dispatcher.h">
       <Filter>Packet</Filter>
     </ClInclude>
@@ -17,18 +14,18 @@
     <ClInclude Include="Payload\ToWorld.pb.h">
       <Filter>Payload</Filter>
     </ClInclude>
-    <ClInclude Include="Packet\Sender.h">
+    <ClInclude Include="Packet\Id.h">
       <Filter>Packet</Filter>
     </ClInclude>
-    <ClInclude Include="Packet\Id.h">
+    <ClInclude Include="Packet\Utils.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\Type.h">
       <Filter>Packet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Packet\Util.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
     <ClCompile Include="Packet\Dispatcher.cpp">
       <Filter>Packet</Filter>
     </ClCompile>

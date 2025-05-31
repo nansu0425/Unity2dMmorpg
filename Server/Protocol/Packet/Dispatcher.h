@@ -1,48 +1,16 @@
-/*    Protocol/Packet/Dispatcher.h    */
+﻿/*    Protocol/Packet/Dispatcher.h    */
 
 #pragma once
 
-#include "Protocol/Packet/Id.h"
-#include "Protocol/Payload/ToClient.pb.h"
-#include "Protocol/Payload/ToWorld.pb.h"
+#include "Protocol/Packet/Type.h"
 
 namespace core
 {
     class Session;
-}
+} // namespace core
 
 namespace proto
 {
-#pragma pack(push, 1)
-    struct PacketHeader
-    {
-        Int16       size = 0; // 헤더까지 포함한 패킷의 전체 크기
-        PacketId    id = PacketId::Invalid;
-    };
-#pragma pack(pop)
-
-    // 직렬화된 바이너리 패킷 데이터를 쉽게 읽을 수 있도록 뷰를 제공
-    class PacketView
-    {
-    public:
-        explicit PacketView(const SharedPtr<core::Session>& owner, const Byte* buffer)
-            : mOwner(owner)
-            , mHeader(reinterpret_cast<const PacketHeader*>(buffer))
-            , mPayload(buffer + sizeof_16(PacketHeader))
-        {}
-
-        const SharedPtr<core::Session>& GetOwner() const { return mOwner; }
-        const PacketHeader*             GetHeader() const { return mHeader; }
-        Int16                           GetSize() const { return mHeader->size; }
-        Int16                           GetId() const { return static_cast_16(mHeader->id); }
-        const Byte*                     GetPayload() const { return mPayload; }
-
-    private:
-        const SharedPtr<core::Session>& mOwner;
-        const PacketHeader*             mHeader;
-        const Byte*                     mPayload;
-    };
-
     // 패킷 ID를 기반으로 들어오는 패킷을 지정된 핸들러 함수에 전달
     class PacketDispatcher
     {

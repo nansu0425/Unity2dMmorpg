@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "Protocol/Payload/ToClient.pb.h"
+#include "Protocol/Payload/ToWorld.pb.h"
+
 namespace proto
 {
     enum class PacketId : Int16

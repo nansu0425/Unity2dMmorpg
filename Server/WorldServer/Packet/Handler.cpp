@@ -3,8 +3,7 @@
 #include "WorldServer/Pch.h"
 #include "WorldServer/Packet/Handler.h"
 #include "WorldServer/Network/Session.h"
-#include "Protocol/Packet/Sender.h"
-#include "Protocol/Packet/Util.h"
+#include "Protocol/Packet/Utils.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"
 
@@ -28,7 +27,7 @@ namespace world
         WorldToClient_EnterRoom enterRoom;
         enterRoom.set_id(payload.id());
         enterRoom.set_success(true);
-        PacketSender::Send(owner, enterRoom);
+        PacketUtils::Send(owner, enterRoom);
 
         return true;
     }
@@ -39,7 +38,7 @@ namespace world
         WorldToClient_Chat chat;
         chat.set_id(payload.id());
         chat.set_message(payload.message());
-        gRoom->Broadcast(util::MakePacketSendBuffer(chat, PacketId::WorldToClient_Chat), payload.id());
+        gRoom->Broadcast(PacketUtils::MakeSendBuffer(chat, PacketId::WorldToClient_Chat), payload.id());
 
         return true;
     }

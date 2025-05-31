@@ -1,21 +1,21 @@
-/*    Protocol/Packet/Sender.h    */
+/*    Protocol/Packet/Utils.h    */
 
 #pragma once
 
+#include "Protocol/Packet/Type.h"
 #include "Core/Network/Session.h"
-#include "Protocol/Packet/Dispatcher.h"
 
 namespace proto
 {
-    class PacketSender
+    class PacketUtils
     {
-    public:
-        // payload 타입별로 Send 함수를 오버로딩
+    public:     // payload 타입별로 Send 함수를 오버로딩
         static void Send(const SharedPtr<core::Session>& target, const WorldToClient_EnterRoom& payload) { Send(target, payload, PacketId::WorldToClient_EnterRoom); }
         static void Send(const SharedPtr<core::Session>& target, const WorldToClient_Chat& payload) { Send(target, payload, PacketId::WorldToClient_Chat); }
         static void Send(const SharedPtr<core::Session>& target, const ClientToWorld_EnterRoom& payload) { Send(target, payload, PacketId::ClientToWorld_EnterRoom); }
         static void Send(const SharedPtr<core::Session>& target, const ClientToWorld_Chat& payload) { Send(target, payload, PacketId::ClientToWorld_Chat); }
 
+    public:
         template<typename TPayload>
         static void Broadcast(const Vector<SharedPtr<core::Session>>& targets, const TPayload& payload)
         {
@@ -25,9 +25,9 @@ namespace proto
             }
         }
 
-    private:
+        // 전송할 Packet을 SendBuffer로 생성
         template<typename TPayload>
-        static void Send(const SharedPtr<core::Session>& target, const TPayload& payload, PacketId id)
+        static SharedPtr<core::SendBuffer> MakeSendBuffer(const TPayload& payload, PacketId id)
         {
             using namespace core;
 
@@ -44,8 +44,14 @@ namespace proto
             ASSERT_CRASH(payload.SerializeToArray(header + 1, payloadSize), "SERIALIZE_TO_ARRAY_FAILED");
             buffer->OnWritten(packetSize);
 
-            // 세션에 전송
-            target->SendAsync(std::move(buffer));
+            return buffer;
+        }
+
+    private:
+        template<typename TPayload>
+        static void Send(const SharedPtr<core::Session>& target, const TPayload& payload, PacketId id)
+        {
+            target->SendAsync(MakeSendBuffer(payload, id));
         }
     };
 } // namespace proto

@@ -3,7 +3,6 @@
 #include "WorldServer/Pch.h"
 #include "WorldServer/Network/Session.h"
 #include "WorldServer/Packet/Handler.h"
-#include "Protocol/Packet/Util.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Common/Player.h"
 
