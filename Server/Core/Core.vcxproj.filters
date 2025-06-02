@@ -137,4 +137,9 @@
       <Filter>Io</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Common\Global.inl">
+      <Filter>Common</Filter>
+    </None>
+  </ItemGroup>
 </Project>
