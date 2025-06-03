@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Common\Pch.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <ItemGroup>

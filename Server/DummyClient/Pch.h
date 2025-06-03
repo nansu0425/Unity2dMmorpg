@@ -14,4 +14,4 @@
 #pragma comment(lib, "Release//GameLogic.lib")
 #endif // _DEBUG
 
-#include "Core/Pch.h"
+#include "Core/Common/Pch.h"

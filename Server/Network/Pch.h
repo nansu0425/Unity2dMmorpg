@@ -8,9 +8,4 @@
 #pragma comment(lib, "Release//Core.lib")
 #endif // _DEBUG
 
-#include "Core/Pch.h"
-
-namespace net
-{
-    void HelloWorld();
-}
+#include "Core/Common/Pch.h"

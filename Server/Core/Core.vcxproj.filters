@@ -2,8 +2,16 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="Pch.h" />
+    <ClInclude Include="Common\Pch.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>{7fb1d0c6-7647-447e-bea1-52e5d82e8cfc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

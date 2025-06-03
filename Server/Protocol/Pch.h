@@ -10,9 +10,4 @@
 #pragma comment(lib, "Release//Network.lib")
 #endif // _DEBUG
 
-#include "Core/Pch.h"
-
-namespace proto
-{
-    void HelloWorld();
-}
+#include "Core/Common/Pch.h"
