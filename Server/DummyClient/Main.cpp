@@ -4,6 +4,11 @@
 
 int main()
 {
+    core::AppContext appContext;
+    appContext.initialize();
+
+
+    appContext.shutdown();
 
     return 0;
 }

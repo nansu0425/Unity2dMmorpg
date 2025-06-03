@@ -1,11 +1,41 @@
+# 이 파일이 최상위 설정임을 명시
 root = true
 
-[*]
+# C++ 소스 및 헤더 파일
+[*.{cpp,h,hpp,cxx,hxx,inl}]
+charset = utf-8-bom
 indent_style = space
 indent_size = 4
-tab_width = 4
+insert_final_newline = true
 trim_trailing_whitespace = true
+end_of_line = crlf
+max_line_length = 120
+
+# 프로젝트/솔루션 설정 파일
+[*.{vcxproj,vcproj,props,targets}]
+charset = utf-8-bom
+indent_style = space
+indent_size = 2
+end_of_line = crlf
+trim_trailing_whitespace = true
+
+# C# 파일 (Visual Studio에서 함께 사용하는 경우)
+[*.cs]
+charset = utf-8-bom
+indent_style = space
+indent_size = 4
+end_of_line = crlf
 insert_final_newline = true
 
-[*.{h,hpp,c,cpp,inl}]
-charset = utf-8-bom
+# Markdown, 텍스트 파일
+[*.md]
+charset = utf-8
+trim_trailing_whitespace = false
+insert_final_newline = true
+max_line_length = off
+
+# CMake를 쓰지 않지만 혹시 사용될 경우 대비
+[CMakeLists.txt]
+charset = utf-8
+indent_style = space
+indent_size = 2
