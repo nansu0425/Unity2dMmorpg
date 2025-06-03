@@ -3,28 +3,8 @@
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Network\Session.cpp">
-      <Filter>Network</Filter>
-    </ClCompile>
-    <ClCompile Include="Packet\Handler.cpp">
-      <Filter>Packet</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
-    <ClInclude Include="Network\Session.h">
-      <Filter>Network</Filter>
-    </ClInclude>
-    <ClInclude Include="Packet\Handler.h">
-      <Filter>Packet</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <Filter Include="Network">
-      <UniqueIdentifier>{7145323d-aff7-4821-8676-6599937f6871}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Packet">
-      <UniqueIdentifier>{f02cde0a-d836-49fd-a8fe-843dd5021411}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
 </Project>

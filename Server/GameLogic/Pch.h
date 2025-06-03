@@ -8,4 +8,9 @@
 #pragma comment(lib, "Release//Core.lib")
 #endif // _DEBUG
 
-#include "Core/Common/Pch.h"
+#include "Core/Pch.h"
+
+namespace game
+{
+    void HelloWorld();
+}

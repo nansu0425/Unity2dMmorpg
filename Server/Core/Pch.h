@@ -2,4 +2,9 @@
 
 #pragma once
 
-#include "Core/Common/Pch.h"
+#include <iostream>
+
+namespace core
+{
+    void HelloWorld();
+}

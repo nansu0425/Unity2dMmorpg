@@ -7,5 +7,5 @@ tab_width = 4
 trim_trailing_whitespace = true
 insert_final_newline = true
 
-[*.{h,hpp,c,cpp}]
+[*.{h,hpp,c,cpp,inl}]
 charset = utf-8-bom
