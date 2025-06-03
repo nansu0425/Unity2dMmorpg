@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="Pch.h" />
+    <ClInclude Include="Chat\Room.h">
+      <Filter>Chat</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Player.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Pch.cpp" />
+    <ClCompile Include="Chat\Room.cpp">
+      <Filter>Chat</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Player.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Chat">
+      <UniqueIdentifier>{248b5da0-c75a-41c7-80c9-9f4d2fecae38}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{889ebf6b-d65e-4ceb-8c58-c9e56f47fbbd}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
