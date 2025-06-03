@@ -35,42 +35,42 @@ namespace core
     class AppContext
     {
     public:
-        AppContext() = default;
-        ~AppContext();
+                        AppContext() = default;
+                        ~AppContext();
 
         // 복사 방지
-        AppContext(const AppContext&) = delete;
-        AppContext& operator=(const AppContext&) = delete;
+                        AppContext(const AppContext&) = delete;
+        AppContext&     operator=(const AppContext&) = delete;
 
         // 컴포넌트 등록
         template<typename T, typename... Args>
-        T* RegisterComponent(Args&&... args);
+        T*              RegisterComponent(Args&&... args);
 
         // 컴포넌트 검색
         template<typename T>
-        T* GetComponent() const;
+        T*              GetComponent() const;
 
         // 이름이 지정된 컴포넌트 등록
         template<typename T, typename... Args>
-        T* RegisterNamedComponent(String8View name, Args&&... args);
+        T*              RegisterNamedComponent(String8View name, Args&&... args);
 
         // 이름이 지정된 컴포넌트 검색
         template<typename T>
-        T* GetNamedComponent(String8View name) const;
+        T*              GetNamedComponent(String8View name) const;
 
         // 의존성 순서에 따라 모든 컴포넌트 초기화
-        void Initialize();
+        void            Initialize();
 
         // 역순으로 모든 컴포넌트 종료
-        void Shutdown();
+        void            Shutdown();
 
     private:
-        void InitializeComponent(String8View name);
-        void ShutdownComponent(String8View name);
+        void            InitializeComponent(String8View name);
+        void            ShutdownComponent(String8View name);
 
         // 사이클 탐지 관련 메서드
-        Bool DetectCycle(String8* outCyclePath = nullptr);
-        Bool DetectCycleRec(String8View node, HashSet<String8View>& visited, HashSet<String8View>& recursionStack, Vector<String8View>& cycleTrace);
+        Bool            DetectCycle(String8* outCyclePath = nullptr);
+        Bool            DetectCycleRec(String8View node, HashSet<String8View>& visited, HashSet<String8View>& recursionStack, Vector<String8View>& cycleTrace);
 
         struct ComponentEntry
         {
