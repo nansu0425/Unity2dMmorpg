@@ -11,21 +11,39 @@
     <ClInclude Include="Common\Macros.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="Thread\Context.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread\Pool.h">
+      <Filter>Thread</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
     <ClCompile Include="Common\Context.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Thread\Context.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread\Pool.cpp">
+      <Filter>Thread</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Common">
       <UniqueIdentifier>{7fb1d0c6-7647-447e-bea1-52e5d82e8cfc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Thread">
+      <UniqueIdentifier>{e25aa4b7-742c-4be0-a380-808fca00a1b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Common\Context.inl">
       <Filter>Common</Filter>
+    </None>
+    <None Include="Thread\Context.inl">
+      <Filter>Thread</Filter>
     </None>
   </ItemGroup>
 </Project>

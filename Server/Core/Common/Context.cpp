@@ -1,12 +1,36 @@
 ﻿/*    Core/Common/Context.cpp    */
 
 #include "Core/Pch.h"
+#include "Core/Thread/Context.h"
 
 namespace core
 {
+    // 싱글턴 인스턴스 초기화
+    AppContext* AppContext::s_instance = nullptr;
+
+    AppContext::AppContext()
+    {
+        // 싱글턴 인스턴스 설정
+        if (!s_instance)
+        {
+            s_instance = this;
+
+            // ThreadContext에 AppContext 참조 설정
+            ThreadContext::setAppContext(this);
+        }
+    }
+
     AppContext::~AppContext()
     {
         shutdown();
+
+        if (s_instance == this)
+        {
+            s_instance = nullptr;
+
+            // 애플리케이션 종료 시 ThreadContext 설정 지우기
+            ThreadContext::setAppContext(nullptr);
+        }
     }
 
     void AppContext::initialize()
@@ -74,11 +98,10 @@ namespace core
 
         it->second.component->shutdown();
         it->second.initialized = false;
-
-        std::cout << "Component " << name << " has been shut down." << std::endl;
     }
 
-    // 사이클 검출 메서드 구현
+    // 사이클 검출 메서드 구현은 기존과 동일하게 유지
+
     bool AppContext::detectCycle(std::string* outCyclePath)
     {
         std::unordered_set<std::string_view> visited;
@@ -91,7 +114,6 @@ namespace core
             {
                 if (detectCycleRec(name, visited, recursionStack, cycleTrace))
                 {
-                    // 사이클을 발견한 후 outCyclePath 생성
                     if (outCyclePath && !cycleTrace.empty())
                     {
                         *outCyclePath = "";
@@ -126,7 +148,6 @@ namespace core
         {
             for (const auto& dependency : it->second.dependsOn)
             {
-                // 아직 방문하지 않은 의존성이면 재귀적으로 탐색
                 if (!visited.count(dependency))
                 {
                     if (detectCycleRec(dependency, visited, recursionStack, cycleTrace))
@@ -135,7 +156,6 @@ namespace core
                         return true;
                     }
                 }
-                // 이미 현재 재귀 스택에 있는 노드라면 사이클 발견
                 else if (recursionStack.count(dependency))
                 {
                     cycleTrace.push_back(dependency);
@@ -148,4 +168,21 @@ namespace core
         recursionStack.erase(node);
         return false;
     }
+
+    AppContext* AppContext::getInstance()
+    {
+        return s_instance;
+    }
+
+    // 글로벌 헬퍼 함수
+    AppContext* GetAppContext()
+    {
+        return ThreadContext::getAppContext();
+    }
+
+    ThreadContext* GetThreadContext()
+    {
+        return ThreadContext::getCurrent();
+    }
+
 } // namespace core

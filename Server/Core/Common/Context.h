@@ -4,6 +4,9 @@
 
 namespace core
 {
+    // Forward declaration
+    class ThreadContext;
+
     class IAppComponent
     {
     public:
@@ -19,7 +22,7 @@ namespace core
     class AppContext
     {
     public:
-        AppContext() = default;
+        AppContext();
         ~AppContext();
 
         // 복사 방지
@@ -48,6 +51,9 @@ namespace core
         // 역순으로 모든 컴포넌트 종료
         void shutdown();
 
+        // 전역 AppContext 싱글턴 접근자
+        static AppContext* getInstance();
+
     private:
         void initializeComponent(std::string_view name);
         void shutdownComponent(std::string_view name);
@@ -68,7 +74,17 @@ namespace core
         std::unordered_map<std::string_view, ComponentEntry> m_components;
         std::unordered_map<std::string_view, IAppComponent*> m_typeRegistry;
         std::vector<std::string_view> m_initOrder; // 초기화 순서를 추적하여 올바른 종료 순서 보장
+
+        // 전역 싱글턴 인스턴스
+        static AppContext* s_instance;
     };
+
+    // 현재 스레드의 ThreadContext에서 AppContext를 얻는 헬퍼 함수
+    AppContext* GetAppContext();
+
+    // 현재 스레드의 ThreadContext를 얻는 헬퍼 함수
+    ThreadContext* GetThreadContext();
+
 } // namespace core
 
 #include "Core/Common/Context.inl"
