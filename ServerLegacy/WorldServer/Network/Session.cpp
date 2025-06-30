@@ -36,7 +36,7 @@ namespace world
 
     Int64 ClientSession::OnReceived(const Byte* buffer, Int64 numBytes)
     {
-        return ToWorld_PacketHandler::GetInstance().DispatchPackets(GetSession(), buffer, numBytes);
+        return ToWorld_PacketHandler::GetInstance().PushPackets(GetSession(), buffer, numBytes);
     }
 
     void ClientSession::OnSent(Int64 numBytes)

@@ -23,6 +23,9 @@
     <ClInclude Include="Packet\Type.h">
       <Filter>Packet</Filter>
     </ClInclude>
+    <ClInclude Include="Packet\Queue.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -37,6 +40,9 @@
     </ClCompile>
     <ClCompile Include="Payload\ToWorld.pb.cc">
       <Filter>Payload</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet\Queue.cpp">
+      <Filter>Packet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

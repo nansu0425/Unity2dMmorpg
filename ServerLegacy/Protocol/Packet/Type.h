@@ -11,6 +11,12 @@ namespace core
 
 namespace proto
 {
+    struct RawPacket
+    {
+        SharedPtr<core::Session> owner; // 패킷 소유자 세션
+        Vector<Byte> data; // 패킷 데이터
+    };
+
 #pragma pack(push, 1)
     struct PacketHeader
     {

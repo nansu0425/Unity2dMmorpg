@@ -27,8 +27,20 @@ int main()
     auto service = std::make_shared<ServerService>(gConfig);
     ASSERT_CRASH(SUCCESS == service->Run(), "SERVER_SERVICE_RUN_FAILED");
 
+    // 패킷 워커 실행
+    for (Int64 i = 0; i < 6; ++i)
+    {
+        gThreadManager->Launch([]
+                               {
+                                   while (true)
+                                   {
+                                       ToWorld_PacketHandler::GetInstance().DispatchPacket();
+                                   }
+                               });
+    }
+
     // 입출력 워커 실행
-    for (Int64 i = 0; i < 3; ++i)
+    for (Int64 i = 0; i < 2; ++i)
     {
         gThreadManager->Launch([service]
                                {

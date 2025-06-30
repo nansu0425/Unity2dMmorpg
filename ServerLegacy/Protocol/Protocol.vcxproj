@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="Packet\Dispatcher.h" />
     <ClInclude Include="Packet\Id.h" />
+    <ClInclude Include="Packet\Queue.h" />
     <ClInclude Include="Packet\Type.h" />
     <ClInclude Include="Packet\Utils.h" />
     <ClInclude Include="Payload\Common.pb.h" />
@@ -30,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Packet\Dispatcher.cpp" />
+    <ClCompile Include="Packet\Queue.cpp" />
     <ClCompile Include="Payload\Common.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>

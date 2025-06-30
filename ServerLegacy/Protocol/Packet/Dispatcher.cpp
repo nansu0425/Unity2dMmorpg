@@ -8,11 +8,11 @@ using namespace core;
 
 namespace proto
 {
-    Int64 PacketDispatcher::DispatchPackets(const SharedPtr<core::Session>& owner, const Byte* buffer, Int64 numBytes)
+    Int64 PacketDispatcher::PushPackets(const SharedPtr<core::Session>& owner, const Byte* buffer, Int64 numBytes)
     {
         Int64 packetOffset = 0;
 
-        // 전달 가능한 모든 패킷을 핸들러에게 전달
+        // 모든 패킷을 큐에 넣는다
         while (packetOffset < numBytes)
         {
             const Int64 remainingBytes = numBytes - packetOffset;
@@ -32,13 +32,26 @@ namespace proto
                 break;
             }
 
-            // 패킷 id에 해당하는 핸들러에게 전달하여 패킷 처리
-            Bool result = DispatchPacket(PacketView(owner, reinterpret_cast<const Byte*>(header)));
-            ASSERT_CRASH_DEBUG(result, "DISPATCH_PACKET_FAILED");
+            // 패킷을 큐에 추가
+            SharedPtr<RawPacket> packet = std::make_shared<RawPacket>();
+            packet->owner = owner;
+            packet->data.resize(header->size);
+            std::memcpy(packet->data.data(), header, header->size);
+            mPacketQueue.Push(packet);
+
+            // 다음 패킷 오프셋으로 이동
             packetOffset += header->size;
         }
 
         return packetOffset;
+    }
+
+    void PacketDispatcher::DispatchPacket()
+    {
+        // 패킷을 꺼내서 처리
+        SharedPtr<RawPacket> packet = mPacketQueue.PopBlocking();
+        Bool result = HandlePacket(PacketView(packet->owner, reinterpret_cast<const Byte*>(packet->data.data())));
+
     }
 
     PacketDispatcher::PacketDispatcher()

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "Protocol/Packet/Type.h"
+#include "Protocol/Packet/Queue.h"
 
 namespace core
 {
@@ -15,7 +16,8 @@ namespace proto
     class PacketDispatcher
     {
     public:
-        Int64               DispatchPackets(const SharedPtr<core::Session>& owner, const Byte* buffer, Int64 numBytes);
+        Int64               PushPackets(const SharedPtr<core::Session>& owner, const Byte* buffer, Int64 numBytes);
+        void                DispatchPacket();
 
     protected:
                             PacketDispatcher();
@@ -33,7 +35,7 @@ namespace proto
         }
 
     private:
-        Bool                DispatchPacket(const PacketView& packet) { return mIdToHandler[packet.GetId()](packet); }
+        Bool                HandlePacket(const PacketView& packet) { return mIdToHandler[packet.GetId()](packet); }
 
         template<typename TPayload, typename TPayloadHandler>
         static Bool         HandlePayload(TPayloadHandler handler, const PacketView& packet)
@@ -54,5 +56,6 @@ namespace proto
         using PacketHandler     = Function<Bool(const PacketView&)>;
 
         PacketHandler           mIdToHandler[std::numeric_limits<Int16>::max() + 1];
+        PacketQueue             mPacketQueue;
     };
 } // namespace protocol

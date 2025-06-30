@@ -48,7 +48,7 @@ namespace dummy
 
     Int64 ServerSession::OnReceived(const Byte* buffer, Int64 numBytes)
     {
-        return ToClient_PacketHandler::GetInstance().DispatchPackets(GetSession(), buffer, numBytes);
+        return ToClient_PacketHandler::GetInstance().PushPackets(GetSession(), buffer, numBytes);
     }
 
     void ServerSession::OnSent(Int64 numBytes)

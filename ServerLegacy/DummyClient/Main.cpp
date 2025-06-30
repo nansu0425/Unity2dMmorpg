@@ -5,6 +5,7 @@
 #include "Core/Io/Dispatcher.h"
 #include "Core/Network/Service.h"
 #include "DummyClient/Network/Session.h"
+#include "DummyClient/Packet/Handler.h"
 
 using namespace core;
 using namespace dummy;
@@ -26,8 +27,20 @@ int main()
     auto service = std::make_shared<ClientService>(gConfig);
     ASSERT_CRASH(SUCCESS == service->Run(), "CLIENT_SERVICE_RUN_FAILED");
 
+    // 패킷 워커 실행
+    for (Int64 i = 0; i < 6; ++i)
+    {
+        gThreadManager->Launch([]
+                               {
+                                   while (true)
+                                   {
+                                       ToClient_PacketHandler::GetInstance().DispatchPacket();
+                                   }
+                               });
+    }
+
     // 입출력 워커 실행
-    for (Int64 i = 0; i < 3; ++i)
+    for (Int64 i = 0; i < 2; ++i)
     {
         gThreadManager->Launch([service]
                                {
