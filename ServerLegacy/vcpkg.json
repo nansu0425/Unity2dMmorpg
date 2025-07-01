@@ -1,8 +1,0 @@
-{
-  "dependencies": [
-    "mimalloc",
-    "protobuf",
-    "spdlog",
-    "concurrentqueue"
-  ]
-}

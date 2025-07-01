@@ -2,8 +2,55 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClInclude Include="Pch.h" />
+    <ClInclude Include="Packet\Dispatcher.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Payload\Common.pb.h">
+      <Filter>Payload</Filter>
+    </ClInclude>
+    <ClInclude Include="Payload\ToClient.pb.h">
+      <Filter>Payload</Filter>
+    </ClInclude>
+    <ClInclude Include="Payload\ToWorld.pb.h">
+      <Filter>Payload</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\Id.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\Type.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\Queue.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
+    <ClInclude Include="Packet\Utils.h">
+      <Filter>Packet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
+    <ClCompile Include="Packet\Dispatcher.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="Payload\Common.pb.cc">
+      <Filter>Payload</Filter>
+    </ClCompile>
+    <ClCompile Include="Payload\ToClient.pb.cc">
+      <Filter>Payload</Filter>
+    </ClCompile>
+    <ClCompile Include="Payload\ToWorld.pb.cc">
+      <Filter>Payload</Filter>
+    </ClCompile>
+    <ClCompile Include="Packet\Queue.cpp">
+      <Filter>Packet</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Packet">
+      <UniqueIdentifier>{ddb78a84-e3be-46f3-9351-982a0f07b3be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Payload">
+      <UniqueIdentifier>{77e84c92-d358-417d-9ad7-1d4bc794ad22}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>

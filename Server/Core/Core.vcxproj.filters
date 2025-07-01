@@ -1,49 +1,145 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
+    <Filter Include="Concurrency">
+      <UniqueIdentifier>{bf2a8b0b-e5f3-495d-953a-b34f9435ca9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{3f1b2998-d8f4-4816-a21f-edd9bb6694de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Log">
+      <UniqueIdentifier>{52e8fbba-a7e2-4133-a9b9-3a6193849c7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Job">
+      <UniqueIdentifier>{752b92d9-f13b-49b9-9e7b-56ae5dd5c346}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{67ee8be2-fcf5-4df2-9b83-abf31462876e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Io">
+      <UniqueIdentifier>{a7d01aa2-bcc1-4006-85ec-82c92cbebaf1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="Pch.h" />
+    <ClInclude Include="Concurrency\Thread.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="Concurrency\Lock.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="Concurrency\Deadlock.h">
+      <Filter>Concurrency</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Address.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Socket.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Listener.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Session.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Service.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\Buffer.h">
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="Log\Logger.h">
+      <Filter>Log</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\Queue.h">
+      <Filter>Job</Filter>
+    </ClInclude>
+    <ClInclude Include="Job\Serializer.h">
+      <Filter>Job</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Global.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\Macro.h">
+      <Filter>Common</Filter>
+    </ClInclude>
     <ClInclude Include="Common\Pch.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\Context.h">
+    <ClInclude Include="Common\Tls.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Common\Macros.h">
+    <ClInclude Include="Common\Types.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Thread\Context.h">
-      <Filter>Thread</Filter>
+    <ClInclude Include="Job\Timer.h">
+      <Filter>Job</Filter>
     </ClInclude>
-    <ClInclude Include="Thread\Pool.h">
-      <Filter>Thread</Filter>
+    <ClInclude Include="Io\Dispatcher.h">
+      <Filter>Io</Filter>
+    </ClInclude>
+    <ClInclude Include="Io\Event.h">
+      <Filter>Io</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Common\Context.cpp">
+    <ClCompile Include="Concurrency\Thread.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="Concurrency\Lock.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="Concurrency\Deadlock.cpp">
+      <Filter>Concurrency</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Address.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Socket.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Listener.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Session.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Service.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\Buffer.cpp">
+      <Filter>Network</Filter>
+    </ClCompile>
+    <ClCompile Include="Log\Logger.cpp">
+      <Filter>Log</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\Queue.cpp">
+      <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Job\Serializer.cpp">
+      <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Common\Global.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="Thread\Context.cpp">
-      <Filter>Thread</Filter>
+    <ClCompile Include="Common\Tls.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="Thread\Pool.cpp">
-      <Filter>Thread</Filter>
+    <ClCompile Include="Job\Timer.cpp">
+      <Filter>Job</Filter>
+    </ClCompile>
+    <ClCompile Include="Io\Dispatcher.cpp">
+      <Filter>Io</Filter>
+    </ClCompile>
+    <ClCompile Include="Io\Event.cpp">
+      <Filter>Io</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="Common">
-      <UniqueIdentifier>{7fb1d0c6-7647-447e-bea1-52e5d82e8cfc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Thread">
-      <UniqueIdentifier>{e25aa4b7-742c-4be0-a380-808fca00a1b5}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Common\Context.inl">
+    <None Include="Common\Global.inl">
       <Filter>Common</Filter>
-    </None>
-    <None Include="Thread\Context.inl">
-      <Filter>Thread</Filter>
     </None>
   </ItemGroup>
 </Project>
