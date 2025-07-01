@@ -29,10 +29,9 @@ int main()
     ASSERT_CRASH(SUCCESS == service->Run(), "SERVER_SERVICE_RUN_FAILED");
 
     // 게임 루프 실행
-    auto gameLoop = std::make_shared<game::Loop>();
-    gThreadManager->Launch([gameLoop]
+    gThreadManager->Launch([]
                            {
-                               gameLoop->Run();
+                               game::Loop::GetInstance().Run();
                            });
 
     // 패킷 워커 실행

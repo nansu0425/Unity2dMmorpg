@@ -13,6 +13,15 @@ namespace game
         static constexpr MilliSec TickInterval = MilliSec(50); // 틱 간격 (50ms)
 
     public:
+        static Loop& GetInstance()
+        {
+            static Loop sInstance; // 싱글턴 인스턴스
+            return sInstance;
+        }
+
+        Loop(const Loop&) = delete; // 복사 생성자 삭제
+        Loop& operator=(const Loop&) = delete; // 대입 연산자 삭제
+
         /**
          * 루프를 실행합니다.
          */
@@ -31,6 +40,8 @@ namespace game
         void PushCommand(const SharedPtr<ICommand>& command);
 
     private:
+        Loop() = default; // 외부 생성 방지
+
         /**
          * 월드 객체를 업데이트합니다.
          */
