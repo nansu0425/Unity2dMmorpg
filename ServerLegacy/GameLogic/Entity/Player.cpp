@@ -1,7 +1,7 @@
-﻿/*    GameLogic/Common/Player.cpp    */
+﻿/*    GameLogic/Entity/Player.cpp    */
 
 #include "GameLogic/Pch.h"
-#include "GameLogic/Common/Player.h"
+#include "GameLogic/Entity/Player.h"
 
 using namespace core;
 
@@ -12,9 +12,9 @@ namespace game
         , mId(sNextId.fetch_add(1))
     {}
 
-    Player::Player(SharedPtr<Session> session, Int64 playerId)
+    Player::Player(SharedPtr<Session> session, PlayerId id)
         : mSession(std::move(session))
-        , mId(playerId)
+        , mId(id)
     {}
 
     void Player::SendAsync(SharedPtr<SendBuffer> buffer)
@@ -66,7 +66,7 @@ namespace game
         }
     }
 
-    void PlayerManager::RemovePlayer(Int64 id)
+    void PlayerManager::RemovePlayer(PlayerId id)
     {
         Bool result = true;
         {
@@ -85,7 +85,7 @@ namespace game
         }
     }
 
-    SharedPtr<Player> PlayerManager::FindPlayer(Int64 id)
+    SharedPtr<Player> PlayerManager::FindPlayer(PlayerId id)
     {
         WRITE_GUARD;
 
@@ -99,5 +99,5 @@ namespace game
         return nullptr;
     }
 
-    Atomic<Int64>   Player::sNextId = 1;
+    Atomic<PlayerId> Player::sNextId = 1;
 } // namespace game

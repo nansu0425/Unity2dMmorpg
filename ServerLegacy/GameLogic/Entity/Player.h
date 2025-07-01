@@ -6,22 +6,24 @@
 
 namespace game
 {
+    using PlayerId = Int64;
+
     class Player
         : public core::JobSerializer
     {
     public:
         Player(SharedPtr<core::Session> session);
-        Player(SharedPtr<core::Session> session, Int64 playerId);
+        Player(SharedPtr<core::Session> session, PlayerId id);
 
         void                    SendAsync(SharedPtr<core::SendBuffer> buffer);
         void                    StartSendLoop(SharedPtr<core::SendBuffer> buffer, Int64 loopMs);
-        Int64                   GetId() const { return mId; }
+        PlayerId                GetId() const { return mId; }
 
     private:
-        SharedPtr<core::Session>    mSession;
-        Int64                       mId;
+        SharedPtr<core::Session> mSession;
+        PlayerId mId;
 
-        static Atomic<Int64>        sNextId;
+        static Atomic<PlayerId> sNextId;
     };
 
     class PlayerManager
@@ -34,14 +36,14 @@ namespace game
         }
 
         void                    AddPlayer(SharedPtr<Player> player);
-        void                    RemovePlayer(Int64 id);
-        SharedPtr<Player>       FindPlayer(Int64 id);
+        void                    RemovePlayer(PlayerId id);
+        SharedPtr<Player>       FindPlayer(PlayerId id);
 
     private:
         PlayerManager() = default;
 
     private:
         RW_LOCK;
-        HashMap<Int64, SharedPtr<Player>>   mPlayers;
+        HashMap<PlayerId, SharedPtr<Player>>   mPlayers;
     };
 } // namespace game

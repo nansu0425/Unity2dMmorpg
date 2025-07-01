@@ -4,7 +4,7 @@
 #include "DummyClient/Packet/Handler.h"
 #include "DummyClient/Network/Session.h"
 #include "GameLogic/Chat/Room.h"
-#include "GameLogic/Common/Player.h"
+#include "GameLogic/Entity/Player.h"
 
 using namespace core;
 using namespace proto;

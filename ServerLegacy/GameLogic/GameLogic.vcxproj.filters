@@ -2,9 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
-    <ClCompile Include="Common\Player.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="Chat\Room.cpp">
       <Filter>Chat</Filter>
     </ClCompile>
@@ -17,12 +14,12 @@
     <ClCompile Include="Core\Loop.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Entity\Player.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
-    <ClInclude Include="Common\Player.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Chat\Room.h">
       <Filter>Chat</Filter>
     </ClInclude>
@@ -35,19 +32,22 @@
     <ClInclude Include="Core\Loop.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Entity\Player.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Chat">
       <UniqueIdentifier>{00078dfe-d5b5-42e5-b8e4-d47bfd35d363}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Common">
-      <UniqueIdentifier>{72b37ea5-dd88-42aa-b362-0b0681e77824}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{c4ddb271-2018-4878-930a-7a94bbfe92b1}</UniqueIdentifier>
     </Filter>
     <Filter Include="Command">
       <UniqueIdentifier>{824edc54-63f3-4b94-86f3-c6077ca2be7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entity">
+      <UniqueIdentifier>{72b37ea5-dd88-42aa-b362-0b0681e77824}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

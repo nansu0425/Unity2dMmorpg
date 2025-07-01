@@ -5,7 +5,7 @@
 #include "DummyClient/Packet/Handler.h"
 #include "Protocol/Packet/Utils.h"
 #include "GameLogic/Chat/Room.h"
-#include "GameLogic/Common/Player.h"
+#include "GameLogic/Entity/Player.h"
 
 using namespace core;
 using namespace game;

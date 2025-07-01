@@ -2,7 +2,7 @@
 
 #include "GameLogic/Pch.h"
 #include "GameLogic/Chat/Room.h"
-#include "GameLogic/Common/Player.h"
+#include "GameLogic/Entity/Player.h"
 #include "Core/Network/Session.h"
 
 using namespace core;

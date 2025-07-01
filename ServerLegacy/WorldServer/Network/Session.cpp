@@ -4,7 +4,7 @@
 #include "WorldServer/Network/Session.h"
 #include "WorldServer/Packet/Handler.h"
 #include "GameLogic/Chat/Room.h"
-#include "GameLogic/Common/Player.h"
+#include "GameLogic/Entity/Player.h"
 
 using namespace core;
 using namespace game;
