@@ -3,7 +3,6 @@
 #include "GameLogic/Pch.h"
 #include "GameLogic/Command/Queue.h"
 #include "GameLogic/Core/World.h"
-#include "GameLogic/Interface.h"
 
 namespace game
 {

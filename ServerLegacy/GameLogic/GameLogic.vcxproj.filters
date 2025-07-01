@@ -32,9 +32,6 @@
     <ClInclude Include="Command\Queue.h">
       <Filter>Command</Filter>
     </ClInclude>
-    <ClInclude Include="Interface.h">
-      <Filter>Command</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Loop.h">
       <Filter>Core</Filter>
     </ClInclude>

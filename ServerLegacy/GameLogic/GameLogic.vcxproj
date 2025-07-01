@@ -24,7 +24,6 @@
     <ClInclude Include="Common\Player.h" />
     <ClInclude Include="Core\Loop.h" />
     <ClInclude Include="Core\World.h" />
-    <ClInclude Include="Interface.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <ItemGroup>
