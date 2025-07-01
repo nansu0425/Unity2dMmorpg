@@ -8,6 +8,7 @@
 #include "GameLogic/Chat/Room.h"
 #include "WorldServer/Packet/Handler.h"
 #include "Protocol/Packet/Utils.h"
+#include "GameLogic/Core/Loop.h"
 
 using namespace core;
 using namespace proto;
@@ -26,6 +27,13 @@ int main()
     // 서버 서비스 생성 및 실행
     auto service = std::make_shared<ServerService>(gConfig);
     ASSERT_CRASH(SUCCESS == service->Run(), "SERVER_SERVICE_RUN_FAILED");
+
+    // 게임 루프 실행
+    auto gameLoop = std::make_shared<game::Loop>();
+    gThreadManager->Launch([gameLoop]
+                           {
+                               gameLoop->Run();
+                           });
 
     // 패킷 워커 실행
     for (Int64 i = 0; i < 6; ++i)

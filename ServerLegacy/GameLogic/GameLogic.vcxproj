@@ -20,12 +20,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Chat\Room.h" />
+    <ClInclude Include="Command\Queue.h" />
     <ClInclude Include="Common\Player.h" />
+    <ClInclude Include="Core\Loop.h" />
+    <ClInclude Include="Core\World.h" />
+    <ClInclude Include="Interface.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Chat\Room.cpp" />
+    <ClCompile Include="Command\Queue.cpp" />
     <ClCompile Include="Common\Player.cpp" />
+    <ClCompile Include="Core\Loop.cpp" />
+    <ClCompile Include="Core\World.cpp" />
     <ClCompile Include="Pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
