@@ -6,6 +6,7 @@
 #include "Protocol/Packet/Utils.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Entity/Player.h"
+#include "DummyClient/Core/Loop.h"
 
 using namespace core;
 using namespace game;
@@ -48,7 +49,7 @@ namespace dummy
 
     Int64 ServerSession::OnReceived(const Byte* buffer, Int64 numBytes)
     {
-        return ToClient_PacketHandler::GetInstance().PushPackets(GetSession(), buffer, numBytes);
+        return dummy::Loop::GetInstance().PushPackets(GetSession(), buffer, numBytes);
     }
 
     void ServerSession::OnSent(Int64 numBytes)

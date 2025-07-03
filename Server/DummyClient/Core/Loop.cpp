@@ -1,13 +1,13 @@
-﻿/*    GameLogic/Core/Loop.cpp    */
+﻿/*    DummyClient/Core/Loop.cpp    */
 
-#include "GameLogic/Pch.h"
-#include "GameLogic/Core/Loop.h"
-#include "Protocol/Packet/Dispatcher.h"
+#include "DummyClient/Pch.h"
+#include "DummyClient/Core/Loop.h"
+#include "DummyClient/Packet/Handler.h"
 #include "Core/Network/Session.h"
 
-namespace game
+namespace dummy
 {
-    void Loop::Run(proto::PacketDispatcher& pktDispatcher)
+    void Loop::Run()
     {
         Int64 tickCount = 0;
         auto lastLogTime = std::chrono::steady_clock::now();
@@ -16,9 +16,7 @@ namespace game
         {
             auto start = std::chrono::steady_clock::now();
 
-            ProcessPackets(pktDispatcher);
-            UpdateWorld();
-            HandleTimers();
+            ProcessPackets();
 
             ++tickCount;
 
@@ -31,7 +29,7 @@ namespace game
                 tickCount = 0;
                 lastLogTime = now;
             }
-            
+
             // 틱 간격 유지
             MilliSec elapsed;
             do
@@ -53,7 +51,7 @@ namespace game
         return mPacketQueue.Push(owner, buffer, numBytes);
     }
 
-    void Loop::ProcessPackets(proto::PacketDispatcher& pktDispatcher)
+    void Loop::ProcessPackets()
     {
         auto start = std::chrono::steady_clock::now();
 
@@ -63,7 +61,7 @@ namespace game
             ASSERT_CRASH_DEBUG(packet != nullptr, "NULL_PACKET_RECEIVED");
 
             // 패킷을 핸들러로 전달하여 처리
-            Bool result = pktDispatcher.DispatchPacket(packet);
+            Bool result = ToClient_PacketHandler::GetInstance().DispatchPacket(packet);
             if (!result)
             {
                 core::gLogger->Error(TEXT_8("Session[{}]: Failed to process packet with id: {}"), packet->GetOwner()->GetId(), packet->GetId());
@@ -79,10 +77,4 @@ namespace game
             }
         }
     }
-
-    void Loop::UpdateWorld()
-    {}
-
-    void Loop::HandleTimers()
-    {}
 }

@@ -16,8 +16,13 @@ namespace proto
     class PacketDispatcher
     {
     public:
-        Int64               PushPackets(const SharedPtr<core::Session>& owner, const Byte* buffer, Int64 numBytes);
-        void                DispatchPacket();
+        /**
+         * 패킷을 핸들러로 전달합니다.
+         *
+         * @param packet 핸들러로 전달할 패킷
+         * @return 패킷이 성공적으로 처리되었는지 여부
+         */
+        Bool                DispatchPacket(const SharedPtr<RawPacket>& packet) { return mIdToHandler[packet->GetId()](packet); }
 
     protected:
                             PacketDispatcher();
@@ -28,34 +33,31 @@ namespace proto
         void                RegisterHandler(TPayloadHandler handler, PacketId id)
         {
             // id에 해당하는 패킷 핸들러 등록
-            mIdToHandler[static_cast_16(id)] = [handler](const PacketView& packet) -> Bool
+            mIdToHandler[static_cast_16(id)] = [handler](const SharedPtr<RawPacket>& packet) -> Bool
             {
                 return HandlePayload<TPayload>(handler, packet);
             };
         }
 
     private:
-        Bool                HandlePacket(const PacketView& packet) { return mIdToHandler[packet.GetId()](packet); }
-
         template<typename TPayload, typename TPayloadHandler>
-        static Bool         HandlePayload(TPayloadHandler handler, const PacketView& packet)
+        static Bool         HandlePayload(TPayloadHandler handler, const SharedPtr<RawPacket>& packet)
         {
             TPayload payload;
-            if (!payload.ParseFromArray(packet.GetPayload(), packet.GetSize() - sizeof_16(PacketHeader)))
+            if (!payload.ParseFromArray(packet->GetPayload(), packet->GetSize() - sizeof_16(PacketHeader)))
             {
                 return false;
             }
 
             // 페이로드 처리
-            return handler(packet.GetOwner(), payload);
+            return handler(packet->GetOwner(), payload);
         }
 
-        static Bool         Handle_Invalid(const PacketView& packet);
+        static Bool         Handle_Invalid(const SharedPtr<RawPacket>& packet);
 
     private:
-        using PacketHandler     = Function<Bool(const PacketView&)>;
+        using PacketHandler     = Function<Bool(const SharedPtr<RawPacket>&)>;
 
         PacketHandler           mIdToHandler[std::numeric_limits<Int16>::max() + 1];
-        PacketQueue             mPacketQueue;
     };
 } // namespace protocol

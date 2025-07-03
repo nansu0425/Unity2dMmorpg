@@ -5,6 +5,7 @@
 #include "WorldServer/Packet/Handler.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Entity/Player.h"
+#include "GameLogic/Core/Loop.h"
 
 using namespace core;
 using namespace game;
@@ -36,7 +37,7 @@ namespace world
 
     Int64 ClientSession::OnReceived(const Byte* buffer, Int64 numBytes)
     {
-        return ToWorld_PacketHandler::GetInstance().PushPackets(GetSession(), buffer, numBytes);
+        return game::Loop::GetInstance().PushPackets(GetSession(), buffer, numBytes);
     }
 
     void ClientSession::OnSent(Int64 numBytes)

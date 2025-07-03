@@ -11,12 +11,6 @@ namespace core
 
 namespace proto
 {
-    struct RawPacket
-    {
-        SharedPtr<core::Session> owner; // 패킷 소유자 세션
-        Vector<Byte> data; // 패킷 데이터
-    };
-
 #pragma pack(push, 1)
     struct PacketHeader
     {
@@ -25,25 +19,25 @@ namespace proto
     };
 #pragma pack(pop)
 
-    // 직렬화된 바이너리 패킷 데이터를 쉽게 읽을 수 있도록 뷰를 제공
-    class PacketView
+    // 패킷을 직렬화된 바이너리 형태의 데이터로 소유
+    class RawPacket
     {
     public:
-        explicit PacketView(const SharedPtr<core::Session>& owner, const Byte* buffer)
+        explicit RawPacket(const SharedPtr<core::Session>& owner, const Byte* packet)
             : mOwner(owner)
-            , mHeader(reinterpret_cast<const PacketHeader*>(buffer))
-            , mPayload(buffer + sizeof_16(PacketHeader))
+            , mData(packet, packet + reinterpret_cast<const PacketHeader*>(packet)->size)
         {}
 
-        const SharedPtr<core::Session>&     GetOwner() const { return mOwner; }
-        const PacketHeader*                 GetHeader() const { return mHeader; }
-        Int16                               GetSize() const { return mHeader->size; }
-        Int16                               GetId() const { return static_cast_16(mHeader->id); }
-        const Byte*                         GetPayload() const { return mPayload; }
+        const SharedPtr<core::Session>& GetOwner() const { return mOwner; }
+
+        const PacketHeader* GetHeader() const { return reinterpret_cast<const PacketHeader*>(mData.data()); }
+        const Byte* GetPayload() const { return mData.data() + sizeof_16(PacketHeader); }
+
+        Int16 GetSize() const { return GetHeader()->size; }
+        Int16 GetId() const { return static_cast_16(GetHeader()->id); }
 
     private:
-        const SharedPtr<core::Session>&     mOwner;
-        const PacketHeader*                 mHeader;
-        const Byte*                         mPayload;
+        SharedPtr<core::Session> mOwner; // 패킷 소유자 세션
+        Vector<Byte> mData; // 패킷 데이터
     };
 } // namespace proto

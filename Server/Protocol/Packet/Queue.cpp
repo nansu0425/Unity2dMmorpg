@@ -6,46 +6,53 @@
 
 namespace proto
 {
-    PacketQueue::PacketQueue()
-    {
-        // 큐를 초기화하고 세마포어를 생성합니다.
-        mSemaphore = CreateSemaphore(nullptr, 0, LONG_MAX, nullptr);
-    }
-
-    PacketQueue::~PacketQueue()
-    {
-        // 세마포어를 닫습니다.
-        if (mSemaphore != nullptr)
-        {
-            CloseHandle(mSemaphore);
-            mSemaphore = nullptr;
-        }
-    }
-
     void PacketQueue::Push(const SharedPtr<RawPacket>& packet)
     {
-        // 큐에 패킷을 추가합니다.
         while (!mQueue.enqueue(packet))
         {
             // 큐가 가득 찬 경우 대기합니다.
+            core::gLogger->Warn(TEXT_8("PacketQueue is full, retrying to enqueue packet"));
             _mm_pause();
         }
-        // 패킷이 추가되었음을 알리기 위해 세마포어를 증가시킵니다.
-        ReleaseSemaphore(mSemaphore, 1, nullptr);
     }
 
-    SharedPtr<RawPacket> PacketQueue::PopBlocking()
+    Int64 PacketQueue::Push(const SharedPtr<core::Session>& owner, const Byte* buffer, Int64 numBytes)
     {
-        // 패킷이 큐에 추가될 때까지 대기합니다.
-        WaitForSingleObject(mSemaphore, INFINITE);
-        // 큐에서 패킷을 가져옵니다.
-        SharedPtr<RawPacket> packet;
-        while (!mQueue.try_dequeue(packet))
+        Int64 packetOffset = 0;
+
+        // 모든 패킷을 큐에 넣는다
+        while (packetOffset < numBytes)
         {
-            // 큐가 비어있으면 대기합니다.
-            _mm_pause();
+            const Int64 remainingBytes = numBytes - packetOffset;
+
+            // 패킷 헤더 크기만큼 있는지 확인
+            if (remainingBytes < sizeof_64(PacketHeader))
+            {
+                break;
+            }
+
+            const PacketHeader* header = reinterpret_cast<const PacketHeader*>(buffer + packetOffset);
+            ASSERT_CRASH_DEBUG(header->size > 0, "INVALID_PACKET_SIZE");
+
+            // 패킷의 일부만 수신한 경우
+            if (header->size > remainingBytes)
+            {
+                break;
+            }
+
+            // 패킷을 큐에 추가
+            SharedPtr<RawPacket> packet = std::make_shared<RawPacket>(owner, buffer + packetOffset);
+            Push(packet);
+
+            // 다음 패킷 오프셋으로 이동
+            packetOffset += header->size;
         }
-        // 가져온 패킷을 반환합니다.
-        return packet;
+
+        return packetOffset;
+    }
+
+    Bool PacketQueue::TryPop(SharedPtr<RawPacket>& packet)
+    {
+        return mQueue.try_dequeue(packet);
     }
 }

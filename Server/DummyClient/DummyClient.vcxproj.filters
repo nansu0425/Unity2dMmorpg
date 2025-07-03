@@ -9,6 +9,9 @@
     <ClCompile Include="Packet\Handler.cpp">
       <Filter>Packet</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Loop.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
@@ -18,6 +21,9 @@
     <ClInclude Include="Packet\Handler.h">
       <Filter>Packet</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Loop.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Network">
@@ -25,6 +31,9 @@
     </Filter>
     <Filter Include="Packet">
       <UniqueIdentifier>{f02cde0a-d836-49fd-a8fe-843dd5021411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{7292db7d-01d7-43ad-a29a-53bb597061cf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

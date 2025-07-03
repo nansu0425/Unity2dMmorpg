@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\Loop.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Network\Session.cpp" />
     <ClCompile Include="Packet\Handler.cpp" />
@@ -30,6 +31,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Core\Loop.h" />
     <ClInclude Include="Network\Session.h" />
     <ClInclude Include="Packet\Handler.h" />
     <ClInclude Include="Pch.h" />

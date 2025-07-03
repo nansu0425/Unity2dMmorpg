@@ -71,4 +71,3 @@ using String16View      = std::basic_string_view<Char16>;
 using NanoSec           = std::chrono::nanoseconds;
 using MicroSec          = std::chrono::microseconds;
 using MilliSec          = std::chrono::milliseconds;
-using Seconds           = std::chrono::seconds;

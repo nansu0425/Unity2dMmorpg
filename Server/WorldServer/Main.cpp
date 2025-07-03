@@ -31,23 +31,11 @@ int main()
     // 게임 루프 실행
     gThreadManager->Launch([]
                            {
-                               game::Loop::GetInstance().Run();
+                               game::Loop::GetInstance().Run(ToWorld_PacketHandler::GetInstance());
                            });
 
-    // 패킷 워커 실행
-    for (Int64 i = 0; i < 6; ++i)
-    {
-        gThreadManager->Launch([]
-                               {
-                                   while (true)
-                                   {
-                                       ToWorld_PacketHandler::GetInstance().DispatchPacket();
-                                   }
-                               });
-    }
-
     // 입출력 워커 실행
-    for (Int64 i = 0; i < 2; ++i)
+    for (Int64 i = 0; i < 4; ++i)
     {
         gThreadManager->Launch([service]
                                {

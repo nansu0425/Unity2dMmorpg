@@ -1,27 +1,21 @@
-﻿/*    GameLogic/Core/Loop.h    */
+﻿/*    DummyClient/Core/Loop.h    */
 
 #pragma once
 
-#include "GameLogic/Core/World.h"
 #include "Protocol/Packet/Queue.h"
-
-namespace core
-{
-    class Session;
-}
 
 namespace proto
 {
     class PacketDispatcher;
 }
 
-namespace game
+namespace dummy
 {
     class Loop
     {
     public:
         static constexpr MilliSec TickInterval = MilliSec(50); // 틱 간격
-        static constexpr MilliSec MaxPacketProcessTime = MilliSec(10); // 최대 패킷 처리 시간
+        static constexpr MilliSec MaxPacketProcessTime = TickInterval; // 최대 패킷 처리 시간
 
     public:
         static Loop& GetInstance()
@@ -38,7 +32,7 @@ namespace game
          *
          * @param pktDispatcher 패킷 디스패처
          */
-        void Run(proto::PacketDispatcher& pktDispatcher);
+        void Run();
 
         /**
          * 루프를 중지합니다.
@@ -63,20 +57,9 @@ namespace game
          *
          * @param pktDispatcher 패킷 디스패처
          */
-        void ProcessPackets(proto::PacketDispatcher& pktDispatcher);
-
-        /**
-         * 월드 객체를 업데이트합니다.
-         */
-        void UpdateWorld();
-
-        /**
-         * 타이머를 처리합니다.
-         */
-        void HandleTimers();
+        void ProcessPackets();
 
     private:
-        World mWorld; // 월드 객체
         proto::PacketQueue mPacketQueue; // 패킷 큐
         Bool mRunning = true; // 루프 실행 여부
     };
