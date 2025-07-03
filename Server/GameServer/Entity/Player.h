@@ -1,4 +1,4 @@
-﻿/*    GameLogic/Common/Player.h    */
+﻿/*    GameServer/Common/Player.h    */
 
 #pragma once
 

@@ -1,4 +1,4 @@
-﻿/*    GameLogic/Core/World.h    */
+﻿/*    GameServer/Core/World.h    */
 
 #pragma once
 

@@ -1,18 +1,13 @@
-﻿/*    GameLogic/Core/Loop.h    */
+﻿/*    GameServer/Core/Loop.h    */
 
 #pragma once
 
-#include "GameLogic/Core/World.h"
+#include "GameServer/Core/World.h"
 #include "Protocol/Packet/Queue.h"
 
 namespace core
 {
     class Session;
-}
-
-namespace proto
-{
-    class PacketDispatcher;
 }
 
 namespace game
@@ -38,7 +33,7 @@ namespace game
          *
          * @param pktDispatcher 패킷 디스패처
          */
-        void Run(proto::PacketDispatcher& pktDispatcher);
+        void Run();
 
         /**
          * 루프를 중지합니다.
@@ -63,7 +58,7 @@ namespace game
          *
          * @param pktDispatcher 패킷 디스패처
          */
-        void ProcessPackets(proto::PacketDispatcher& pktDispatcher);
+        void ProcessPackets();
 
         /**
          * 월드 객체를 업데이트합니다.

@@ -5,10 +5,10 @@
 #include "Core/Io/Dispatcher.h"
 #include "Core/Network/Service.h"
 #include "GameServer/Network/Session.h"
-#include "GameLogic/Chat/Room.h"
+#include "GameServer/Chat/Room.h"
 #include "GameServer/Packet/Handler.h"
 #include "Protocol/Packet/Utils.h"
-#include "GameLogic/Core/Loop.h"
+#include "GameServer/Core/Loop.h"
 
 core::Service::Config gConfig =
 {
@@ -27,7 +27,7 @@ int main()
     // 게임 루프 실행
     core::gThreadManager->Launch([]
                            {
-                               game::Loop::GetInstance().Run(game::ToWorld_PacketHandler::GetInstance());
+                               game::Loop::GetInstance().Run();
                            });
 
     // 입출력 워커 실행

@@ -3,9 +3,9 @@
 #include "GameServer/Pch.h"
 #include "GameServer/Network/Session.h"
 #include "GameServer/Packet/Handler.h"
-#include "GameLogic/Chat/Room.h"
-#include "GameLogic/Entity/Player.h"
-#include "GameLogic/Core/Loop.h"
+#include "GameServer/Chat/Room.h"
+#include "GameServer/Entity/Player.h"
+#include "GameServer/Core/Loop.h"
 
 namespace game
 {
@@ -40,4 +40,4 @@ namespace game
     {}
 
     SharedPtr<Room>     gRoom = std::make_shared<Room>();
-} // namespace world
+} // namespace game

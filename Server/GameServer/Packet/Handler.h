@@ -31,4 +31,4 @@ namespace game
         static Bool     Handle_ClientToWorld_EnterRoom(const SharedPtr<core::Session>& owner, const proto::ClientToWorld_EnterRoom& payload);
         static Bool     Handle_ClientToWorld_Chat(const SharedPtr<core::Session>& owner, const proto::ClientToWorld_Chat& payload);
     };
-} // namespace world
+} // namespace game

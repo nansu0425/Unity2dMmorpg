@@ -1,4 +1,4 @@
-﻿/*    GameLogic/Chat/Room.h    */
+﻿/*    GameServer/Chat/Room.h    */
 
 #pragma once
 

@@ -1,7 +1,7 @@
-﻿/*    GameLogic/Entity/Player.cpp    */
+﻿/*    GameServer/Entity/Player.cpp    */
 
-#include "GameLogic/Pch.h"
-#include "GameLogic/Entity/Player.h"
+#include "GameServer/Pch.h"
+#include "GameServer/Entity/Player.h"
 
 using namespace core;
 

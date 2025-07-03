@@ -1,8 +1,8 @@
-﻿/*    GameLogic/Chat/Room.cpp    */
+﻿/*    GameServer/Chat/Room.cpp    */
 
-#include "GameLogic/Pch.h"
-#include "GameLogic/Chat/Room.h"
-#include "GameLogic/Entity/Player.h"
+#include "GameServer/Pch.h"
+#include "GameServer/Chat/Room.h"
+#include "GameServer/Entity/Player.h"
 #include "Core/Network/Session.h"
 
 using namespace core;

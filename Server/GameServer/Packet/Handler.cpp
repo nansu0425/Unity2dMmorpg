@@ -4,8 +4,8 @@
 #include "GameServer/Packet/Handler.h"
 #include "GameServer/Network/Session.h"
 #include "Protocol/Packet/Utils.h"
-#include "GameLogic/Chat/Room.h"
-#include "GameLogic/Entity/Player.h"
+#include "GameServer/Chat/Room.h"
+#include "GameServer/Entity/Player.h"
 
 namespace game
 {
@@ -38,4 +38,4 @@ namespace game
 
         return true;
     }
-} // namespace world
+} // namespace game
