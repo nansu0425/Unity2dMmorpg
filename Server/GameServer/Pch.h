@@ -1,4 +1,4 @@
-﻿/*    WorldServer/Pch.h    */
+﻿/*    GameServer/Pch.h    */
 
 #pragma once
 

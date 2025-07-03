@@ -1,4 +1,4 @@
-﻿/*    WorldServer/Network/Session.h    */
+﻿/*    GameServer/Network/Session.h    */
 
 #pragma once
 
@@ -7,10 +7,7 @@
 namespace game
 {
     class Room;
-} // namespace game
 
-namespace world
-{
     class ClientSession
         : public core::Session
     {
@@ -31,4 +28,4 @@ namespace world
     };
 
     extern SharedPtr<game::Room>    gRoom;
-} // namespace world
+} // namespace game

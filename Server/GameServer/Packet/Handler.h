@@ -1,10 +1,10 @@
-/*    WorldServer/Packet/Handler.h    */
+﻿/*    GameServer/Packet/Handler.h    */
 
 #pragma once
 
 #include "Protocol/Packet/Dispatcher.h"
 
-namespace world
+namespace game
 {
     class ToWorld_PacketHandler
         : public proto::PacketDispatcher

@@ -1,31 +1,27 @@
-﻿ /*    WorldServer/Network/Session.cpp    */
+﻿ /*    GameServer/Network/Session.cpp    */
 
-#include "WorldServer/Pch.h"
-#include "WorldServer/Network/Session.h"
-#include "WorldServer/Packet/Handler.h"
+#include "GameServer/Pch.h"
+#include "GameServer/Network/Session.h"
+#include "GameServer/Packet/Handler.h"
 #include "GameLogic/Chat/Room.h"
 #include "GameLogic/Entity/Player.h"
 #include "GameLogic/Core/Loop.h"
 
-using namespace core;
-using namespace game;
-using namespace proto;
-
-namespace world
+namespace game
 {
     ClientSession::~ClientSession()
     {
-        gLogger->Info(TEXT_8("Session[{}]: Destroyed"), GetId());
+        core::gLogger->Info(TEXT_8("Session[{}]: Destroyed"), GetId());
     }
 
     void ClientSession::OnConnected()
     {
-        gLogger->Info(TEXT_8("Session[{}]: Connected to client"), GetId());
+        core::gLogger->Info(TEXT_8("Session[{}]: Connected to client"), GetId());
     }
 
     void ClientSession::OnDisconnected(String8 cause)
     {
-        gLogger->Warn(TEXT_8("Session[{}]: Disconnected from client: {}"), GetId(), cause);
+        core::gLogger->Warn(TEXT_8("Session[{}]: Disconnected from client: {}"), GetId(), cause);
 
         // 방에서 퇴장
         gRoom->Leave(GetPlayerId());
