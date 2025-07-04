@@ -21,6 +21,8 @@ namespace dummy
             mSessionToAgentIdMap[session->GetId()] = agent->GetId();
         }
 
+        core::gLogger->Info(TEXT_8("Agent[{}] added with session ID [{}]"), agent->GetId(), session->GetId());
+
         return agent;
     }
 
@@ -72,6 +74,8 @@ namespace dummy
 
         mSessionToAgentIdMap.erase(it->second->GetSessionId());
         mAgents.erase(it);
+
+        core::gLogger->Info(TEXT_8("Agent[{}] removed"), agentId);
 
         return true; // 성공적으로 제거됨
     }

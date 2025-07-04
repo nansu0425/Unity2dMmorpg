@@ -9,7 +9,7 @@
 
 namespace game
 {
-    Bool ToWorld_PacketHandler::Handle_ClientToWorld_EnterRoom(const SharedPtr<core::Session>& owner, const proto::ClientToWorld_EnterRoom& payload)
+    Bool C2S_PacketDispatcher::Handle_C2S_EnterRoom(const SharedPtr<core::Session>& owner, const proto::C2S_EnterRoom& payload)
     {
         // 플레이어 생성 및 매니저에 추가
         auto player = std::make_shared<Player>(owner, payload.id());
@@ -20,7 +20,7 @@ namespace game
         gRoom->Enter(std::move(player));
 
         // 방 입장 처리 패킷 전송
-        proto::WorldToClient_EnterRoom enterRoom;
+        proto::S2C_EnterRoom enterRoom;
         enterRoom.set_id(payload.id());
         enterRoom.set_success(true);
         proto::PacketUtils::Send(owner, enterRoom);
@@ -28,13 +28,13 @@ namespace game
         return true;
     }
 
-    Bool ToWorld_PacketHandler::Handle_ClientToWorld_Chat(const SharedPtr<core::Session>& owner, const proto::ClientToWorld_Chat& payload)
+    Bool C2S_PacketDispatcher::Handle_C2S_Chat(const SharedPtr<core::Session>& owner, const proto::C2S_Chat& payload)
     {
         // 룸의 모든 플레이어에게 메시지 전송
-        proto::WorldToClient_Chat chat;
+        proto::S2C_Chat chat;
         chat.set_id(payload.id());
         chat.set_message(payload.message());
-        gRoom->Broadcast(proto::PacketUtils::MakeSendBuffer(chat, proto::PacketId::WorldToClient_Chat), payload.id());
+        gRoom->Broadcast(proto::PacketUtils::MakeSendBuffer(chat, proto::PacketId::S2C_Chat), payload.id());
 
         return true;
     }

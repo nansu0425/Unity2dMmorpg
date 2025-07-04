@@ -1,4 +1,4 @@
-﻿/*    GameServer/Packet/Handler.h    */
+/*    GameServer/Packet/Handler.h    */
 
 #pragma once
 
@@ -6,29 +6,29 @@
 
 namespace game
 {
-    class ToWorld_PacketHandler
+    class C2S_PacketDispatcher
         : public proto::PacketDispatcher
     {
     public:
-        static ToWorld_PacketHandler& GetInstance()
+        static C2S_PacketDispatcher& GetInstance()
         {
-            static ToWorld_PacketHandler sInstance;
+            static C2S_PacketDispatcher sInstance;
             return sInstance;
         }
 
     protected:  // 모든 패킷 핸들러 등록
-                        ToWorld_PacketHandler() { RegisterAllHandlers(); }
+                        C2S_PacketDispatcher() { RegisterAllHandlers(); }
 
         virtual void    RegisterAllHandlers() override
         {
             using namespace proto;
             
-            RegisterHandler<ClientToWorld_EnterRoom>(&Handle_ClientToWorld_EnterRoom, PacketId::ClientToWorld_EnterRoom);
-            RegisterHandler<ClientToWorld_Chat>(&Handle_ClientToWorld_Chat, PacketId::ClientToWorld_Chat);
+            RegisterHandler<C2S_EnterRoom>(&Handle_C2S_EnterRoom, PacketId::C2S_EnterRoom);
+            RegisterHandler<C2S_Chat>(&Handle_C2S_Chat, PacketId::C2S_Chat);
         }
 
     private:    // 모든 페이로드 핸들러
-        static Bool     Handle_ClientToWorld_EnterRoom(const SharedPtr<core::Session>& owner, const proto::ClientToWorld_EnterRoom& payload);
-        static Bool     Handle_ClientToWorld_Chat(const SharedPtr<core::Session>& owner, const proto::ClientToWorld_Chat& payload);
+        static Bool     Handle_C2S_EnterRoom(const SharedPtr<core::Session>& owner, const proto::C2S_EnterRoom& payload);
+        static Bool     Handle_C2S_Chat(const SharedPtr<core::Session>& owner, const proto::C2S_Chat& payload);
     };
 } // namespace game

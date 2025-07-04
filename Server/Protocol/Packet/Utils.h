@@ -10,10 +10,10 @@ namespace proto
     class PacketUtils
     {
     public:     // payload 타입별로 Send 함수를 오버로딩
-        static void Send(const SharedPtr<core::Session>& target, const WorldToClient_EnterRoom& payload) { Send(target, payload, PacketId::WorldToClient_EnterRoom); }
-        static void Send(const SharedPtr<core::Session>& target, const WorldToClient_Chat& payload) { Send(target, payload, PacketId::WorldToClient_Chat); }
-        static void Send(const SharedPtr<core::Session>& target, const ClientToWorld_EnterRoom& payload) { Send(target, payload, PacketId::ClientToWorld_EnterRoom); }
-        static void Send(const SharedPtr<core::Session>& target, const ClientToWorld_Chat& payload) { Send(target, payload, PacketId::ClientToWorld_Chat); }
+        static void Send(const SharedPtr<core::Session>& target, const C2S_EnterRoom& payload) { Send(target, payload, PacketId::C2S_EnterRoom); }
+        static void Send(const SharedPtr<core::Session>& target, const C2S_Chat& payload) { Send(target, payload, PacketId::C2S_Chat); }
+        static void Send(const SharedPtr<core::Session>& target, const S2C_EnterRoom& payload) { Send(target, payload, PacketId::S2C_EnterRoom); }
+        static void Send(const SharedPtr<core::Session>& target, const S2C_Chat& payload) { Send(target, payload, PacketId::S2C_Chat); }
 
     public:
         template<typename TPayload>

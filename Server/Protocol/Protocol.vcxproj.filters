@@ -8,12 +8,6 @@
     <ClInclude Include="Payload\Common.pb.h">
       <Filter>Payload</Filter>
     </ClInclude>
-    <ClInclude Include="Payload\ToClient.pb.h">
-      <Filter>Payload</Filter>
-    </ClInclude>
-    <ClInclude Include="Payload\ToWorld.pb.h">
-      <Filter>Payload</Filter>
-    </ClInclude>
     <ClInclude Include="Packet\Id.h">
       <Filter>Packet</Filter>
     </ClInclude>
@@ -26,6 +20,12 @@
     <ClInclude Include="Packet\Utils.h">
       <Filter>Packet</Filter>
     </ClInclude>
+    <ClInclude Include="Payload\C2S.pb.h">
+      <Filter>Payload</Filter>
+    </ClInclude>
+    <ClInclude Include="Payload\S2C.pb.h">
+      <Filter>Payload</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Pch.cpp" />
@@ -35,14 +35,14 @@
     <ClCompile Include="Payload\Common.pb.cc">
       <Filter>Payload</Filter>
     </ClCompile>
-    <ClCompile Include="Payload\ToClient.pb.cc">
-      <Filter>Payload</Filter>
-    </ClCompile>
-    <ClCompile Include="Payload\ToWorld.pb.cc">
-      <Filter>Payload</Filter>
-    </ClCompile>
     <ClCompile Include="Packet\Queue.cpp">
       <Filter>Packet</Filter>
+    </ClCompile>
+    <ClCompile Include="Payload\C2S.pb.cc">
+      <Filter>Payload</Filter>
+    </ClCompile>
+    <ClCompile Include="Payload\S2C.pb.cc">
+      <Filter>Payload</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

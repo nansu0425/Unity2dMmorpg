@@ -6,18 +6,18 @@
 
 namespace {{ project_namespace }}
 {
-    class {{ proto_file }}_PacketHandler
+    class {{ proto_file }}_PacketDispatcher
         : public proto::PacketDispatcher
     {
     public:
-        static {{ proto_file }}_PacketHandler& GetInstance()
+        static {{ proto_file }}_PacketDispatcher& GetInstance()
         {
-            static {{ proto_file }}_PacketHandler sInstance;
+            static {{ proto_file }}_PacketDispatcher sInstance;
             return sInstance;
         }
 
     protected:  // 모든 패킷 핸들러 등록
-                        {{ proto_file }}_PacketHandler() { RegisterAllHandlers(); }
+                        {{ proto_file }}_PacketDispatcher() { RegisterAllHandlers(); }
 
         virtual void    RegisterAllHandlers() override
         {

@@ -24,23 +24,23 @@
     <ClInclude Include="Packet\Queue.h" />
     <ClInclude Include="Packet\Type.h" />
     <ClInclude Include="Packet\Utils.h" />
+    <ClInclude Include="Payload\C2S.pb.h" />
     <ClInclude Include="Payload\Common.pb.h" />
-    <ClInclude Include="Payload\ToClient.pb.h" />
-    <ClInclude Include="Payload\ToWorld.pb.h" />
+    <ClInclude Include="Payload\S2C.pb.h" />
     <ClInclude Include="Pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Packet\Dispatcher.cpp" />
     <ClCompile Include="Packet\Queue.cpp" />
+    <ClCompile Include="Payload\C2S.pb.cc">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Payload\Common.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Payload\ToClient.pb.cc">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Payload\ToWorld.pb.cc">
+    <ClCompile Include="Payload\S2C.pb.cc">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

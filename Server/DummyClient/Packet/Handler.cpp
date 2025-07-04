@@ -7,7 +7,7 @@
 
 namespace dummy
 {
-    Bool ToClient_PacketHandler::Handle_WorldToClient_EnterRoom(const SharedPtr<core::Session>& owner, const proto::WorldToClient_EnterRoom& payload)
+    Bool S2C_PacketDispatcher::Handle_S2C_EnterRoom(const SharedPtr<core::Session>& owner, const proto::S2C_EnterRoom& payload)
     {
         if (!payload.success())
         {
@@ -33,7 +33,7 @@ namespace dummy
         return true;
     }
 
-    Bool ToClient_PacketHandler::Handle_WorldToClient_Chat(const SharedPtr<core::Session>& owner, const proto::WorldToClient_Chat& payload)
+    Bool S2C_PacketDispatcher::Handle_S2C_Chat(const SharedPtr<core::Session>& owner, const proto::S2C_Chat& payload)
     {
         return true;
     }

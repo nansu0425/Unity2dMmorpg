@@ -58,10 +58,10 @@ int main()
                            });
 
     // 룸 브로드캐스트 루프 실행
-    proto::WorldToClient_Chat chat;
+    proto::S2C_Chat chat;
     chat.set_id(0);
     chat.set_message(TEXT_8("Hello World!"));
-    game::gRoom->StartBroadcastLoop(proto::PacketUtils::MakeSendBuffer(chat, proto::PacketId::WorldToClient_Chat), 100);
+    game::gRoom->StartBroadcastLoop(proto::PacketUtils::MakeSendBuffer(chat, proto::PacketId::S2C_Chat), 100);
 
     core::gThreadManager->Join();
 

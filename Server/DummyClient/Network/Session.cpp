@@ -22,7 +22,7 @@ namespace dummy
         SharedPtr<Agent> agent = AgentManager::GetInstance().AddAgent(GetServerSession());
 
         // 방 입장 요청 전송
-        proto::ClientToWorld_EnterRoom payload;
+        proto::C2S_EnterRoom payload;
         payload.set_id(agent->GetId());
         payload.set_password(TEXT_8("1234"));
         proto::PacketUtils::Send(GetSession(), payload);

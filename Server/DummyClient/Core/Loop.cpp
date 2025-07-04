@@ -61,7 +61,7 @@ namespace dummy
             ASSERT_CRASH_DEBUG(packet != nullptr, "NULL_PACKET_RECEIVED");
 
             // 패킷을 핸들러로 전달하여 처리
-            Bool result = ToClient_PacketHandler::GetInstance().DispatchPacket(packet);
+            Bool result = S2C_PacketDispatcher::GetInstance().DispatchPacket(packet);
             if (!result)
             {
                 core::gLogger->Error(TEXT_8("Session[{}]: Failed to process packet with id: {}"), packet->GetOwner()->GetId(), packet->GetId());

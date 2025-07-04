@@ -6,29 +6,29 @@
 
 namespace dummy
 {
-    class ToClient_PacketHandler
+    class S2C_PacketDispatcher
         : public proto::PacketDispatcher
     {
     public:
-        static ToClient_PacketHandler& GetInstance()
+        static S2C_PacketDispatcher& GetInstance()
         {
-            static ToClient_PacketHandler sInstance;
+            static S2C_PacketDispatcher sInstance;
             return sInstance;
         }
 
     protected:  // 모든 패킷 핸들러 등록
-                        ToClient_PacketHandler() { RegisterAllHandlers(); }
+                        S2C_PacketDispatcher() { RegisterAllHandlers(); }
 
         virtual void    RegisterAllHandlers() override
         {
             using namespace proto;
             
-            RegisterHandler<WorldToClient_EnterRoom>(&Handle_WorldToClient_EnterRoom, PacketId::WorldToClient_EnterRoom);
-            RegisterHandler<WorldToClient_Chat>(&Handle_WorldToClient_Chat, PacketId::WorldToClient_Chat);
+            RegisterHandler<S2C_EnterRoom>(&Handle_S2C_EnterRoom, PacketId::S2C_EnterRoom);
+            RegisterHandler<S2C_Chat>(&Handle_S2C_Chat, PacketId::S2C_Chat);
         }
 
     private:    // 모든 페이로드 핸들러
-        static Bool     Handle_WorldToClient_EnterRoom(const SharedPtr<core::Session>& owner, const proto::WorldToClient_EnterRoom& payload);
-        static Bool     Handle_WorldToClient_Chat(const SharedPtr<core::Session>& owner, const proto::WorldToClient_Chat& payload);
+        static Bool     Handle_S2C_EnterRoom(const SharedPtr<core::Session>& owner, const proto::S2C_EnterRoom& payload);
+        static Bool     Handle_S2C_Chat(const SharedPtr<core::Session>& owner, const proto::S2C_Chat& payload);
     };
 } // namespace dummy

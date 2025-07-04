@@ -63,7 +63,7 @@ namespace game
             ASSERT_CRASH_DEBUG(packet != nullptr, "NULL_PACKET_RECEIVED");
 
             // 패킷을 핸들러로 전달하여 처리
-            Bool result = game::ToWorld_PacketHandler::GetInstance().DispatchPacket(packet);
+            Bool result = C2S_PacketDispatcher::GetInstance().DispatchPacket(packet);
             if (!result)
             {
                 core::gLogger->Error(TEXT_8("Session[{}]: Failed to process packet with id: {}"), packet->GetOwner()->GetId(), packet->GetId());

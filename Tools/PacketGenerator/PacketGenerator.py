@@ -53,8 +53,8 @@ def main():
 
     # 패킷 핸들러 코드를 생성할 project 관련 인자
     project_name_to_args = {
-        "DummyClient": {"namespace": "dummy", "proto_file": "ToClient"},
-        "WorldServer": {"namespace": "world", "proto_file": "ToWorld"}}
+        "DummyClient": {"namespace": "dummy", "proto_file": "S2C"},
+        "GameServer": {"namespace": "game", "proto_file": "C2S"}}
 
     for project_name, project_args in project_name_to_args.items():
         # Handler.h 렌더링

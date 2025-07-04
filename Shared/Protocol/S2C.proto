@@ -4,13 +4,13 @@ import "Common.proto";
 
 package proto;
 
-message ClientToWorld_EnterRoom
+message S2C_EnterRoom
 {
     int64   id = 1;
-    string  password = 2;
+    bool    success = 2;
 }
 
-message ClientToWorld_Chat
+message S2C_Chat
 {
     int64   id = 1;
     string  message = 2;
