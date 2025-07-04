@@ -12,6 +12,9 @@
     <ClCompile Include="Core\Loop.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Simulation\Agent.cpp">
+      <Filter>Simulation</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Pch.h" />
@@ -24,6 +27,9 @@
     <ClInclude Include="Core\Loop.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Simulation\Agent.h">
+      <Filter>Simulation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Network">
@@ -34,6 +40,9 @@
     </Filter>
     <Filter Include="Core">
       <UniqueIdentifier>{7292db7d-01d7-43ad-a29a-53bb597061cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Simulation">
+      <UniqueIdentifier>{fd0d0bbd-10ab-4e05-8d75-47e9758cbfd4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
